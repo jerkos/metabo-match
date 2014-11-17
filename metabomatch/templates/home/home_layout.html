@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>
+        {% block title %}
+            Metabomatch: comparing metabolomic software
+            <!--{%- if not page_title -%}-->
+                <!--{{ flaskbb_config["PROJECT_TITLE"] }} - {{ flaskbb_config["PROJECT_SUBTITLE"] }}-->
+            <!--{%- else -%}-->
+                <!--{{ page_title }} - {{ flaskbb_config["PROJECT_TITLE"] }}-->
+            {%- endif -%}
+        {% endblock %}
+        </title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="FlaskBB is a forum software written in Flask">
+        <meta name="author" content="FlaskBB Team">
+
+        <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
+        {% block css %}
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" >
+         <!--"{{ url_for('static', filename='css/font-awesome.min.css') }}" >-->
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/code.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/flaskbb.css') }}">
+        {% endblock %}
+    </head>
+
+    <body>
+        <div id="wrap">
+        {% block navigation %}
+        {%- from theme("macros.html") import topnav with context -%}
+        <!-- Navigation -->
+            <nav class="navbar navbar-default navbar-static-top" style="margin-bottom: 0">
+                <div class="container">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" href="/">metabomatch</a>
+                    </div>
+                    <div class="collapse navbar-collapse navbar-ex1-collapse">
+                        <ul class="nav navbar-nav">
+                            {{ emit_event("before-first-navigation-element") }}
+
+                            {# active_forum_nav is set in {forum, category, topic}.html and new_{topic, post}.html #}
+                            {{ topnav(endpoint='softwares.index' , name='Softwares', icon='fa fa-bar-chart') }}
+                            {{ topnav(endpoint='scripts.index' , name='Scripts', icon='fa fa-file-text-o') }}
+                            {{ topnav(endpoint='forum.index', name='Forum', icon='fa fa-comment', active=active_forum_nav) }}
+                            {{ topnav(endpoint='forum.memberlist', name='Memberlist', icon='fa fa-user') }}
+                            {{ topnav(endpoint='forum.search', name='forumSearch', icon='fa fa-search') }}
+
+                            {{ emit_event("after-last-navigation-element") }}
+                        </ul>
+
+                    {% if current_user and current_user.is_authenticated() %}
+                        <div class="btn-group navbar-btn navbar-right" style="padding-left: 15px; margin-right: -10px">
+                            <a class="btn btn-primary" href="{{ url_for('user.profile', username=current_user.username) }}">
+                                <span class="fa fa-user"></span> {{ current_user.username }}
+                            </a>
+                            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="{{ url_for('forum.topictracker') }}"><span class="fa fa-book"></span> Topic Tracker</a></li>
+                                <li class="divider"></li>
+
+                                <li><a href="{{ url_for('user.settings') }}"><span class="fa fa-cogs"></span> Settings</a></li>
+                                {% if current_user|is_admin_or_moderator %}
+                                <li><a href="{{ url_for('management.overview') }}"><span class="fa fa-cog"></span>Management</a></li>
+                                <li class="divider"></li>
+                                {% endif %}
+
+                                <li><a href="{{ url_for('auth.logout') }}"><span class="fa fa-power-off"></span> Logout</a></li>
+                            </ul>
+                        </div>
+
+                        <div class="btn-group navbar-btn navbar-right">
+                            <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
+                                <span class="fa fa-envelope"></span> <span class="badge">{{ current_user.pm_unread }}</span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="{{ url_for('user.inbox') }}"><span class="fa fa-envelope"></span> Inbox</a></li>
+                                <li><a href="{{ url_for('user.new_message') }}"><span class="fa fa-pencil"></span> New Message</a></li>
+                            </ul>
+                        </div>
+                    {% else %}
+                        <div class="btn-group navbar-btn navbar-right">
+                            <a class="btn btn-primary" href="{{ url_for('auth.login') }}">
+                                <span class="fa fa-user"></span> Login
+                            </a>
+                            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="{{ url_for('auth.register') }}">Register</a></li>
+                                <li><a href="{{ url_for('auth.forgot_password') }}">Reset Password</a></li>
+                            </ul>
+                        </div>
+                    {% endif %}
+                    </div><!-- nav-collapse -->
+                </div><!-- container -->
+            </nav> <!-- navbar navbar-inverse -->
+        {% endblock %}
+
+        <!---->
+        <div class="jumbotron">
+            <div class="container text-center" style="color:lightgrey">
+                <h1 class="text-center" > Metabomatch: fit your needs</h1>
+                <h2 class="text-center">Find the best metabolomic software for your need.</h2>
+                <p>All metabolomic are tested againsted several reference datasets. You can test providing your own dataset</p>
+                <a class="btn btn-lg btn-primary" href="/forum">access to the forum</a>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 text-center">
+                    <i class="fa fa-thumbs-o-up fa-5x"></i>
+                    <h3>Find the right tool for your needs</h3>
+                    <p class="text-left"><b>metabomatch</b> organize `match` between different tools. Submit your dataset, select tools you want to compare and check the result.</p>
+                    <p class="text-left"><a href="/" class="btn btn-default">View details &raquo;</a></p>
+                </div>
+
+                <div class="col-md-4 text-center">
+                    <i class="fa fa-share fa-5x"></i>
+                    <h3>Share your script</h3>
+                    <p class="text-left">With all mass sepctrometers available, it is sometimes hard to find a good tuning of algorihtm. We proposed a space to share your scripts to help the community.</p>
+                    <p class="text-left"><a href="/" class="btn btn-default">View details &raquo;</a></p>
+
+                </div>
+                <div class="col-md-4 text-center">
+                    <i class="fa fa-coffee fa-5x"></i>
+                    <h3>Discuss about your favorite software</h3>
+                    <p class="text-left">We offer the possibilty to discuss about available tools. You can post a question about a parameters of an algorihtm and be sure that a community member will be able to answer.</p>
+                    <p class="text-left"><a href="/" class="btn btn-default">View details &raquo;</a></p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+     <div id="footer">
+        <div class="container">
+            <p class="text-muted credit pull-right">powered by <a href="http://flask.pocoo.org">Flask</a></p>
+            <p class="text-muted credit pull-left">Service proposed by <a href="http://omics-services.com">Omics Services</a></p>
+            <!--<p class="text-muted credit pull-right">&copy; 2013 - <a href="http://flaskbb.org">FlaskBB.org</a></p>-->
+        </div>
+    </div>
+    </body>
+</html>
