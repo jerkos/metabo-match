@@ -1,9 +1,12 @@
 {% extends theme("layout.html") %}
 {% block content %}
-    <div class="row">
-        <h2>Note on the workflow</h2>
-        <p>We focus here only (for the moment) on untargeted metabolomic. I will define shortly all the steps. If you want to improve it, send me mail</p>
+    <div class="row" style="padding: 0 0 20px 0">
+        <h2>Help the community</h2>
+        <p> <b>You found a new software and you to share it with the community</b></p>
+        <a href="{{url_for('softwares.register')}}" class="btn btn-default">Register new software</a>
+
     </div>
+
     <div class="row">
         <h2 class="text-left">Browse by category:</h2>
     </div>
@@ -12,23 +15,22 @@
 
     <div class="row">
         <div class="col-md-3">
-            <a href="/" class="btn btn-primary"><i class="fa fa-tag"></i> Signal Extraction</a>
+            <a href="/softwares?category=1" class="btn btn-primary"><i class="fa fa-tag"></i> Signal Extraction</a>
         </div>
         <div class="col-md-3">
-            <a href="/" class="btn btn-success"><i class="fa fa-tag"></i> LC-alignment</a>
+            <a href="/softwares?category=2" class="btn btn-success"><i class="fa fa-tag"></i> LC-alignment</a>
         </div>
         <div class="col-md-3">
-            <a href="/" class="btn btn-warning"><i class="fa fa-tag"></i> Database Search</a>
+            <a href="/softwares?category=3" class="btn btn-warning"><i class="fa fa-tag"></i> Database Search</a>
         </div>
         <div class="col-md-3">
-            <a href="/" class="btn btn-danger"><i class="fa fa-tag"></i> Statiscal analysis</a>
+            <a href="/softwares?category=4" class="btn btn-danger"><i class="fa fa-tag"></i> Statistical analysis</a>
         </div>
     </div>
 
     <hr>
 
     <div class="row">
-        <!--<h2>All</h2>-->
             <table class="table table-condensed">
                 <thead>
                     <tr>
@@ -39,13 +41,30 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <th><a href="/">XCMS</a></th>
-                        <th>R</th>
-                        <th>I don't know !</th>
-                        <th><i class="btn btn-primary fa fa-tag"></i> <i class="btn btn-success fa fa-tag"></i>
-                            <i class="btn btn-warning fa fa-tag"></i> <i class="btn btn-danger fa fa-tag"></i></th>
-                    </tr>
+                    {% for soft in softwares %}
+
+                        <tr>
+                            <th><a href="{{ url_for('softwares.info', name=soft.name) }}">{{ soft.name }}</a></th>
+                            <th>{{ soft.programming_language }}</th>
+                            <th>{{ soft.organization }}</th>
+                            <th>
+                                {% set soft_tags = soft.tags| map(attribute='tag') | join(',') %}
+                                {% if 'Signal Extraction' in soft_tags %}
+                                    <i class="btn btn-primary fa fa-tag"></i>
+                                {% endif %}
+                                {% if 'LC Alignment' in soft_tags %}
+                                    <i class="btn btn-success fa fa-tag"></i>
+                                {% endif %}
+                                {% if 'Database Search' in soft_tags %}
+                                    <i class="btn btn-warning fa fa-tag"></i>
+                                {% endif %}
+                                {% if 'Statistical Analysis' in soft_tags %}
+                                    <i class="btn btn-danger fa fa-tag"></i>
+                                {% endif %}
+
+                            </th>
+                        </tr>
+                    {% endfor %}
                 </tbody>
             </table>
     </div>

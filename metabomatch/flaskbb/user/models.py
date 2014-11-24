@@ -15,9 +15,10 @@ from itsdangerous import SignatureExpired
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import current_app, url_for
 from flask.ext.login import UserMixin, AnonymousUserMixin
+from flask.ext.github import GitHubError
 
 from metabomatch._compat import max_integer
-from metabomatch.extensions import db, cache
+from metabomatch.extensions import db, cache, github
 from metabomatch.flaskbb.utils.settings import flaskbb_config
 from metabomatch.flaskbb.forum.models import (Post, Topic, topictracker, TopicsRead,
                                   ForumsRead)
@@ -79,8 +80,12 @@ class User(db.Model, UserMixin):
     __searchable__ = ['username', 'email']
 
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(200), unique=True, nullable=False)
-    email = db.Column(db.String(200), unique=True, nullable=False)
+    username = db.Column(db.String(200), unique=True, nullable=False)  #,
+    email = db.Column(db.String(200), unique=True, nullable=False) #
+
+    #logged with github api, is nullable
+    github_access_token = db.Column(db.String(200))
+
     _password = db.Column('password', db.String(120), nullable=False)
     date_joined = db.Column(db.DateTime, default=datetime.utcnow())
     lastseen = db.Column(db.DateTime, default=datetime.utcnow())
@@ -118,6 +123,23 @@ class User(db.Model, UserMixin):
                         primaryjoin=(topictracker.c.user_id == id),
                         backref=db.backref("topicstracked", lazy="dynamic"),
                         lazy="dynamic")
+
+
+    @staticmethod
+    def create_github_account(oauth_token):
+        u = User()
+        try:
+            user_as_dict = github.get("user")
+        except GitHubError as e:
+            print e.message
+            return None
+        u.username = user_as_dict["login"]
+        u.email = user_as_dict["email"]
+        u.password = '1234'
+        u.primary_group_id = 4
+        u.date_joined = datetime.utcnow()
+        u.github_access_token = oauth_token
+        return u.save()
 
     # Properties
     @property

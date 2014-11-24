@@ -1,0 +1,121 @@
+{% extends theme("layout.html") %}
+{% from theme("macros.html") import render_submit %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-4">
+            <h1>{{ software.name }}</h1>
+            <img src="{{ url_for('static', filename=["img/", software.name|lower, ".png"] |join("")) }}"/>
+        </div>
+        <div id="circles-1" class="col-md-4 col-md-offset-4"></div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            {% if software.organization and software.organization != "" %}
+                <p>created by <b>{{ software.organization }}</b></p>
+            {%  else %}
+
+            {% endif %}
+        </div>
+        <div class="col-md-4">
+            <p>with <b>{{ software.programming_language }}</b> as programming languages</p>
+        </div>
+        <div class="col-md-4">
+
+        </div>
+    </div>
+
+    <div class="row">
+        {% if software.is_maintained %}
+            <p><b>This software is still maintained (base code changed during last year)</b></p>
+        {% else %}
+            <p class="alert-warning"><b>This software is no longer maintained</b></p>
+        {% endif %}
+    </div>
+
+    <div class="row">
+        {% if software.publication_link %}
+            <p><a href="{{ software.publication_link  }}">{{ software.publication_link }}</a></p>
+        {% else %}
+            <p class="alert-info">This software seems to be non published</p>
+        {% endif %}
+    </div>
+
+    <div class="row">
+       <h2> Citations: {{ software.get_publication_citation_nb() }}</h2>
+    </div>
+
+    <div class="row" style="min-height: 300px;">
+        <div class="col-md-4">
+            <h2 class="text-center">Last ratings</h2>
+            <hr>
+            {% for c in [] %}
+                <h3> {{ c.user.username }} says:</h3>
+                <p class="text-center">{{ c.content }}</p>
+            {% else %}
+                <p class="text-center text-muted">Nothing to show</p>
+            {% endfor %}
+        </div>
+        <div class="col-md-4">
+            <h2 class="text-center">Last comments</h2>
+            <hr>
+            {% for c in software.comments[-5:] %}
+                <p><b>{{ c.user.username }}</b> says:</p>
+                <p class=" well">{{ c.content }}</p>
+            {% endfor %}
+
+        </div>
+        <div class="col-md-4">
+            <h2 class="text-center">Last match</h2>
+            <hr>
+        </div>
+    </div>
+
+    {% if current_user.is_authenticated() %}
+        <div class="row">
+            <form class="form-horizontal" method="post" action="{{ url_for('softwares.comment', name=software.name) }}">
+                <div class="form-group">
+                    <label class="col-md-3 control-label">Leave a comment or a rating:</label>
+                    <div class="col-md-9 col-md-offset-3">
+                        <textarea class="form-control" rows="10" name="content" placeholder="Fill this!"></textarea>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-3 control-label">rating</label>
+                     <div class="col-sm-9">
+                        <input name="rating" type="number" class="form-control" name="rating" min="0" max="100">
+                    </div>
+                </div>
+
+                {{ render_submit() }}
+            </form>
+        </div>
+    {% else %}
+        <h3> Login in and post a comment on this software</h3>
+    {% endif %}
+{% endblock %}
+
+{% block javascript %}
+    {{super()}}
+    <script src="{{url_for('static', filename='js/circles.js')}}"></script>
+
+    <script>
+        var myCircle = Circles.create({
+          id:           'circles-1',
+          radius:       100,
+          value:        '{{ software.rating }}',
+          maxValue:     100,
+          width:        10,
+          text:         function(value){return value + '%';},
+          colors:       ['#D3B6C6', '#4B253A'],
+          duration:       400,
+          wrpClass:     'circles-wrp',
+          textClass:      'circles-text',
+          styleWrapper: true,
+          styleText:    true
+        });
+    </script>
+
+{% endblock %}

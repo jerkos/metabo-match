@@ -21,11 +21,6 @@ body {
   margin: 20px 0;
 }
 
-.jumbotron {
-    height:600px;
-    background: url('../img/computer.jpg') 50% 40%;
-}
-
 #footer > .container {
   /*margin: 0 auto 15px;*/
   padding-left: 15px;

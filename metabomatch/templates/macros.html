@@ -19,6 +19,14 @@
 {%- endmacro -%}
 
 
+{%- macro render_submit(message='Submit') -%}
+    <div class="form-group">
+        <div class="col-sm-offset-3 col-sm-9">
+            <button type="submit" class="btn btn-success">{{ message }}</button>
+        </div>
+    </div>
+{%- endmacro -%}
+
 {%- macro render_boolean_field(field, inline=False) -%}
 <label class="checkbox {%- if inline -%}inline{%- endif -%}">
     {{ field(**kwargs) }}

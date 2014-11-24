@@ -9,15 +9,19 @@
     :copyright: (c) 2014 by the FlaskBB Team.
     :license: BSD, see LICENSE for more details.
 """
+from sqlalchemy.orm import load_only
+
 from flask import Blueprint, flash, redirect, url_for, request, current_app
 from flask.ext.login import (current_user, login_user, login_required,
                              logout_user, confirm_login, login_fresh)
 
+from metabomatch.extensions import github
 from metabomatch.flaskbb.utils.helpers import render_template
 from metabomatch.email import send_reset_token
 from metabomatch.auth.forms import (LoginForm, ReauthForm, ForgotPasswordForm,
                                 ResetPasswordForm)
 from metabomatch.flaskbb.user.models import User
+
 
 auth = Blueprint("auth", __name__)
 
@@ -152,3 +156,38 @@ def reset_password(token):
 
     form.token.data = token
     return render_template("auth/reset_password.html", form=form)
+
+
+#  github authentication
+@auth.route("/login_github")
+def login_github():
+    return github.authorize()
+
+
+@auth.route('/github-callback')
+@github.authorized_handler
+def authorized(oauth_token):
+    #next_url = request.args.get('next') or url_for('index')
+    if oauth_token is None:
+        flash("Authorization failed.")
+        return redirect(url_for('auth.login'))
+
+    user = User.query.filter_by(github_access_token=oauth_token).first()
+    if user is None:
+        user = User.create_github_account(oauth_token)
+
+    if user is None:
+        flash("An error occurred during github auth")
+        return redirect(url_for('auth.login'))
+
+    #  force remembering
+    login_user(user, True)
+    flash("Github oauth succeeded")
+
+    return redirect(url_for('softwares.index'))
+
+
+@github.access_token_getter
+def token_getter():
+    token = User.options(load_only("id", "github_access_token")).filter(User.id == 1).first()
+    return token[1]

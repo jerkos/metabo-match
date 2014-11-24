@@ -137,5 +137,5 @@ def initflaskbb(username=None, password=None, email=None):
 
 
 if __name__ == "__main__":
-    #create_app().run(debug=True)
-    manager.run()
+    create_app().run(debug=True)
+    #manager.run()

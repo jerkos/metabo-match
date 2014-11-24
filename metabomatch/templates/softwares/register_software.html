@@ -1,0 +1,73 @@
+{% extends theme("layout.html") %}
+{% from theme("macros.html") import horizontal_field %}
+{% from theme("macros.html") import field_label %}
+{% from theme("macros.html") import render_boolean_field %}
+
+{% block css %}
+    {{super()}}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/selectize.bootstrap3.css') }}">
+{% endblock %}
+
+{% block content %}
+
+ <form class="form-horizontal" role="form" method="POST">
+
+     <h2>Register software</h2>
+
+     <h3>Basic</h3>
+     <hr>
+        {{ form.hidden_tag() }}
+        {{ horizontal_field(form.name) }}
+        {{ horizontal_field(form.pg_language) }}
+
+{#         <div class="form-group">#}
+{#            <label class="col-md-3 control-label">rating</label>#}
+{#             <div class="col-sm-9">#}
+{#                <input type="number" class="form-control" name="rating" min="0" max="100">#}
+{#            </div>#}
+{#         </div>#}
+
+         <div class="form-group">
+             <div class="col-md-9 col-md-offset-3">
+                 <select id="select-tags"  name="selected_tags" multiple placeholder="Select tags...">
+                    <option value="Signal Extraction">Signal Extraction</option>
+                    <option value="LC-Alignment">LC-Alignment</option>
+                    <option value="Database Search">Database Search</option>
+                    <option value="Statistical Analysis">Statistical Analysis</option>
+                 </select>
+             </div>
+         </div>
+
+     <h3>Version</h3>
+     <hr>
+        <div class="form-group">
+            <div class="col-md-9 col-md-offset-3">
+                {{ render_boolean_field(form.is_maintained) }}
+            </div>
+        </div>
+        {{ horizontal_field(form.current_version) }}
+
+     <h3>Publications</h3>
+     <hr>
+        {{ horizontal_field(form.publication_link) }}
+{#        {{ horizontal_field(form.publication_id) }}#}
+        {{ horizontal_field(form.download_link) }}
+
+
+    <div class="form-group">
+        <div class="col-sm-offset-3 col-sm-9">
+            <button type="submit" class="btn btn-success">Register</button>
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block javascript %}
+    {{super()}}
+    <script src="{{url_for('static', filename='js/selectize.js')}}"></script>
+
+    <script>
+         $('#select-tags').selectize({create: true});
+     </script>
+
+{% endblock %}

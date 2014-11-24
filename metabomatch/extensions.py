@@ -17,6 +17,7 @@ from flask.ext.redis import Redis
 from flask.ext.migrate import Migrate
 from flask.ext.themes2 import Themes
 from flask.ext.plugins import PluginManager
+from flask.ext.github import GitHub
 
 
 # Database
@@ -45,3 +46,5 @@ themes = Themes()
 
 # PluginManager
 plugin_manager = PluginManager()
+
+github = GitHub()

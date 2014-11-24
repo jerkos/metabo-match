@@ -39,7 +39,7 @@ from metabomatch.flaskbb.forum.models import Post, Topic, Category, Forum
 
 # extensions
 from metabomatch.extensions import db, login_manager, mail, cache, redis_store, \
-    debugtoolbar, migrate, themes, plugin_manager
+    debugtoolbar, migrate, themes, plugin_manager, github
 
 # various helpers
 from metabomatch.flaskbb.utils.helpers import format_date, time_since, crop_title, \
@@ -68,6 +68,10 @@ def create_app(config=None):
     app.config.from_object(config)
     # try to update the config via the environment variable
     app.config.from_envvar("FLASKBB_SETTINGS", silent=True)
+
+    #github extensions, TODO put that into configs directory
+    app.config['GITHUB_CLIENT_ID'] = 'ed057c9e07f531f0fdb6'
+    app.config['GITHUB_CLIENT_SECRET'] = 'e221675a465c749bddfb93e248a271deb5687485'
 
     configure_blueprints(app)
     configure_extensions(app)
@@ -137,6 +141,8 @@ def configure_extensions(app):
         """
         Loads the user. Required by the `login` extension
         """
+
+        # to show unread messages in the toolbar
         unread_count = db.session.query(db.func.count(PrivateMessage.id)).\
             filter(PrivateMessage.unread == True,
                    PrivateMessage.user_id == id).subquery()
@@ -149,6 +155,9 @@ def configure_extensions(app):
             return None
 
     login_manager.init_app(app)
+
+    #  github extension
+    github.init_app(app)
 
 
 def configure_template_filters(app):

@@ -4,6 +4,10 @@
 {% from theme("macros.html") import horizontal_field %}
 {% block content %}
 
+    <div class="row">
+        <p class="well alert-info">Authentication via Github is intended primarily for developers of tools referenced in <b>metabomatch</b>. The classic authentication is reserved for its conventional users.
+        After choosing sides, use the same means of authentication the next time you visit <b>metabomatch</b>. If you have any connection problem, send an email to contact@omics-services.com.</p>
+    </div>
 <form class="form-horizontal" role="form" method="POST">
     <h2>Login</h2>
     <hr>
@@ -27,5 +31,14 @@
         </div>
     </div>
 </form>
+
+    <div class="row" style="padding-top: 50px">
+        <div class="col-md-offset-3 col-md-9">
+            <p>Or</p>
+            <a style="font-size: 1.5em;" class="btn btn-info" href="{{ url_for('auth.login_github')}}"><i class="fa fa-github"></i> Login with <b>github</b></a>
+        </div>
+    </div>
+
+
 
 {% endblock %}
