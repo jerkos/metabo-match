@@ -1,58 +1,125 @@
 {% extends theme("layout.html") %}
 {% from theme("macros.html") import render_submit %}
 
+
 {% block content %}
+
     <div class="row">
-        <div class="col-md-4">
-            <h1>{{ software.name }}</h1>
+        <div class="col-md-6">
+            <h1>{{ software.name }} <small>{{ software.omictools_id }}, <a href="/">omictools link</a></small></h1>
             <img src="{{ url_for('static', filename=["img/", software.name|lower, ".png"] |join("")) }}"/>
         </div>
-        <div id="circles-1" class="col-md-4 col-md-offset-4"></div>
+        <div id="circles-1" class="col-md-4 col-md-offset-2"></div>
     </div>
 
     <div class="row">
-        <div class="col-md-4">
-            {% if software.organization and software.organization != "" %}
-                <p>created by <b>{{ software.organization }}</b></p>
-            {%  else %}
+    <h2>
+        Software informations
+        {% if current_user.id == software.owner.id %}
+            <a href="/" class="btn btn-info">Edit</a>
+        {% else %}
+            <small>You can not edit this sheet</small>
+        {% endif %}
+    </h2>
+    <hr>
+    </div>
 
+    <div class="row" style="padding-bottom: 10px;">
+            {% if software.organization and software.organization != "None" %}
+                <p>Created by <b><input type="text" text="{{ software.organization }}"></b>
+                    with <b><input style="width:auto; display:inline;" disabled class='form-control'
+                                   value="{{ software.programming_language }}"></b> as programming languages</p>
+            {%  else %}
+                <p>Created by <b><input style="width:auto; display:inline;" disabled class='form-control' value="Anonymous"></b>
+                    with <b><input style="width:auto; display:inline;" disabled class='form-control'
+                    value="{{ software.programming_language }}"></b> as programming languages</p>
+            {% endif %}
+    </div>
+
+
+    <div class="row" style="padding-bottom: 50px;">
+        <div class="col-md-3">
+            {% if software.is_maintained %}
+                <a href="/" class="btn" style="background-color: #673ab7; color:white;"><i class="fa fa-check-square-o fa-2x"> maintained</i></a>
+{#                <small>This software is still maintained (base code changed during last year)</small>#}
+            {% else %}
+                <a href="/" class="btn" style="background-color: #673ab7; color:white"><i class="fa fa-square-o fa-3x"> not maintained</i></a>
+{#                <small>This software is no longer maintained (no base code changed during last year)</small>#}
             {% endif %}
         </div>
-        <div class="col-md-4">
-            <p>with <b>{{ software.programming_language }}</b> as programming languages</p>
+
+        <div class="col-md-3">
+            {% if software.publication_link %}
+                <a class='btn' style="background-color: #3f51b5; color:white" href="{{ software.publication_link  }}"><i class="fa fa-file-text fa-2x"> publicated</i> </a>
+            {% else %}
+                <p class="alert-info">This software seems to be non published</p>
+            {% endif %}
         </div>
-        <div class="col-md-4">
 
+        <div class="col-md-3">
+            {% if software.download_link %}
+                <a href="{{ software.download_link }}" class="btn" style="background-color: #2196f3; color:white"><i class="fa fa-cloud-download fa-2x"> download</i> </a>
+            {% else %}
+                <p class="alert-info">Source do not seem to be available (at least hardly) </p>
+            {% endif %}
+        </div>
+
+        <div class="col-md-3">
+            {% if software.github_link %}
+                 <a class="btn" style="background-color: #03a9f4; color:white" href="{{ software.github_link  }}"><i class="fa fa-github-square fa-2x"> github</i> </a>
+            {% else %}
+                <p class="alert-info">It has not available on <i class="fa fa-github-square"></i> Gihtub</p>
+            {% endif %}
+        </div>
+
+    </div>
+
+
+    <div class="row">
+    <h2>Various statistics</h2>
+    <hr>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3">
+            <p> Mean Rate (metabomatch users): <b></b></p>
+        </div>
+        <div class="col-md-3">
+{#            <p> <b>#</b> Citations: <b>{{ software.get_publication_citation_nb() }}</b></p>#}
+            <a href="/" class="btn btn-success">CITATIONS <span class="badge">{{ software.get_publication_citation_nb() }}</span></a>
+        </div>
+        <div class="col-md-3">
+{#            <p> <b>#</b> Users on metabomatch: <b>{{ software.users | length }}</b>#}
+            <a href="/" class="btn btn-info">USERS <span class="badge">{{ software.users | length }}</span></a>
+        </div>
+        <div class="col-md-3">
+{#            <p> <b>#</b> Contributors: <b>{{ software.get_nb_maintainers() }}</b></p>#}
+            <a href="/" class="btn btn-warning">CONTRIBUTORS <span class="badge">{{ software.get_nb_maintainers() }}</span></a>
         </div>
     </div>
 
     <div class="row">
-        {% if software.is_maintained %}
-            <p><b>This software is still maintained (base code changed during last year)</b></p>
-        {% else %}
-            <p class="alert-warning"><b>This software is no longer maintained</b></p>
-        {% endif %}
+        <p> <b>#</b> Issues opened on github: <b>{{ software.get_nb_issues()[0] }}</b> which <b>{{ software.get_nb_issues()[0] }}</b> are opened</p>
+        <p> <b>#</b> Commits during last year: <b></b>, during last mont:<b></b></p>
+        <p> <b>#</b> Downloads: <b></b></p>
     </div>
 
-    <div class="row">
-        {% if software.publication_link %}
-            <p><a href="{{ software.publication_link  }}">{{ software.publication_link }}</a></p>
-        {% else %}
-            <p class="alert-info">This software seems to be non published</p>
-        {% endif %}
-    </div>
-
-    <div class="row">
-       <h2> Citations: {{ software.get_publication_citation_nb() }}</h2>
+    <div class="row" style="padding-top: 50px;">
+    <h2>Community view</h2>
+    <hr>
     </div>
 
     <div class="row" style="min-height: 300px;">
         <div class="col-md-4">
             <h2 class="text-center">Last ratings</h2>
             <hr>
-            {% for c in [] %}
-                <h3> {{ c.user.username }} says:</h3>
-                <p class="text-center">{{ c.content }}</p>
+            {% for c in software.ratings[-5:] %}
+                <p class="text-center">
+                    <b>{{ c.user.username }}</b> :
+                    {% for i in range((c.rate / 10.0)|int) %}
+                        <i class="fa fa-star"></i>
+                    {% endfor %}
+                </p>
             {% else %}
                 <p class="text-center text-muted">Nothing to show</p>
             {% endfor %}
@@ -61,36 +128,55 @@
             <h2 class="text-center">Last comments</h2>
             <hr>
             {% for c in software.comments[-5:] %}
-                <p><b>{{ c.user.username }}</b> says:</p>
-                <p class=" well">{{ c.content }}</p>
+                <p class="well">
+                    <b>{{ c.user.username }}</b>: <br>
+                    <i class="fa fa-quote-left"></i> {{ c.content }} <i class="fa fa-quote-right"></i>
+                </p>
+            {% else %}
+                <p class="text-center text-muted">Nothing to show</p>
             {% endfor %}
 
         </div>
         <div class="col-md-4">
             <h2 class="text-center">Last match</h2>
             <hr>
+            <p class="text-center text-muted">Nothing to show</p>
         </div>
     </div>
 
     {% if current_user.is_authenticated() %}
         <div class="row">
+            {% if not current_user.has_commented(software.name) or not current_user.has_commented or show_comment_form %}
+
             <form class="form-horizontal" method="post" action="{{ url_for('softwares.comment', name=software.name) }}">
+
+                {% if not current_user.has_commented(software.name) or show_comment_form %}
                 <div class="form-group">
                     <label class="col-md-3 control-label">Leave a comment or a rating:</label>
                     <div class="col-md-9 col-md-offset-3">
                         <textarea class="form-control" rows="10" name="content" placeholder="Fill this!"></textarea>
                     </div>
                 </div>
+                {% endif %}
 
+                {% if not current_user.has_rated(software.name) or show_comment_form %}
                 <div class="form-group">
                     <label class="col-md-3 control-label">rating</label>
                      <div class="col-sm-9">
                         <input name="rating" type="number" class="form-control" name="rating" min="0" max="100">
                     </div>
                 </div>
-
+                {% endif %}
                 {{ render_submit() }}
             </form>
+            {% else %}
+
+                <p class="alert-info">It seems you have already commented or rated this software.
+                    <a href="{{ ['/softwares/', software.name, '?show_comment_form'] | join('') }}" >Comment this software again</a>
+                </p>
+
+            {% endif %}
+
         </div>
     {% else %}
         <h3> Login in and post a comment on this software</h3>

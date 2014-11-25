@@ -38,6 +38,9 @@
                         <th>Programming Language</th>
                         <th>Institute</th>
                         <th>Tags</th>
+                        {% if current_user.is_authenticated() %}
+                            <th></th>
+                        {% endif %}
                     </tr>
                 </thead>
                 <tbody>
@@ -63,6 +66,11 @@
                                 {% endif %}
 
                             </th>
+                            {% if current_user.is_authenticated() and not soft.name in (current_user.softwares_used | map(attribute='name')) %}
+                                <th><a class="btn btn-default" href="{{ url_for('softwares.register_user', name=soft.name) }}">Do you use this software ?</a></th>
+                            {% elif current_user.is_authenticated() and soft.name in (current_user.softwares_used | map(attribute='name')) %}
+                                <th><a class="btn btn-primary" href="/"><i class="fa fa-certificate"></i> software user !</a></th>
+                            {% endif %}
                         </tr>
                     {% endfor %}
                 </tbody>

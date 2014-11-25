@@ -3,13 +3,13 @@ Software views
 """
 
 
-from flask import Blueprint, request, redirect, url_for
+from flask import Blueprint, request, redirect, url_for, session, flash
 
 from flask.ext.login import login_required, current_user
 
 from metabomatch.extensions import db
 from metabomatch.flaskbb.utils.helpers import render_template
-from metabomatch.softwares.models import Software, Tag, Comment
+from metabomatch.softwares.models import Software, Tag, Comment, Rating, user_softwares_mapping
 from metabomatch.softwares.forms import SoftwareForm
 
 softwares = Blueprint("softwares", __name__, template_folder="../../templates")
@@ -50,18 +50,42 @@ def register():
 
 @softwares.route('/<name>')
 def info(name):
-    print name
+
+    # view restriction
+    if not current_user.is_authenticated():
+        v = session.get('nb_views', 0)
+        session['nb_views'] = v + 1
+
+        if session['nb_views'] > 3:
+            flash("Please register or log in to see more about softwares")
+            return redirect(url_for('auth.login'))
+
     soft = Software.query.filter(Software.name == name).first()
+    show_comment_form = True if 'show_comment_form' in request.args else False
     return render_template('softwares/software.html',
                            software=soft,
-                           current_user=current_user)
+                           show_comment_form=show_comment_form)
 
 
 @softwares.route('/<name>/comment', methods=['POST'])
 @login_required
 def comment(name):
-    c = Comment(request.form['content'])
-    c.user_id = current_user.id
-    c.software_id = name
-    c.save()
+    #comment stuff
+    content, rating = request.form['content'], request.form['rating']
+    if content:
+        c = Comment(content)
+        c.user_id = current_user.id
+        c.software_id = name
+        c.save()
+    if rating:
+        r = Rating(request.form['rating'], current_user.id, name)
+        r.save()
     return redirect(url_for('softwares.info', name=name))
+
+@softwares.route('/<name>/register_user')
+@login_required
+def register_user(name):
+    soft = Software.query.filter(Software.name == name).first()
+    current_user.softwares_used.append(soft)
+    current_user.save()
+    return redirect(url_for('softwares.index'))

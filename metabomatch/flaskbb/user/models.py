@@ -80,8 +80,8 @@ class User(db.Model, UserMixin):
     __searchable__ = ['username', 'email']
 
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(200), unique=True, nullable=False)  #,
-    email = db.Column(db.String(200), unique=True, nullable=False) #
+    username = db.Column(db.String(200), unique=True, nullable=False)
+    email = db.Column(db.String(200), unique=True, nullable=False)
 
     #logged with github api, is nullable
     github_access_token = db.Column(db.String(200))
@@ -98,6 +98,9 @@ class User(db.Model, UserMixin):
     notes = db.Column(db.Text)
 
     theme = db.Column(db.String(15))
+
+    comments = db.relationship("Comment", backref="user")
+    ratings = db.relationship("Rating", backref="user")
 
     posts = db.relationship("Post", backref="user", lazy="dynamic")
     topics = db.relationship("Topic", backref="user", lazy="dynamic")
@@ -140,6 +143,12 @@ class User(db.Model, UserMixin):
         u.date_joined = datetime.utcnow()
         u.github_access_token = oauth_token
         return u.save()
+
+    def has_commented(self, software_name):
+        return any([c.software.name == software_name for c in self.comments])
+
+    def has_rated(self, software_name):
+        return any([c.software.name == software_name for c in self.ratings])
 
     # Properties
     @property

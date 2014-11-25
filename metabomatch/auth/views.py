@@ -10,16 +10,14 @@
     :license: BSD, see LICENSE for more details.
 """
 from sqlalchemy.orm import load_only
-
-from flask import Blueprint, flash, redirect, url_for, request, current_app
+from flask import Blueprint, flash, redirect, url_for, request, current_app, session
 from flask.ext.login import (current_user, login_user, login_required,
                              logout_user, confirm_login, login_fresh)
 
 from metabomatch.extensions import github
 from metabomatch.flaskbb.utils.helpers import render_template
 from metabomatch.email import send_reset_token
-from metabomatch.auth.forms import (LoginForm, ReauthForm, ForgotPasswordForm,
-                                ResetPasswordForm)
+from metabomatch.auth.forms import (LoginForm, ReauthForm, ForgotPasswordForm, ResetPasswordForm)
 from metabomatch.flaskbb.user.models import User
 
 
@@ -41,6 +39,8 @@ def login():
                                                 form.password.data)
 
         if user and authenticated:
+            #remove this key when a user is authenticated
+            session.pop('nb_views', None)
             login_user(user, remember=form.remember_me.data)
             return redirect(request.args.get("next") or
                             url_for("forum.index"))
@@ -118,7 +118,7 @@ def forgot_password():
             token = user.make_reset_token()
             send_reset_token(user, token=token)
 
-            flash(("E-Mail sent! Please check your inbox."), "info")
+            flash("E-Mail sent! Please check your inbox.", "info")
             return redirect(url_for("auth.forgot_password"))
         else:
             flash(("You have entered an username or email that is not linked \
@@ -141,17 +141,17 @@ def reset_password(token):
         expired, invalid, data = user.verify_reset_token(form.token.data)
 
         if invalid:
-            flash(("Your password token is invalid."), "danger")
+            flash("Your password token is invalid.", "danger")
             return redirect(url_for("auth.forgot_password"))
 
         if expired:
-            flash(("Your password is expired."), "danger")
+            flash("Your password is expired.", "danger")
             return redirect(url_for("auth.forgot_password"))
 
         if user and data:
             user.password = form.password.data
             user.save()
-            flash(("Your password has been updated."), "success")
+            flash("Your password has been updated.", "success")
             return redirect(url_for("auth.login"))
 
     form.token.data = token
@@ -169,7 +169,7 @@ def login_github():
 def authorized(oauth_token):
     #next_url = request.args.get('next') or url_for('index')
     if oauth_token is None:
-        flash("Authorization failed.")
+        flash("Authorization failed.", "danger")
         return redirect(url_for('auth.login'))
 
     user = User.query.filter_by(github_access_token=oauth_token).first()
@@ -177,17 +177,20 @@ def authorized(oauth_token):
         user = User.create_github_account(oauth_token)
 
     if user is None:
-        flash("An error occurred during github auth")
+        flash("An error occurred during github auth.", "danger")
         return redirect(url_for('auth.login'))
 
+    session.pop('nb_views', None)
     #  force remembering
     login_user(user, True)
-    flash("Github oauth succeeded")
+    flash("Github oauth succeeded.", "success")
 
     return redirect(url_for('softwares.index'))
 
 
 @github.access_token_getter
 def token_getter():
-    token = User.options(load_only("id", "github_access_token")).filter(User.id == 1).first()
-    return token[1]
+    #token = User.options(load_only("id", "github_access_token")).filter(User.id == 1).first()
+    #return token[1]
+    u = User.query.filter(User.id == 1).first()
+    return u.github_access_token
