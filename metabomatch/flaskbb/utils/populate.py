@@ -9,7 +9,7 @@
     :license: BSD, see LICENSE for more details.
 """
 from metabomatch.flaskbb.management.models import Setting, SettingsGroup
-from metabomatch.flaskbb.user.models import User, Group
+from metabomatch.user.models import User, Group
 from metabomatch.flaskbb.forum.models import Post, Topic, Forum, Category
 from metabomatch.softwares.models import Tag, Software
 

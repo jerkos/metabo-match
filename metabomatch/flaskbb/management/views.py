@@ -25,7 +25,7 @@ from metabomatch.flaskbb.utils.helpers import render_template
 from metabomatch.flaskbb.utils.decorators import admin_required, moderator_required
 from metabomatch.flaskbb.utils.permissions import can_ban_user, can_edit_user
 from metabomatch.extensions import db
-from metabomatch.flaskbb.user.models import User, Group
+from metabomatch.user.models import User, Group
 from metabomatch.flaskbb.forum.models import Post, Topic, Forum, Category, Report
 from metabomatch.flaskbb.management.models import Setting, SettingsGroup
 from metabomatch.flaskbb.management.forms import (AddUserForm, EditUserForm, AddGroupForm,

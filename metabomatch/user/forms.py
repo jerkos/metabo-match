@@ -15,7 +15,7 @@ from wtforms import (StringField, PasswordField, DateField, TextAreaField,
 from wtforms.validators import (Length, DataRequired, Email, EqualTo, regexp,
                                 Optional, URL)
 
-from metabomatch.flaskbb.user.models import User, PrivateMessage
+from metabomatch.user.models import User, PrivateMessage
 from metabomatch.extensions import db
 from metabomatch.flaskbb.utils.widgets import SelectDateWidget
 

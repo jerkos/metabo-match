@@ -18,15 +18,15 @@ from flask.ext.login import login_required, current_user
 from metabomatch.extensions import db
 from metabomatch.flaskbb.utils.settings import flaskbb_config
 from metabomatch.flaskbb.utils.helpers import (get_online_users, time_diff, render_template,
-                                   format_quote)
+                                               format_quote)
 from metabomatch.flaskbb.utils.permissions import (can_post_reply, can_post_topic,
-                                       can_delete_topic, can_delete_post,
-                                       can_edit_post, can_moderate)
+                                                   can_delete_topic, can_delete_post,
+                                                   can_edit_post, can_moderate)
 from metabomatch.flaskbb.forum.models import (Category, Forum, Topic, Post, ForumsRead,
-                                  TopicsRead)
+                                              TopicsRead)
 from metabomatch.flaskbb.forum.forms import (QuickreplyForm, ReplyForm, NewTopicForm,
-                                 ReportForm, UserSearchForm, SearchPageForm)
-from metabomatch.flaskbb.user.models import User
+                                             ReportForm, UserSearchForm, SearchPageForm)
+from metabomatch.user.models import User
 
 forum = Blueprint("forum", __name__, template_folder="../../templates")
 

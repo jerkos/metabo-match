@@ -15,7 +15,7 @@ from wtforms import StringField, PasswordField, BooleanField, HiddenField
 from wtforms.validators import (DataRequired, Email, EqualTo, regexp,
                                 ValidationError)
 
-from metabomatch.flaskbb.user.models import User
+from metabomatch.user.models import User
 
 USERNAME_RE = r'^[\w.+-]+$'
 is_username = regexp(USERNAME_RE,

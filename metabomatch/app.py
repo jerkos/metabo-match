@@ -24,8 +24,8 @@ from metabomatch.scripts.views import scripts
 
 
 # Import the user blueprint
-from metabomatch.flaskbb.user.views import user
-from metabomatch.flaskbb.user.models import User, Guest, PrivateMessage
+from metabomatch.user.views import user
+from metabomatch.user.models import User, Guest, PrivateMessage
 
 # Import the auth blueprint
 from metabomatch.auth.views import auth

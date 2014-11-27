@@ -166,6 +166,13 @@ class Software(db.Model):
             return self.publication_link.split('/')[-1]
         return None
 
+    @cache.memoize(timeout=3600)
+    def mean_rate(self):
+        if not self.ratings:
+            return 'NA'
+        return sum([r.rate for r in self.ratings]) / float(len(self.ratings))
+
+
     @cache.memoize(timeout=86400)
     def get_publication_citation_nb(self):
         h = Entrez.elink(dbfrom="pubmed", db="pmc", LinkName="pubmed_pmc_refs", from_uid=self.get_publication_id())
@@ -182,28 +189,51 @@ class Software(db.Model):
     def get_nb_maintainers(self):
         owner, repo = self.github_owner_repo()
         if owner is None:
-            return 0
+            return 'NA'
 
         rep = github.get("".join(['repos/', owner, '/', repo, '/contributors']))
         return len(rep)
 
-
     @cache.memoize(timeout=86400)
     def get_nb_commits(self):
-        pass
+        owner, repo = self.github_owner_repo()
+        if owner is None:
+            return 'NA', 'NA'
+        rep = github.get("".join(['repos/', owner, '/', repo, '/stats/commit_activity']))
+
+        if not rep:
+            return 0, 0
+
+        year_activity = sum([r['total'] for r in rep])
+        last_month_activity = sum([r['total'] for r in rep[-4:]])
+        return year_activity, last_month_activity
+
 
     @cache.memoize(timeout=86400)
     def get_nb_issues(self):
         """GET /repos/:owner/:repo/issues"""
         owner, repo = self.github_owner_repo()
         if owner is None:
-            return 0
+            return 'NA', 'NA'
         rep = github.get("".join(['repos/', owner, '/', repo, '/issues']))
         opened = 0
         for r in rep:
             if r['state'] == 'open':
                 opened += 1
         return len(rep), opened
+
+    @cache.memoize(timeout=24 * 3600)
+    def get_nb_downloads(self):
+        owner, repo = self.github_owner_repo()
+        if owner is None:
+            return 'NA'
+        rep = github.get("".join(['repos/', owner, '/', repo, '/releases']))
+
+        c = 0
+        for r in rep:
+            c += r.get('downloads_count', 0)
+        return c
+
 
 
 

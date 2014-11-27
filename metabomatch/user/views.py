@@ -17,10 +17,10 @@ from flask.ext.themes2 import get_themes_list
 
 from metabomatch.extensions import db
 from metabomatch.flaskbb.utils.helpers import render_template
-from metabomatch.flaskbb.user.models import User, PrivateMessage
-from metabomatch.flaskbb.user.forms import (ChangePasswordForm, ChangeEmailForm,
-                                ChangeUserDetailsForm, GeneralSettingsForm,
-                                NewMessageForm, EditMessageForm)
+from metabomatch.user.models import User, PrivateMessage
+from metabomatch.user.forms import (ChangePasswordForm, ChangeEmailForm,
+                                    ChangeUserDetailsForm, GeneralSettingsForm,
+                                    NewMessageForm, EditMessageForm)
 
 
 user = Blueprint("user", __name__, template_folder="templates")

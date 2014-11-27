@@ -14,7 +14,7 @@ from wtforms import (TextAreaField, StringField, SelectMultipleField,
 from wtforms.validators import DataRequired, Optional, Length
 
 from metabomatch.flaskbb.forum.models import Topic, Post, Report, Forum
-from metabomatch.flaskbb.user.models import User
+from metabomatch.user.models import User
 
 
 class QuickreplyForm(Form):

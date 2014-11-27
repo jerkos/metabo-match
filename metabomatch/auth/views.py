@@ -18,7 +18,7 @@ from metabomatch.extensions import github
 from metabomatch.flaskbb.utils.helpers import render_template
 from metabomatch.email import send_reset_token
 from metabomatch.auth.forms import (LoginForm, ReauthForm, ForgotPasswordForm, ResetPasswordForm)
-from metabomatch.flaskbb.user.models import User
+from metabomatch.user.models import User
 
 
 auth = Blueprint("auth", __name__)

@@ -20,7 +20,7 @@ from wtforms.ext.sqlalchemy.fields import (QuerySelectField,
 from metabomatch.flaskbb.utils.widgets import SelectDateWidget
 from metabomatch.extensions import db
 from metabomatch.flaskbb.forum.models import Forum, Category
-from metabomatch.flaskbb.user.models import User, Group
+from metabomatch.user.models import User, Group
 
 USERNAME_RE = r'^[\w.+-]+$'
 is_username = regexp(USERNAME_RE,
