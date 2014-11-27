@@ -327,3 +327,20 @@ def create_test_data():
 
     metassign.tags = [t3]
     metassign.save()
+
+    softwares = Software.query.all()
+    for s in softwares:
+        category_title = s.name
+        category = Category(title=category_title,
+                            description="{} category".format(s.name))
+        category.save()
+
+        for f in (('Installation', 'Installation problems and troubleshooting, versions'),
+                  ('Algorithm', 'Questions about alogrithm used'),
+                  ('Parameters options', 'Common parameters for some common experiments'),
+                  ('Requests', 'Message to developpers ?')):
+            forum_title = "{}".format(f[0])
+            forum = Forum(title=forum_title, description=f[1],
+                          category_id=category.id)
+            forum.save()
+

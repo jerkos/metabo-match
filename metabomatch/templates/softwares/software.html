@@ -36,6 +36,7 @@
         <div id="circles-1" class="col-md-4"></div>
     </div>
 
+    <h3><a href="{{ software.get_category_url() }}">Forum link</a></h3>
 
     <div class="row" style="padding-top: 50px;">
     <h2>
@@ -232,7 +233,7 @@
         <div class="col-md-4">
             <h2 class="text-center">Last match</h2>
             <hr>
-            <p class="text-center text-muted">Nothing to show</p>
+            <p class="text-center"><label class="label label-danger">Available soon !</label></p>
         </div>
     </div>
 
@@ -283,7 +284,7 @@
         var myCircle = Circles.create({
           id:           'circles-1',
           radius:       100,
-          value:        '{{ software.rating }}',
+          value:        '{{ software_rating }}',
           maxValue:     100,
           width:        10,
           text:         function(value){return value + '%';},

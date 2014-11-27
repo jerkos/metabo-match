@@ -20,8 +20,8 @@ class DefaultConfig(object):
     _basedir = os.path.join(os.path.abspath(os.path.dirname(os.path.dirname(
                             os.path.dirname(__file__)))))
 
-    DEBUG = False
-    TESTING = False
+    DEBUG = True
+    TESTING = True
 
     # Logs
     # If SEND_LOGS is set to True, the admins (see the mail configuration) will

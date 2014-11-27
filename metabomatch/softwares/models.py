@@ -6,6 +6,7 @@ from datetime import datetime
 from Bio import Entrez
 
 from metabomatch.extensions import db, cache, github
+from metabomatch.flaskbb.forum.models import Category
 
 Entrez.email = 'cram@hotmail.fr'
 
@@ -136,7 +137,9 @@ class Software(db.Model):
     comments = db.relationship('Comment', order_by='Comment.date_created', lazy='joined')
     ratings = db.relationship('Rating', order_by='Rating.date_created', lazy='joined')
     tags = db.relationship('Tag', secondary=tags_software_mapping, backref='softwares', lazy='joined')
-    users = db.relationship('User', secondary=user_softwares_mapping, backref='softwares_used', lazy='joined')
+    users = db.relationship('User', secondary=user_softwares_mapping, backref='softwares_used')
+
+    scripts = db.relationship('Script', backref='software')
 
     def __init__(self, name, organization, pg_language):
         self.name = name
@@ -154,6 +157,16 @@ class Software(db.Model):
         db.session.add(self)
         db.session.commit()
         return self
+
+    def remove_user(self, user):
+        self.users.remove(user)
+        return self.save()
+
+    def get_category_url(self):
+        cat = Category.query.filter(Category.title == self.name).first()
+        if cat is None:
+            pass
+        return cat.url
 
     def github_owner_repo(self):
         #could be a property
@@ -233,6 +246,40 @@ class Software(db.Model):
         for r in rep:
             c += r.get('downloads_count', 0)
         return c
+
+    @cache.memoize(timeout=3600)
+    def compute_rate(self):
+        max_val = 0
+        if self.publication_link is not None:
+            max_val += 15.0
+        if self.is_maintained:
+            max_val += 15.0
+        if self.github_link is not None:
+            max_val += 10.0
+        if self.download_link is not None:
+            max_val += 10.0
+
+        #malus
+        if self.github_link is not None:
+            issues, opened_issues = self.get_nb_issues()
+            year_commits, month_commits = self.get_nb_commits()
+
+            max_val -= (issues * 0.1 + opened_issues * 0.2)
+            if year_commits <= 20:
+                max_val -= min(6, year_commits * 0.5)
+            else:
+                max_val += 6
+
+            #bonus
+            max_val += min(4, self.get_nb_maintainers() * 0.75)
+
+        max_val += min(25, self.get_publication_citation_nb() * 0.75)
+        return round(max_val)
+
+
+
+
+
 
 
 

@@ -62,8 +62,10 @@ def info(name):
 
     soft = Software.query.filter(Software.name == name).first()
     show_comment_form = True if 'show_comment_form' in request.args else False
+    rate = soft.compute_rate()
     return render_template('softwares/software.html',
                            software=soft,
+                           software_rating=rate,
                            show_comment_form=show_comment_form)
 
 
@@ -82,6 +84,7 @@ def comment(name):
         r.save()
     return redirect(url_for('softwares.info', name=name))
 
+
 @softwares.route('/<name>/register_user')
 @login_required
 def register_user(name):
@@ -89,3 +92,16 @@ def register_user(name):
     current_user.softwares_used.append(soft)
     current_user.save()
     return redirect(url_for('softwares.index'))
+
+
+@softwares.route('/<name>/remove_user')
+@login_required
+def remove_user(name):
+    soft = Software.query.filter(Software.name == name).first()
+    try:
+        current_user.softwares_used.remove(soft)
+    except ValueError:
+        print "ERROR"
+    current_user.save()
+    return redirect(url_for('user.profile', username=current_user.username))
+
