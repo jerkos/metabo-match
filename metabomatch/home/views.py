@@ -10,6 +10,6 @@ def index():
     return render_template('home/home_layout.html')
 
 
-@home.route('/workflow')
+@home.route('workflow', methods=['GET'])
 def workflow():
-    return "Hello_world!!!"
+    return render_template('home/workflow.html')
