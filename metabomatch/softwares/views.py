@@ -26,12 +26,12 @@ def index():
     """
     if request.args:
         keyword = soft_map[request.args['category']]
-        softwares = db.session.query(Software).join(Software.tags).filter(Tag.tag == keyword)
+        softs = db.session.query(Software).join(Software.tags).filter(Tag.tag == keyword)
     else:
-        softwares = Software.query.all()
-        softwares.sort(key=lambda _: -len(_.tags))
+        softs = Software.query.all()
+        softs.sort(key=lambda _: -len(_.tags))
 
-    return render_template('softwares/softwares.html', softwares=softwares)
+    return render_template('softwares/softwares.html', softwares=softs)
 
 
 @softwares.route('/register', methods=['GET', 'POST'])

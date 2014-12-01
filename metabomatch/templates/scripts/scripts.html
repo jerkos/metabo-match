@@ -1,13 +1,16 @@
 {% extends theme("layout.html") %}
 {% block content %}
     {% for name, script in scripts|groupby('software.name') %}
-        <ul>
-            <li>name</li>
+        <ul class="breadcrumb">
+            <li><a href="{{ url_for('softwares.info', name=name) }}">{{ name }}</a></li>
             {% for s in script %}
-                <li>{{ s.title }}</li>
+                <li style="text-indent: 20px;"><a href="{{ url_for('scripts.info', script_id=s.id) }}">{{ s.title }}</a></li>
             {% endfor %}
         </ul>
     {% else %}
         <p class="text-muted">No scripts found</p>
     {% endfor %}
+
+    <a class="btn btn-default" href="{{ url_for('scripts.register') }}">Register new script</a>
+
 {% endblock %}

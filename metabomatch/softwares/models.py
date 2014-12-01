@@ -179,14 +179,14 @@ class Software(db.Model):
             return self.publication_link.split('/')[-1]
         return None
 
-    @cache.memoize(timeout=3600)
+    @cache.memoize(timeout=24 * 3600)
     def mean_rate(self):
         if not self.ratings:
             return 'NA'
         return sum([r.rate for r in self.ratings]) / float(len(self.ratings))
 
 
-    @cache.memoize(timeout=86400)
+    @cache.memoize(timeout=24 * 3600)
     def get_publication_citation_nb(self):
         h = Entrez.elink(dbfrom="pubmed", db="pmc", LinkName="pubmed_pmc_refs", from_uid=self.get_publication_id())
         result = Entrez.read(h)
@@ -198,7 +198,7 @@ class Software(db.Model):
         return nb_citations
 
     # github api
-    @cache.memoize(timeout=86400)
+    @cache.memoize(timeout=24 * 3600)
     def get_nb_maintainers(self):
         owner, repo = self.github_owner_repo()
         if owner is None:
@@ -207,7 +207,7 @@ class Software(db.Model):
         rep = github.get("".join(['repos/', owner, '/', repo, '/contributors']))
         return len(rep)
 
-    @cache.memoize(timeout=86400)
+    @cache.memoize(timeout=24 * 3600)
     def get_nb_commits(self):
         owner, repo = self.github_owner_repo()
         if owner is None:
@@ -218,6 +218,7 @@ class Software(db.Model):
             return 0, 0
 
         year_activity = sum([r['total'] for r in rep])
+        # get only last foour weeks
         last_month_activity = sum([r['total'] for r in rep[-4:]])
         return year_activity, last_month_activity
 

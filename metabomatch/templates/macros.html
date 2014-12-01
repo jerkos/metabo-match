@@ -36,14 +36,16 @@
 </label>
 {%- endmacro -%}
 
-{%- macro render_select_field(field, div_class='') -%}
-<div class="form-group">
-    {% if div_class %}
-    <div class="{{ div_class }}">
-    {% else %}
-    <div class="col-sm-5">
-    {% endif %}
-        <label>{{ field.label.text }}</label>
+{%- macro render_select_field(field, div_class='', label_class='') -%}
+<div class="form-group row">
+
+        <label class="{{ label_class }} control-label">{{ field.label.text }}</label>
+        {% if div_class %}
+            <div class="{{ div_class }}">
+        {% else %}
+            <div class="col-sm-5">
+        {% endif %}
+
         {% if field.type == 'QuerySelectMultipleField' or field.type == 'SelectMultipleField' %}
             {{ field(multiple=True, class="form-control") }}
         {% else %}
@@ -52,7 +54,7 @@
 
         {{ field_description(field) }}
         {{ field_errors(field) }}
-    </div>
+        </div>
 </div>
 {%- endmacro -%}
 

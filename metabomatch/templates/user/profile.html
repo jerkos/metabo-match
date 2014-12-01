@@ -86,15 +86,27 @@
     </tbody>
 </table>
 
-<h2>Softwares you are using to drive your metabolomic analyses</h2>
+<h3>Softwares you are using to drive your metabolomic analyses</h3>
 <hr>
 
-<ul>
+<ul class="breadcrumb">
     {% for software in user.softwares_used %}
         <li>{{ software.name }}............................<a href="{{ url_for('softwares.remove_user', name=software.name) }}"><i class="fa fa-trash-o"></i>Remove</a></li>
     {% else %}
         <p>You do not have prefered softwares.</p>
         <p class="alert-info">You can choose your favorites softwares on the softwares page.</p>
+    {% endfor %}
+</ul>
+
+
+<h3>Propsed scripts</h3>
+<hr>
+<ul class="breadcrumb">
+    {% for script in user.scripts %}
+        <li><a href="{{ url_for('scripts.info', script_id=script.id) }}">{{ script.title }}</a>.............................{{ script.software.name }}</li>
+    {% else %}
+        <p>You did not propsed any scripts yet.</p>
+        <p class="alert-info">You can send a script from the script page.</p>
     {% endfor %}
 </ul>
 {% endblock %}

@@ -1,0 +1,49 @@
+{% extends theme("layout.html") %}
+{% block css %}
+    {{ super() }}
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/default.min.css">
+{% endblock %}
+{% block content %}
+    <h2>{{ script.software.name }}</h2>
+    <h2> {{ script.title }} by <a href="{{ url_for('user.profile', username=current_user.username) }}">{{ current_user.username }}</a>
+        <a href="{{ url_for('scripts.upvote', script_id=script.id) }}"><i class="fa fa-thumbs-o-up"></i><span class="badge">{{ script.up_votes }}</span></a></h2>
+    <hr>
+
+    <h4>Description</h4>
+    <div class="row">
+        <div class="col-md-offset-1">
+            {%  if script.description %}
+            <p class="well">{{ script.description }}</p>
+            {% else %}
+                <p class="well text-muted">No description available</p>
+            {% endif %}
+        </div>
+    </div>
+    <h4>Dependancies</h4>
+    <div class="row">
+        <div class="col-md-offset-1">
+            {% if script.dependancies %}
+                <p class="well">{{ script.dependancies }}</p>
+            {%  else %}
+                <p class="well text-muted">Nothing found here</p>
+            {% endif %}
+        </div>
+    </div>
+    <h4>Code</h4>
+    <div class="row">
+        <div class="col-md-offset-1">
+            <pre>
+                <code>
+                    {{ script.content }}
+                </code>
+            </pre>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascript %}
+    {{ super() }}
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+{% endblock %}
