@@ -5,7 +5,7 @@
 {% endblock %}
 {% block content %}
     <h2>{{ script.software.name }}</h2>
-    <h2> {{ script.title }} by <a href="{{ url_for('user.profile', username=current_user.username) }}">{{ current_user.username }}</a>
+    <h2> {{ script.title }} by <a href="{{ url_for('user.profile', username=script.user.username) }}">{{ current_user.username }}</a>
         <a href="{{ url_for('scripts.upvote', script_id=script.id) }}"><i class="fa fa-thumbs-o-up"></i><span class="badge">{{ script.up_votes }}</span></a></h2>
     <hr>
 

@@ -21,8 +21,7 @@ from flask.ext.migrate import MigrateCommand
 from metabomatch.app import create_app
 from metabomatch.extensions import db
 from metabomatch.flaskbb.utils.populate import (create_test_data, create_welcome_forum,
-                                    create_admin_user, create_default_groups,
-                                    create_default_settings)
+                                                create_admin_user, create_default_groups, create_default_settings)
 
 # Use the development configuration if available
 try:

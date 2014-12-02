@@ -89,9 +89,9 @@
 <h3>Softwares you are using to drive your metabolomic analyses</h3>
 <hr>
 
-<ul class="breadcrumb">
+<ul class="list-group">
     {% for software in user.softwares_used %}
-        <li>{{ software.name }}............................<a href="{{ url_for('softwares.remove_user', name=software.name) }}"><i class="fa fa-trash-o"></i>Remove</a></li>
+        <li class="list-group-item">{{ software.name }}............................<a href="{{ url_for('softwares.remove_user', name=software.name) }}"><i class="fa fa-trash-o"></i>Remove</a></li>
     {% else %}
         <p>You do not have prefered softwares.</p>
         <p class="alert-info">You can choose your favorites softwares on the softwares page.</p>
@@ -101,9 +101,17 @@
 
 <h3>Propsed scripts</h3>
 <hr>
-<ul class="breadcrumb">
-    {% for script in user.scripts %}
-        <li><a href="{{ url_for('scripts.info', script_id=script.id) }}">{{ script.title }}</a>.............................{{ script.software.name }}</li>
+    {% for name, script in user.scripts|groupby('software.name') %}
+        <ul style="list-style-type: circle">
+            <li><h3><a href="{{ url_for('softwares.info', name=name) }}">{{ name }}</a>:</h3></li>
+                        <ul class="list-group">
+
+        {% for s in script %}
+            <li class="list-group-item"><a href="{{ url_for('scripts.info', script_id=s.id) }}">{{ s.title }}</a></li>
+        {% endfor %}
+                                    </ul>
+
+        </ul>
     {% else %}
         <p>You did not propsed any scripts yet.</p>
         <p class="alert-info">You can send a script from the script page.</p>

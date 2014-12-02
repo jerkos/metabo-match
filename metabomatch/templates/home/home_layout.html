@@ -72,8 +72,8 @@
 
                 <p class="text-left"><b>metabomatch</b> organize `match` between different tools. Submit your dataset,
                     select tools you want to compare and check the result.</p>
-
-                <p class="text-left"><a href="/" class="btn btn-default">View details &raquo;</a></p>
+{#                <p class="text-left label label-danger">Available soon</p>#}
+                <p class="text-left"><a href="{{ url_for('softwares.index') }}" class="btn btn-default">View details &raquo;</a></p>
             </div>
 
             <div class="col-md-4 text-center">
@@ -84,7 +84,7 @@
                 <p class="text-left">With all mass sepctrometers available, it is sometimes hard to find a good tuning
                     of algorihtm. We proposed a space to share your scripts to help the community.</p>
 
-                <p class="text-left"><a href="/" class="btn btn-default">View details &raquo;</a></p>
+                <p class="text-left"><a href="{{ url_for('scripts.index') }}" class="btn btn-default">View details &raquo;</a></p>
 
             </div>
             <div class="col-md-4 text-center">
@@ -95,7 +95,7 @@
                 <p class="text-left">We offer the possibilty to discuss about available tools. You can post a question
                     about a parameters of an algorihtm and be sure that a community member will be able to answer.</p>
 
-                <p class="text-left"><a href="/" class="btn btn-default">View details &raquo;</a></p>
+                <p class="text-left"><a href="{{ url_for('forum.index') }}" class="btn btn-default">View details &raquo;</a></p>
             </div>
 
         </div>

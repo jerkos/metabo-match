@@ -7,6 +7,8 @@
     :copyright: (c) 2014 by the FlaskBB Team.
     :license: BSD, see LICENSE for more details.
 """
+import os
+
 from flaskbb.configs.default import DefaultConfig
 
 
@@ -15,7 +17,7 @@ class ProductionConfig(DefaultConfig):
     ## Database
     # If no SQL service is choosen, it will fallback to sqlite
     # For PostgresSQL:
-    #SQLALCHEMY_DATABASE_URI = "postgresql://localhost/example"
+    SQLALCHEMY_DATABASE_URI =  os.environ['POSTGRE_URL'] #"postgresql://localhost/example"
     # For SQLite:
     #SQLALCHEMY_DATABASE_URI = 'sqlite:///' + DefaultConfig._basedir + '/' + \
     #                          'flaskbb.sqlite'
@@ -23,13 +25,13 @@ class ProductionConfig(DefaultConfig):
     ## Security
     # This is the secret key that is used for session signing.
     # You can generate a secure key with os.urandom(24)
-    SECRET_KEY = 'secret key'
+    SECRET_KEY =  os.urandom(24)  #  'secret key'
 
     # You can generate the WTF_CSRF_SECRET_KEY the same way as you have
     # generated the SECRET_KEY. If no WTF_CSRF_SECRET_KEY is provided, it will
     # use the SECRET_KEY.
     WTF_CSRF_ENABLED = True
-    WTF_CSRF_SECRET_KEY = "reallyhardtoguess"
+    WTF_CSRF_SECRET_KEY =  os.urandom(24) # "reallyhardtoguess"
 
 
     ## Caching

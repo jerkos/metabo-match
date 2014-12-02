@@ -1,16 +1,31 @@
 {% extends theme("layout.html") %}
 {% block content %}
+    <h2># available scripts: {{ scripts | length }}</h2>
+    <hr>
+
+    <div class="row" style="padding: 20px 0 50px 0">
     {% for name, script in scripts|groupby('software.name') %}
-        <ul style="list-style-type: none">
-            <li><a href="{{ url_for('softwares.info', name=name) }}">{{ name }}</a></li>
-            {% for s in script %}
-                <li style="padding-left: 20px"><a href="{{ url_for('scripts.info', script_id=s.id) }}">{{ s.title }} <span class="badge">{{ s.up_votes }}</span></a></li>
-            {% endfor %}
+        <ul style="list-style-type: circle">
+            <li><h3><a href="{{ url_for('softwares.info', name=name) }}">{{ name }}</a>:</h3></li>
+                <ul class="list-group">
+    {#                    style="list-style-type: none">#}
+                    {% for s in script %}
+                        <li class="list-group-item">
+    {#                        style="padding-left: 20px">#}
+                            <span class="badge">{{ s.up_votes }}</span>
+                            <h4>
+                                <a href="{{ url_for('scripts.info', script_id=s.id) }}">{{ s.title }} </a>
+                                <small>by <a href="{{ url_for('user.profile', username=s.user.username)}}">{{ s.user.username }}</a></small>
+                            </h4>
+                        </li>
+                    {% endfor %}
+                </ul>
         </ul>
     {% else %}
         <p class="text-muted">No scripts found</p>
     {% endfor %}
-
-    <a class="btn btn-default" href="{{ url_for('scripts.register') }}">Register new script</a>
+    </div>
+    <hr>
+    <h3>You want to submit a piece of code ? <a class="btn btn-default" href="{{ url_for('scripts.register') }}">Register new script</a></h3>
 
 {% endblock %}

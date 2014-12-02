@@ -9,7 +9,7 @@ from flask.ext.login import login_required, current_user
 
 from metabomatch.extensions import db
 from metabomatch.flaskbb.utils.helpers import render_template
-from metabomatch.softwares.models import Software, Tag, Comment, Rating, user_softwares_mapping
+from metabomatch.softwares.models import Software, Tag, Comment, Rating
 from metabomatch.softwares.forms import SoftwareForm
 
 softwares = Blueprint("softwares", __name__, template_folder="../../templates")
@@ -58,7 +58,8 @@ def info(name):
 
         if session['nb_views'] > 3:
             flash("Please register or log in to see more about softwares")
-            return redirect(url_for('auth.login'))
+            #redirect to softwares by default
+            return redirect(url_for('auth.login', next='/softwares'))
 
     soft = Software.query.filter(Software.name == name).first()
     show_comment_form = True if 'show_comment_form' in request.args else False
