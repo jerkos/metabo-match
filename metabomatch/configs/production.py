@@ -17,7 +17,7 @@ class ProductionConfig(DefaultConfig):
     ## Database
     # If no SQL service is choosen, it will fallback to sqlite
     # For PostgresSQL:
-    SQLALCHEMY_DATABASE_URI =  os.environ['POSTGRE_URL'] #"postgresql://localhost/example"
+    SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']  # "postgresql://localhost/example"
     # For SQLite:
     #SQLALCHEMY_DATABASE_URI = 'sqlite:///' + DefaultConfig._basedir + '/' + \
     #                          'flaskbb.sqlite'
@@ -25,13 +25,13 @@ class ProductionConfig(DefaultConfig):
     ## Security
     # This is the secret key that is used for session signing.
     # You can generate a secure key with os.urandom(24)
-    SECRET_KEY =  os.urandom(24)  #  'secret key'
+    SECRET_KEY = os.urandom(24)  # 'secret key'
 
     # You can generate the WTF_CSRF_SECRET_KEY the same way as you have
     # generated the SECRET_KEY. If no WTF_CSRF_SECRET_KEY is provided, it will
     # use the SECRET_KEY.
     WTF_CSRF_ENABLED = True
-    WTF_CSRF_SECRET_KEY =  os.urandom(24) # "reallyhardtoguess"
+    WTF_CSRF_SECRET_KEY = os.urandom(24)  # "reallyhardtoguess"
 
 
     ## Caching
@@ -88,7 +88,7 @@ class ProductionConfig(DefaultConfig):
     REDIS_DATABASE = 0
 
     # URL Prefixes.
-    FORUM_URL_PREFIX = ""
+    FORUM_URL_PREFIX = "/forum"
     USER_URL_PREFIX = "/user"
     AUTH_URL_PREFIX = "/auth"
     ADMIN_URL_PREFIX = "/admin"
