@@ -81,7 +81,7 @@ def create_app(config=None):
     configure_errorhandlers(app)
     #configure_logging(app)
 
-    app.debug = True
+    #app.debug = True
     return app
 
 
