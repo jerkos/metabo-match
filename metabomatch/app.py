@@ -60,7 +60,7 @@ def create_app(config=None):
     Creates the app.
     """
     # Initialize the app
-    app = Flask("flaskbb")
+    app = Flask("flaskbb", static_path='../static')
 
     # Use the default config and override it afterwards
     app.config.from_object('metabomatch.configs.default.DefaultConfig')
