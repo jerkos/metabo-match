@@ -63,7 +63,7 @@ def create_app(config=None):
     app = Flask("flaskbb")
 
     # Use the default config and override it afterwards
-    app.config.from_object('metabomatch.configs.production.ProductionConfig')
+    app.config.from_object('metabomatch.configs.default.DefaultConfig')
     # Update the config
     app.config.from_object(config)
     # try to update the config via the environment variable
