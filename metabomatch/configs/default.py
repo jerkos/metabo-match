@@ -14,6 +14,8 @@ import os
 
 class DefaultConfig(object):
 
+    _basedir = os.path.join(os.path.abspath(os.path.dirname(os.path.dirname(
+                            os.path.dirname(__file__)))))
     ## Database
     # If no SQL service is choosen, it will fallback to sqlite
     # For PostgresSQL:
@@ -33,6 +35,13 @@ class DefaultConfig(object):
     WTF_CSRF_ENABLED = True
     WTF_CSRF_SECRET_KEY = os.urandom(24)  # "reallyhardtoguess"
 
+    # Searching
+    WHOOSH_BASE = os.path.join(_basedir, "whoosh_index")
+
+    # Auth
+    LOGIN_VIEW = "auth.login"
+    REAUTH_VIEW = "auth.reauth"
+    LOGIN_MESSAGE_CATEGORY = "error"
 
     ## Caching
     # For all available caching types, take a look at the Flask-Cache docs
