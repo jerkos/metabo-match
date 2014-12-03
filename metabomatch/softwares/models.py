@@ -56,7 +56,7 @@ class Rating(db.Model):
     rate = db.Column(db.Integer, nullable=False)
     date_created = db.Column(db.DateTime, default=datetime.utcnow())
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-    software_id = db.Column(db.Integer, db.ForeignKey("softwares.name"), nullable=False)
+    software_id = db.Column(db.String, db.ForeignKey("softwares.name"), nullable=False)
 
     #defined in user model
     # user = db.relationship('User', foreign_keys=[user_id])
