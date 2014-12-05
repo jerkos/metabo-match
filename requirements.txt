@@ -40,3 +40,4 @@ pytest-random==0.02
 redis==2.10.3
 requests==2.4.3
 simplejson==3.6.4
+newrelic==2.40.0

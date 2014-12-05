@@ -1,15 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-    flaskbb.auth.views
-    ~~~~~~~~~~~~~~~~~~~~
-
+    auth.views
     This view provides user authentication, registration and a view for
     resetting the password of a user if he has lost his password
 
-    :copyright: (c) 2014 by the FlaskBB Team.
-    :license: BSD, see LICENSE for more details.
 """
-from sqlalchemy.orm import load_only
 from flask import Blueprint, flash, redirect, url_for, request, current_app, session
 from flask.ext.login import (current_user, login_user, login_required,
                              logout_user, confirm_login, login_fresh)
@@ -43,7 +38,7 @@ def login():
             session.pop('nb_views', None)
             login_user(user, remember=form.remember_me.data)
             return redirect(request.args.get("next") or
-                            url_for("forum.index"))
+                            url_for("home.index"))
 
         flash("Wrong username or password", "danger")
     return render_template("auth/login.html", form=form)
@@ -73,7 +68,7 @@ def reauth():
 def logout():
     logout_user()
     flash("Logged out", "success")
-    return redirect(url_for("forum.index"))
+    return redirect(url_for("home.index"))
 
 
 @auth.route("/register", methods=["GET", "POST"])

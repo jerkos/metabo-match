@@ -4,15 +4,20 @@
         <meta charset="utf-8">
         <title>
         {% block title %}
-            {%- if not page_title -%}
-                {{ flaskbb_config["PROJECT_TITLE"] }} - {{ flaskbb_config["PROJECT_SUBTITLE"] }}
+            {%- if page_title -%}
+                {{ page_title }} - Metabomatch
             {%- else -%}
-                {{ page_title }} - {{ flaskbb_config["PROJECT_TITLE"] }}
+                Metabomatch: comparing metabolomics softwares
             {%- endif -%}
         {% endblock %}
         </title>
+
+        {% block keywords %}
+            <meta name="keywords" content="omics services, metabolomics, software, ranking, best, number one, scripts, parameters">
+            <meta name="description" content="Metabomatch is a website for comparing metabolomics softwares. Metabomatch helps to choose the one which fits best your needs.">
+        {% endblock %}
+
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="Metabomatch is website for comparing metabolomics softwares">
         <meta name="author" content="Marc Dubois">
 
         <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">

@@ -3,6 +3,11 @@
 {% from theme("macros.html") import field_label %}
 {% from theme("macros.html") import render_boolean_field %}
 
+{% block keywords %}
+    <meta name="keywords" content="metabomatch, software, register, database, ranking">
+    <meta name="description" content="Register new software in metabomatch database">
+{% endblock %}
+
 {% block css %}
     {{super()}}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/selectize.bootstrap3.css') }}">

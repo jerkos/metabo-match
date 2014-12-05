@@ -14,15 +14,19 @@ import os
 
 class DefaultConfig(object):
 
+    DEBUG = True
+    TESTING = True
+
     _basedir = os.path.join(os.path.abspath(os.path.dirname(os.path.dirname(
                             os.path.dirname(__file__)))))
     ## Database
     # If no SQL service is choosen, it will fallback to sqlite
     # For PostgresSQL:
-    SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']  # "postgresql://localhost/example"
+    try:
+        SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']  # "postgresql://localhost/example"
     # For SQLite:
-    #SQLALCHEMY_DATABASE_URI = 'sqlite:///' + DefaultConfig._basedir + '/' + \
-    #                          'flaskbb.sqlite'
+    except KeyError:
+        SQLALCHEMY_DATABASE_URI = 'sqlite:///' + _basedir + '/' + 'flaskbb.sqlite'
 
     ## Security
     # This is the secret key that is used for session signing.
@@ -70,15 +74,15 @@ class DefaultConfig(object):
     #MAIL_DEFAULT_SENDER = "noreply@example.org"
 
     # Google Mail Example
-    MAIL_SERVER = "smtp.gmail.com"
+    MAIL_SERVER = "smtp.live.com"
     MAIL_PORT = 465
     MAIL_USE_SSL = True
-    MAIL_USERNAME = "your_username@gmail.com"
-    MAIL_PASSWORD = "your_password"
-    MAIL_DEFAULT_SENDER = ("Your Name", "your_username@gmail.com")
+    MAIL_USERNAME = "cram@hotmail.fr"
+    MAIL_PASSWORD = "Marco@1986"
+    MAIL_DEFAULT_SENDER = ("Marco from metabomatch", "marc.dubois@omics-services.com")
 
     # The user who should recieve the error logs
-    ADMINS = ["your_admin_user@gmail.com"]
+    ADMINS = ["cram@hotmail.fr"]
 
 
     ## Error/Info Logging

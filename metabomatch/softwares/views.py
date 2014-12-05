@@ -75,6 +75,9 @@ def info(name):
 def comment(name):
     #comment stuff
     content, rating = request.form['content'], request.form['rating']
+    if not content and not rating:
+        flash("Must post a comment or/and a rate", "danger")
+
     if content:
         c = Comment(content)
         c.user_id = current_user.id

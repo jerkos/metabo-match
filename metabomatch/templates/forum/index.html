@@ -5,9 +5,24 @@
     <li><a href="{{ url_for('forum.index') }}">Forum</a></li>
 </ol>
 
+<ul class="list-group">
+
 {% for category, forums in categories %}
-    {% include theme("forum/category_layout.html") %}
+{#    {% include theme("forum/category_layout.html") %}#}
+    <li class="list-group-item">
+            <p>
+                <a href="{{ category.url }}"><strong>{{ category.title }}</strong></a>  <i style="color:green" class="fa fa-angle-double-up"></i>
+                {% set post_count = forums|map('first')|sum(attribute='post_count') %}
+                <span style="padding-left: 20px;">   Total posts: {{ post_count }}
+                    {% if post_count %}
+                        {% set last_post = forums|map('first')|map(attribute='last_post')|reject('none')|sort(attribute='date_created')|first %}
+                    , last post: <strong>{{ last_post.username }}</strong>,  there is  <strong>{{ last_post.date_created | time_since }}</strong>
+                    {% endif %}
+                </span>
+            </p>
+    </li>
 {% endfor %}
+</ul>
 
 <!-- Forum Stats -->
 <table class="table table-bordered">
