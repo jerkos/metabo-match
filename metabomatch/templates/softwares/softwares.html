@@ -34,7 +34,17 @@
         </div>
     </div>
 
-    <hr>
+    <div class="row" style="padding: 50px 0 50px 0;">
+        <p> Or search a software name: </p>
+        <form class="form-inline" role="form" action="{{url_for('softwares.index')}}" method="GET">
+            <div class="form-group">
+{#                <div class="col-md-8">#}
+                 <input type="text" class="form-control" name="text" placeholder="Software name">
+{#                </div>#}
+            </div>
+            <button type="submit" class="btn btn-default">Filter</button>
+        </form>
+    </div>
 
     <div class="row">
             <table class="table table-condensed">

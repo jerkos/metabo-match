@@ -3,7 +3,7 @@ Software views
 """
 
 
-from flask import Blueprint, request, redirect, url_for, session, flash
+from flask import Blueprint, request, redirect, url_for, session, flash, abort
 
 from flask.ext.login import login_required, current_user
 
@@ -25,8 +25,13 @@ def index():
     dealing with args
     """
     if request.args:
-        keyword = soft_map[request.args['category']]
-        softs = db.session.query(Software).join(Software.tags).filter(Tag.tag == keyword)
+        if request.args.get('category') is not None:
+            keyword = soft_map[request.args['category']]
+            softs = db.session.query(Software).join(Software.tags).filter(Tag.tag == keyword)
+        elif request.args.get('text') is not None:
+            text = request.args['text']
+            print "TEXT:", text
+            softs = Software.query.filter(Software.name.like('%' + text))
     else:
         softs = Software.query.all()
         softs.sort(key=lambda _: -len(_.tags))
@@ -87,6 +92,23 @@ def comment(name):
         r = Rating(request.form['rating'], current_user.id, name)
         r.save()
     return redirect(url_for('softwares.info', name=name))
+
+
+@softwares.route('/<name>/upvote/<int:mapping_id>')
+@login_required
+def upvote(name, mapping_id):
+    soft = Software.query.filter(Software.name == name).first()
+    s_mapp = None
+    for s in soft.sentences_mapping:
+        if s.id == mapping_id:
+            s_mapp = s
+            break
+    if s_mapp is None:
+        abort(404)
+    s_mapp.upvote += 1
+    s_mapp.save()
+    return redirect(url_for('softwares.info', name=name))
+
 
 
 @softwares.route('/<name>/register_user')

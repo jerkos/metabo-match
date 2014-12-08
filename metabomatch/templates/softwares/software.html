@@ -55,7 +55,6 @@
     <hr>
     </div>
 
-
     <div class="row" style="padding-bottom: 50px;">
         <div class="col-md-3">
             {% if software.is_maintained %}
@@ -106,7 +105,19 @@
         </div>
 
     </div>
-
+    <p> <em>Click on <i class="fa fa-chevron-circle-up"></i> of the sentence which fit best to this software</em></p>
+     <div class="row">
+        <ul class="list-group">
+            {% for s_mapping in software.sentences_mapping %}
+                <li class="list-group-item"> <strong>{{ s_mapping.sentence.sentence }}</strong>
+                    <span class="badge">{{ s_mapping.upvote }}</span>
+                    <a href="{{ url_for('softwares.upvote', name=software.name, mapping_id=s_mapping.id)}}">
+                        <i class="fa fa-chevron-circle-up"></i>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
 
     <div class="row">
     <h2>Various statistics</h2>
@@ -149,16 +160,14 @@
     </div>
 
     <div class="row" style="padding-top: 25px;">
-        <div class="col-md-3">
-            <h3>Github related statistics</h3>
+            <h2>Github related statistics</h2>
             <hr>
-        </div>
     </div>
 
     <div class="row">
         <div class="col-md-11 col-md-offset-1">
             <table class="table">
-                <tbody></tbody>
+                <tbody>
                     {% set issues, opened_issues = software.get_nb_issues() %}
                     <tr>
                         <th style="border:none"><i class="fa fa-bug fa-2x"></i></th>
@@ -202,8 +211,13 @@
             {% for c in software.ratings[-5:] %}
                 <p class="text-center">
                     <b>{{ c.user.username }}</b> :
-                    {% for i in range((c.rate / 10.0)|int) %}
-                        <i class="fa fa-star"></i>
+                    {% set nb_stars = (c.rate / 10.0)|int %}
+                    {% for i in range(10) %}
+                        {% if i <= nb_stars %}
+                            <i class="fa fa-star"></i>
+                        {% else %}
+                            <i class="fa fa-star-o"></i>
+                        {% endif %}
                     {% endfor %}
                 </p>
             {% else %}

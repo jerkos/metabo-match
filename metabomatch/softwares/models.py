@@ -37,6 +37,42 @@ user_softwares_mapping = db.Table(
 )
 
 
+class Sentence(db.Model):
+    """
+    Description sentence
+    """
+    __tablename__ = 'sentences'
+
+    id = db.Column(db.Integer, primary_key=True)
+    sentence = db.Column(db.String)
+
+    def __init__(self, sentence):
+        self.sentence = sentence
+
+
+class SentenceSoftwareMapping(db.Model):
+    """
+    mapping between softwares and sentences describing it
+    """
+    __tablename__ = 'sentences_software_mapping'
+
+    id = db.Column(db.Integer, primary_key=True)
+    software_id = db.Column(db.String, db.ForeignKey('softwares.name'), nullable=False)
+    sentence_id = db.Column(db.Integer, db.ForeignKey('sentences.id'), nullable=False)
+    upvote = db.Column(db.Integer, default=0)
+
+    software = db.relationship('Software', backref='sentences_mapping')
+    sentence = db.relationship('Sentence', backref='sentences_mapping')
+
+    def __init__(self, software_id, sentence_id):
+        self.software_id = software_id
+        self.sentence_id = sentence_id
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
+
 class Tag(db.Model):
     """
     Tag model representing step in the pipeline

@@ -11,9 +11,10 @@
 from metabomatch.flaskbb.management.models import Setting, SettingsGroup
 from metabomatch.user.models import User, Group
 from metabomatch.flaskbb.forum.models import Post, Topic, Forum, Category
-from metabomatch.softwares.models import Tag, Software
+from metabomatch.softwares.models import Tag, Software, Sentence, SentenceSoftwareMapping
 
 from metabomatch.extensions import db
+
 
 def delete_settings_from_fixture(fixture):
     """
@@ -119,6 +120,10 @@ def create_welcome_forum():
     topic.save(user=user, forum=forum, post=post)
 
 
+def create_sentences_mapping(sentences, software_id):
+    return [SentenceSoftwareMapping(software_id, s.id) for s in sentences]
+
+
 def create_test_data():
     """
     Creates 5 users, 2 categories and 2 forums in each category. It also opens
@@ -127,53 +132,12 @@ def create_test_data():
     create_default_groups()
     create_default_settings()
 
-    # create 5 users
-    # for u in range(1, 6):
-    #     username = "test%s" % u
-    #     email = "test%s@example.org" % u
-    #     user = User(username=username, password="test", email=email)
-    #     user.primary_group_id = u
-    #     user.save()
-
     jerkos = User(username='jerkos',
                   password='Marco@1986',
                   email='cram@hotmail.fr')
     jerkos.primary_group_id = 1
     jerkos.github_access_token = '8eb1be2b5dca90b496948d2a425d2c91545bd770'
     jerkos.save()
-
-    # user1 = User.query.filter_by(id=1).first()
-    # user2 = User.query.filter_by(id=2).first()
-    #
-    # # create 2 categories
-    # for i in range(1, 3):
-    #     category_title = "Test Category %s" % i
-    #     category = Category(title=category_title,
-    #                         description="Test Description")
-    #     category.save()
-    #
-    #     # create 2 forums in each category
-    #     for j in range(1, 3):
-    #         if i == 2:
-    #             j += 2
-    #
-    #         forum_title = "Test Forum %s %s" % (j, i)
-    #         forum = Forum(title=forum_title, description="Test Description",
-    #                       category_id=i)
-    #         forum.save()
-    #
-    #         # create a topic
-    #         topic = Topic()
-    #         post = Post()
-    #
-    #         topic.title = "Test Title %s" % j
-    #         post.content = "Test Content"
-    #         topic.save(post=post, user=user1, forum=forum)
-    #
-    #         # create a second post in the forum
-    #         post = Post()
-    #         post.content = "Test Post"
-    #         post.save(user=user2, topic=topic)
 
     # create static tag for metabolomic
     t1 = Tag("Signal Extraction")
@@ -184,6 +148,18 @@ def create_test_data():
     db.session.add_all([t1, t2, t3, t4])
     db.session.commit()
 
+    s1 = Sentence("provide a clear documentation")
+    s2 = Sentence("is fast")
+    s3 = Sentence("has good support")
+    s4 = Sentence("has regurarly releases")
+    s5 = Sentence("has stable code base")
+    s6 = Sentence("has few parameters")
+
+    sentences = [s1, s2, s3, s4, s5, s6]
+    db.session.add_all(sentences)
+    db.session.commit()
+
+    # softwares
 
     xcms = Software("XCMS", "None", "R, C")
 
@@ -197,6 +173,7 @@ def create_test_data():
     xcms.download_link = 'http://www.bioconductor.org/packages/release/bioc/src/contrib/xcms_1.42.0.tar.gz'
 
     xcms.tags = [t1, t2, t3, t4]
+    xcms.sentences_mapping = create_sentences_mapping(sentences, xcms.name)
     xcms.save()
     ######################################
     openms = Software("OpenMS", "None", "C++, Python bindings")
@@ -211,6 +188,7 @@ def create_test_data():
     openms.download_link = 'https://github.com/OpenMS/OpenMS/archive/Release1.11.1.tar.gz'
 
     openms.tags = [t1, t2, t3, t4]
+    openms.sentences_mapping = create_sentences_mapping(sentences, openms.name)
     openms.save()
 
     #######################################
@@ -225,6 +203,7 @@ def create_test_data():
     mzmine.download_link = 'http://prdownloads.sourceforge.net/mzmine/MZmine-2.11.zip?download'
 
     mzmine.tags = [t1, t2, t3, t4]
+    mzmine.sentences_mapping = create_sentences_mapping(sentences, mzmine.name)
     mzmine.save()
 
     ########################################
@@ -238,6 +217,7 @@ def create_test_data():
     mzOS.download_link = 'https://github.com/jerkos/mzOS/archive/master.zip'
 
     mzOS.tags = [t3]
+    mzOS.sentences_mapping = create_sentences_mapping(sentences, mzOS.name)
     mzOS.save()
 
     ###############################################
@@ -253,6 +233,7 @@ def create_test_data():
     #metabo_analyst.download_link = 'http://prdownloads.sourceforge.net/mzmine/MZmine-2.11.zip?download'
 
     metabo_analyst.tags = [t3, t4]
+    metabo_analyst.sentences_mapping = create_sentences_mapping(sentences, metabo_analyst.name)
     metabo_analyst.save()
 
     ################################################
@@ -269,6 +250,7 @@ def create_test_data():
     camera.download_link = 'http://www.bioconductor.org/packages/release/bioc/src/contrib/CAMERA_1.22.0.tar.gz'
 
     camera.tags = [t3]
+    camera.sentences_mapping = create_sentences_mapping(sentences, camera.name)
     camera.save()
 
     ################################################
@@ -284,10 +266,10 @@ def create_test_data():
 
     probmetab.algorithm_originality = 3
 
-
     probmetab.download_link = 'http://labpib.fmrp.usp.br/methods/probmetab/resources/ProbMetab_1.0.zip'
 
     probmetab.tags = [t3]
+    probmetab.sentences_mapping = create_sentences_mapping(sentences, probmetab.name)
     probmetab.save()
 
     ################################################
@@ -302,12 +284,11 @@ def create_test_data():
 
     #mzmatch.algorithm_originality = 3
 
-
     mzmatch.download_link = 'http://labpib.fmrp.usp.br/methods/probmetab/resources/ProbMetab_1.0.zip'
 
     mzmatch.tags = [t1, t2, t3, t4]
+    mzmatch.sentences_mapping = create_sentences_mapping(sentences, mzmatch.name)
     mzmatch.save()
-
 
     ###############################################
     metassign = Software("metAssign", "None", "R")
@@ -326,6 +307,7 @@ def create_test_data():
     #metassign.download_link = 'http://www.bioconductor.org/packages/release/bioc/src/contrib/CAMERA_1.22.0.tar.gz'
 
     metassign.tags = [t3]
+    metassign.sentences_mapping = create_sentences_mapping(sentences, metassign.name)
     metassign.save()
 
     softwares = Software.query.all()
