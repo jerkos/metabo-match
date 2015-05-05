@@ -1,15 +1,3 @@
-"""
-    flaskbb.manage
-    ~~~~~~~~~~~~~~~~~~~~
-
-    This script provides some easy to use commands for
-    creating the database with or without some sample content.
-    You can also run the development server with it.
-    Just type `python manage.py` to see the full list of commands.
-
-    :copyright: (c) 2014 by the FlaskBB Team.
-    :license: BSD, see LICENSE for more details.
-"""
 import sys
 
 from flask import current_app

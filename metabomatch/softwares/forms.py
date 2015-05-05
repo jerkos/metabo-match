@@ -3,11 +3,13 @@ Softwares form
 """
 from flask.ext.wtf import Form, RecaptchaField
 from wtforms import StringField, IntegerField, BooleanField, SelectField
-from wtforms.validators import (DataRequired, Email, EqualTo, regexp,
-                                ValidationError)
+from wtforms.validators import DataRequired, Email, EqualTo, regexp, ValidationError
+
+from metabomatch.flaskbb.forum.models import Category, Forum
+from metabomatch.flaskbb.utils.populate import create_sentences_mapping
 
 from metabomatch.extensions import db
-from metabomatch.softwares.models import Software, Tag
+from metabomatch.softwares.models import Software, Tag, Sentence
 
 
 class SoftwareForm(Form):
@@ -36,6 +38,26 @@ class SoftwareForm(Form):
         soft.publication_link = self.publication_link.data
         soft.download_link = self.download_link.data
 
+        #---associate tags
         soft.tags = [db.session.query(Tag).filter(Tag.tag == t).first() for t in selected_tags]
+
+        #---create sentence mapping
+        soft.sentences_mapping = create_sentences_mapping(Sentence.query.all(), soft.name)
         soft.save()
+
+        #---create a new category and associated forum
+        category_title = soft.name
+        category = Category(title=category_title, description="{} category".format(soft.name))
+        category.save()
+
+        for f in (('Installation', 'Installation problems and troubleshooting, versions'),
+                  ('Algorithm', 'Questions about alogrithm used'),
+                  ('Parameters options', 'Common parameters for some common experiments'),
+                  ('Requests', 'Message to developpers ?')):
+            forum_title = "{}".format(f[0])
+            forum = Forum(title=forum_title, description=f[1],
+                          category_id=category.id)
+            forum.save()
+
+        #---finally return newly created software
         return soft

@@ -23,10 +23,10 @@
         <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 
         {% block css %}
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+            <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
             <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" >
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/code.css') }}">
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/flaskbb.css') }}">
+            <link rel="stylesheet" href="{{ url_for('static', filename='css/code.css') }}">
+            <link rel="stylesheet" href="{{ url_for('static', filename='css/flaskbb.css') }}">
         {% endblock %}
     </head>
 
@@ -55,6 +55,7 @@
                             {{ topnav(endpoint='softwares.index' , name='Softwares', icon='fa fa-bar-chart') }}
                             {{ topnav(endpoint='scripts.index' , name='Scripts', icon='fa fa-file-text-o') }}
                             {{ topnav(endpoint='forum.index', name='Forum', icon='fa fa-comment', active=active_forum_nav) }}
+                            {{ topnav(endpoint='jobs.index', name='Jobs', icon='fa fa-rocket') }}
 {#                            {{ topnav(endpoint='forum.memberlist', name='Memberlist', icon='fa fa-user') }}#}
 {#                            {{ topnav(endpoint='forum.search', name='forumSearch', icon='fa fa-search') }}#}
 

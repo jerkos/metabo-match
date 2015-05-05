@@ -30,8 +30,7 @@ def index():
             softs = db.session.query(Software).join(Software.tags).filter(Tag.tag == keyword)
         elif request.args.get('text') is not None:
             text = request.args['text']
-            print "TEXT:", text
-            softs = Software.query.filter(Software.name.like('%' + text))
+            softs = Software.query.filter(Software.name.ilike('%' + text + '%'))
     else:
         softs = Software.query.all()
         softs.sort(key=lambda _: -len(_.tags))
@@ -56,6 +55,9 @@ def register():
 @softwares.route('/<name>')
 def info(name):
 
+    soft = Software.query.filter(Software.name == name).first()
+    if soft is None:
+        abort(404)
     # view restriction
     if not current_user.is_authenticated():
         v = session.get('nb_views', 0)
@@ -66,7 +68,6 @@ def info(name):
             #redirect to softwares by default
             return redirect(url_for('auth.login', next='/softwares'))
 
-    soft = Software.query.filter(Software.name == name).first()
     show_comment_form = True if 'show_comment_form' in request.args else False
     rate = soft.compute_rate()
     return render_template('softwares/software.html',

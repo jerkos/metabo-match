@@ -96,7 +96,7 @@ class Rating(db.Model):
 
     #defined in user model
     # user = db.relationship('User', foreign_keys=[user_id])
-    software = db.relationship('Software', foreign_keys=[software_id])
+    #software = db.relationship('Software', foreign_keys=[software_id])
 
     def __init__(self, rate, user_id, software_id):
         self.rate = rate
@@ -171,7 +171,7 @@ class Software(db.Model):
     # relationships
     owner = db.relationship('User', uselist=False, backref='software_owner', foreign_keys=[owner_id])
     comments = db.relationship('Comment', order_by='Comment.date_created', lazy='joined')
-    ratings = db.relationship('Rating', order_by='Rating.date_created', lazy='joined')
+    ratings = db.relationship('Rating', order_by='Rating.date_created', backref='software')  #lazy='joined')
     tags = db.relationship('Tag', secondary=tags_software_mapping, backref='softwares', lazy='joined')
     users = db.relationship('User', secondary=user_softwares_mapping, backref='softwares_used')
 

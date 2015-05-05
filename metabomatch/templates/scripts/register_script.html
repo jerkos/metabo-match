@@ -16,7 +16,7 @@
 {#        {{ render_select_field(form.software, div_class='col-md-9 col-md-offset-3', label_class='col-md-3') }}#}
         <div class="form-group row">
             <label class="control-label col-md-3">software</label>
-            <div class="col-md-9 col-md-offset-3">
+            <div class="col-md-9">
                 <select name='software' class="form-control ">
                     {% for c in form.software.choices %}
                         <option value="{{ c[0] }}"> {{ c[0] }}</option>
@@ -27,13 +27,13 @@
 
         {{ horizontal_field(form.title) }}
 
-        {{ render_select_field(form.programming_language, div_class='col-md-9 col-md-offset-3', label_class='col-md-3') }}
+        {{ render_select_field(form.programming_language, div_class='col-md-9', label_class='col-md-3') }}
         {{ horizontal_field(form.dependancies) }}
 
         <div class="form-group row">
             <label class="control-label col-md-3">Description</label>
 
-            <div class="col-md-9 col-md-offset-3">
+            <div class="col-md-9">
                 <textarea name="description" class="form-control" rows="5" placeholder="Description goes here"></textarea>
             </div>
         </div>
@@ -41,7 +41,7 @@
         <div class="form-group row">
             <label class="control-label col-md-3">Content</label>
 
-            <div class="col-md-9 col-md-offset-3">
+            <div class="col-md-9">
                 <textarea name="content" class="form-control" rows="20"></textarea>
                 {{ field_description(form.content) }}
                 {{ field_errors(form.content) }}

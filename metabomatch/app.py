@@ -17,11 +17,9 @@ from flask.ext.login import current_user
 from flask.ext.whooshalchemy import whoosh_index
 
 from metabomatch.home.views import home
-
 from metabomatch.softwares.views import softwares
-
 from metabomatch.scripts.views import scripts
-
+from metabomatch.jobs.views import jobs
 
 # Import the user blueprint
 from metabomatch.user.views import user
@@ -89,6 +87,7 @@ def configure_blueprints(app):
     app.register_blueprint(home, url_prefix='/')
     app.register_blueprint(softwares, url_prefix='/softwares')
     app.register_blueprint(scripts, url_prefix='/scripts')
+    app.register_blueprint(jobs, url_prefix='/jobs')
     app.register_blueprint(forum, url_prefix=app.config["FORUM_URL_PREFIX"])
     app.register_blueprint(user, url_prefix=app.config["USER_URL_PREFIX"])
     app.register_blueprint(auth, url_prefix=app.config["AUTH_URL_PREFIX"])
