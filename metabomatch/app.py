@@ -137,22 +137,21 @@ def configure_extensions(app):
     login_manager.anonymous_user = Guest
 
     @login_manager.user_loader
-    def load_user(id):
+    def load_user(user_id):
         """
         Loads the user. Required by the `login` extension
         """
 
         # to show unread messages in the toolbar
         unread_count = db.session.query(db.func.count(PrivateMessage.id)).\
-            filter(PrivateMessage.unread == True,
-                   PrivateMessage.user_id == id).subquery()
-        u = db.session.query(User, unread_count).filter(User.id == id).first()
+            filter(PrivateMessage.unread is True,
+                   PrivateMessage.user_id == user_id).subquery()
+        u = db.session.query(User, unread_count).filter(User.id == user_id).first()
 
         if u:
             user, user.pm_unread = u
             return user
-        else:
-            return None
+        return None
 
     login_manager.init_app(app)
 

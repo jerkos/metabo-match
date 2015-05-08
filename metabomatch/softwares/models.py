@@ -43,11 +43,19 @@ class Sentence(db.Model):
     """
     __tablename__ = 'sentences'
 
+    categories = {'UI', 'PERFORMANCE', 'SUPPORT'}
+
     id = db.Column(db.Integer, primary_key=True)
     sentence = db.Column(db.String)
+    category = db.Column(db.String)
 
-    def __init__(self, sentence):
+    def __init__(self, sentence, category):
         self.sentence = sentence
+
+        if category not in Sentence.categories:
+            raise ValueError("Sentence wrong category")
+
+        self.category = category
 
 
 class SentenceSoftwareMapping(db.Model):
@@ -125,7 +133,7 @@ class Comment(db.Model):
 
     ### define in user model
     # user = db.relationship('User', foreign_keys=[user_id])
-    software = db.relationship('Software', foreign_keys=[software_id])
+    #software = db.relationship('Software', foreign_keys=[software_id])
 
     def __init__(self, content):
         self.content = content
@@ -145,6 +153,7 @@ class Software(db.Model):
     __tablename__ = "softwares"
 
     name = db.Column(db.String(200), primary_key=True)
+    insertion_date = db.Column(db.DateTime, default=datetime.utcnow())
     organization = db.Column(db.String(200))  # institute or company which created the software
     programming_language = db.Column(db.String(200))
 
@@ -170,8 +179,8 @@ class Software(db.Model):
 
     # relationships
     owner = db.relationship('User', uselist=False, backref='software_owner', foreign_keys=[owner_id])
-    comments = db.relationship('Comment', order_by='Comment.date_created', lazy='joined')
-    ratings = db.relationship('Rating', order_by='Rating.date_created', backref='software')  #lazy='joined')
+    comments = db.relationship('Comment', order_by='Comment.date_created', backref='software')  # lazy='joined')
+    ratings = db.relationship('Rating', order_by='Rating.date_created', backref='software')  # lazy='joined')
     tags = db.relationship('Tag', secondary=tags_software_mapping, backref='softwares', lazy='joined')
     users = db.relationship('User', secondary=user_softwares_mapping, backref='softwares_used')
 

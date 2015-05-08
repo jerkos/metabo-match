@@ -12,6 +12,11 @@
         .big-font {
             font-size: 1.2em;
         }
+
+        /*add line github style */
+        li.active{
+            border-bottom: 1px solid #D26911;
+        }
     </style>
 {% endblock %}
 
@@ -19,7 +24,7 @@
 
     <div class="row">
         <div class="col-md-8">
-            <h1>{{ software.name }} <small><a href='/'>{{ software.omictools_id }}</a>, <a href="{{ software.get_category_url() }}">Forum link</a></small></h1>
+            <h1>{{ software.name }} <small><label style="font-size: 0.4em;" class="label label-success">{{ software.insertion_date | time_since }}</label> <a href='/'>{{ software.omictools_id }}</a>, <a href="{{ software.get_category_url() }}">Forum link</a></small></h1>
             <div class="container">
                 <div class="row">
                     <div class="col-md-4">
@@ -37,6 +42,7 @@
                     {% endif %}
                 </div>
             </div>
+
         </div>
         <div id="circles-1" class="col-md-4"></div>
     </div>
@@ -106,149 +112,244 @@
         </div>
 
     </div>
-    <p> <em>Click on <i class="fa fa-chevron-circle-up"></i> of the sentence which fit best to this software</em></p>
      <div class="row">
-        <ul class="list-group">
-            {% for s_mapping in software.sentences_mapping %}
-                <li class="list-group-item"> <strong>{{ s_mapping.sentence.sentence }}</strong>
-                    <span class="badge">{{ s_mapping.upvote }}</span>
-                    <a href="{{ url_for('softwares.upvote', name=software.name, mapping_id=s_mapping.id)}}">
-                        <i class="fa fa-chevron-circle-up"></i>
+{#        <ul class="list-group">#}
+{#            {% for s_mapping in software.sentences_mapping %}#}
+{#                <li class="list-group-item"> <strong>{{ s_mapping.sentence.sentence }}</strong>#}
+{#                    <span class="badge">{{ s_mapping.upvote }}</span>#}
+{#                    <a href="{{ url_for('softwares.upvote', name=software.name, mapping_id=s_mapping.id)}}">#}
+{#                        <i class="fa fa-chevron-circle-up"></i>#}
+{#                    </a>#}
+{#                </li>#}
+{#            {% endfor %}#}
+{#        </ul>#}
+
+
+{#        <ul class="nav nav-tabs>#}
+{#            {% for category, l in software.sentences_mapping|groupby('sentence.category') %}#}
+{#                <h5 class="text-left"><strong>{{ category }}</strong></h5>#}
+{#                <ul class="list-group">#}
+{#                    {% for sentence_mapping in l %}#}
+{#                        <li class="list-group-item"> <strong>{{ sentence_mapping.sentence.sentence }}</strong>#}
+{#                            <span class="badge">{{ sentence_mapping.upvote }}</span>#}
+{#                            <a href="{{ url_for('softwares.upvote', name=software.name, mapping_id=sentence_mapping.id)}}">#}
+{#                                <i class="fa fa-chevron-circle-up"></i>#}
+{#                            </a>#}
+{#                        </li>#}
+{#                    {% endfor %}#}
+{#                </ul>#}
+{#            {% endfor %}#}
+{#        </ul>#}
+
+         <div role="tabpanel">
+
+            <!-- Nav tabs -->
+
+            <ul class="nav nav-tabs" role="tablist">
+                {% for category, l in software.sentences_mapping|groupby('sentence.category') %}
+
+                    {% if loop.first %}
+
+                        <li role="presentation" class="active">
+                            <a style="outline:none;-webkit-appearance:none;" href="#{{ category | lower}}" aria-controls="{{ category | lower }}" role="tab" data-toggle="tab">
+                                {% if category == 'PERFORMANCE' %}
+                                    <i class="fa fa-rocket"></i>
+                                {% elif category == 'UI' %}
+                                    <i class="fa fa-th-list"></i>
+                                {% else  %}
+                                    <i class="fa fa-ambulance"></i>
+                                {% endif %}
+                                 {{ category | title }}
+                            </a>
+                        </li>
+                    {% else %}
+                        <li role="presentation">
+                            <a style="outline:none;-webkit-appearance:none;" href="#{{ category | lower}}" aria-controls="{{ category | lower }}" role="tab" data-toggle="tab">
+                                 {% if category == 'PERFORMANCE' %}
+                                    <i class="fa fa-rocket"></i>
+                                {% elif category == 'UI' %}
+                                    <i class="fa fa-th-list"></i>
+                                {% else  %}
+                                    <i class="fa fa-ambulance"></i>
+                                {% endif %}
+                                {{ category | title }}
+                            </a>
+                        </li>
+                    {% endif %}
+
+                {% endfor %}
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+                {% for category, l in software.sentences_mapping|groupby('sentence.category') %}
+                    {% if loop.first %}
+                        <div role="tabpanel" class="tab-pane fade in active" id="{{ category | lower }}">
+                    {% else %}
+                        <div role="tabpanel" class="tab-pane fade" id="{{ category | lower }}">
+                    {% endif %}
+                        <ul class="list-group">
+                            {% for sentence_mapping in l %}
+                                <li class="list-group-item"> <strong>{{ sentence_mapping.sentence.sentence }}</strong>
+                                    <span class="badge">{{ sentence_mapping.upvote }}</span>
+                                    <a href="{{ url_for('softwares.upvote', name=software.name, mapping_id=sentence_mapping.id)}}">
+                                        <i class="fa fa-chevron-circle-up"></i>
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                {% endfor %}
+            </div>
+
+        </div>
+    </div>
+    <p> <em>Click on <i class="fa fa-chevron-circle-up"></i> of the sentence which fit best to this software</em></p>
+
+    {# starts a new row  #}
+    <div class="row" style="padding-top: 50px;">
+        <div role="tabpanel">
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active">
+                    <a style="outline:none;-webkit-appearance:none;" href="#various-stats" aria-controls="various-stats" role="tab" data-toggle="tab">
+                        <h4><i class="fa fa-exchange text-muted"></i> Various statistics</h4>
                     </a>
                 </li>
-            {% endfor %}
-        </ul>
-    </div>
-
-    <div class="row">
-    <h3><i class="fa fa-exchange text-muted"></i> Various statistics</h3>
-    <hr/>
-    </div>
-
-    <div class="row">
-        <div class="col-md-11 col-md-offset-1">
-            <table class="table">
-                <tbody>
-                    <tr>
-                        <th style="border:none"><i class="fa fa-line-chart fa-2x"></i></th>
-                        <th style="border:none">MEAN RATE</th>
-                        <th style="border:none"><span class="badge big-font">{{ software.mean_rate() }}</span></th>
-                        <th style="border:none"><em>(ratings mean of all metabomatch users)</em></th>
-                    </tr>
-                    <tr>
-                        <th style="border:none"><i class="fa fa-quote-left fa-2x"></i></th>
-                        <th style="border:none">CITATIONS</th>
-                        <th style="border:none"><span class="badge big-font">{{ software.get_publication_citation_nb() }}</span></th>
-                        <th style="border:none"><em>(total citations referenced on Pubmed)</em></th>
-                    </tr>
-                    <tr>
-                        <th style="border:none"><i class="fa fa-group fa-2x"></i></th>
-                        <th style="border:none">USERS</th>
-                        <th style="border:none"><span class="badge big-font">{{ software.users | length }}</span></th>
-                        <th style="border:none"><em>(total # users claiming that they uses this software)</em></th>
-                    </tr>
-                    <tr>
-                        <th style="border:none"><i class="fa fa-download fa-2x"></i></th>
-                        <th style="border:none">DOWNLOADS</th>
-                        <th style="border:none"><span class="badge big-font">{{ software.get_nb_downloads() }}</span></th>
-                        <th style="border:none"></th>
-                    </tr>
-                </tbody>
-            </table>
+                <li role="presentation">
+                    <a style="outline:none;-webkit-appearance:none;" href="#github-stats" aria-controls="github-stats" role="tab" data-toggle="tab">
+                        <h4><i class="fa fa-github text-muted"></i> Github related statistics</h4>
+                    </a>
+                </li>
+                <li role="presentation">
+                    <a style="outline:none;-webkit-appearance:none;" href="#community" aria-controls="community" role="tab" data-toggle="tab">
+                        <h4><i class="fa fa-globe text-muted"></i> Community view</h4>
+                    </a>
+                </li>
+            </ul>
 
 
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane fade in active" id="various-stats">
+                            <div class="col-md-11 col-md-offset-1">
+
+                    <table class="table">
+                    <tbody>
+                        <tr>
+                            <th style="border:none"><i class="fa fa-line-chart fa-2x"></i></th>
+                            <th style="border:none">MEAN RATE</th>
+                            <th style="border:none"><span class="badge big-font">{{ software.mean_rate() }}</span></th>
+                            <th style="border:none"><em>(ratings mean of all metabomatch users)</em></th>
+                        </tr>
+                        <tr>
+                            <th style="border:none"><i class="fa fa-quote-left fa-2x"></i></th>
+                            <th style="border:none">CITATIONS</th>
+                            <th style="border:none"><span class="badge big-font">{{ software.get_publication_citation_nb() }}</span></th>
+                            <th style="border:none"><em>(total citations referenced on Pubmed)</em></th>
+                        </tr>
+                        <tr>
+                            <th style="border:none"><i class="fa fa-group fa-2x"></i></th>
+                            <th style="border:none">USERS</th>
+                            <th style="border:none"><span class="badge big-font">{{ software.users | length }}</span></th>
+                            <th style="border:none"><em>(total # users claiming that they uses this software)</em></th>
+                        </tr>
+                        <tr>
+                            <th style="border:none"><i class="fa fa-download fa-2x"></i></th>
+                            <th style="border:none">DOWNLOADS</th>
+                            <th style="border:none"><span class="badge big-font">{{ software.get_nb_downloads() }}</span></th>
+                            <th style="border:none"></th>
+                        </tr>
+                    </tbody>
+                    </table>
+                                </div>
+                </div>
+
+                <div role="tabpanel" class="tab-pane fade" id="github-stats">
+                            <div class="col-md-11 col-md-offset-1">
+
+                    <table class="table">
+                    <tbody>
+                        {% set issues, opened_issues = software.get_nb_issues() %}
+                        <tr>
+                            <th style="border:none"><i class="fa fa-bug fa-2x"></i></th>
+                            <th style="border:none">ISSUES</th>
+                            <th style="border:none"><span class="badge big-font">{{ issues }}</span>, still opened: <span class="badge big-font">{{ opened_issues }}</span></th>
+                            <th style="border:none"><em>(total issues count referenced on github)</em></th>
+                        </tr>
+                        <tr>
+                            <th style="border:none"><i class="fa fa-institution fa-2x"></i></th>
+                            <th style="border:none">CONTRIBUTORS</th>
+                            <th style="border:none"><span class="badge big-font">{{ software.get_nb_maintainers() }}</span></th>
+                            <th style="border:none"></th>
+                        </tr>
+                        {% set year_activity, month_activity = software.get_nb_commits() %}
+                        <tr>
+                            <th style="border:none"><i class="fa fa-code fa-2x"></i></th>
+                            <th style="border:none">COMMITS(LAST YEAR)</th>
+                            <th style="border:none"><span class="badge big-font">{{ year_activity }}</span></th>
+                            <th style="border:none"><em>(total commits of all contributors on this repository during last year)</em></th>
+                        </tr>
+                        <tr>
+                            <th style="border:none"><i class="fa fa-code-fork fa-2x"></i></th>
+                            <th style="border:none">COMMITS(LAST MONTH)</th>
+                            <th style="border:none"><span class="badge big-font">{{ month_activity }}</span></th>
+                            <th style="border:none"><em>(total commits of all contributors on this repository during last month)</em></th>
+                        </tr>
+                    </tbody>
+                    </table>
+                                </div>
+                </div>
+
+                <div role="tabpanel" class="tab-pane fade" id="community">
+                    <div class="row"> {# style="min-height: 300px;" #}
+                        <div class="col-md-4">
+                            <h5 class="text-center"><i class="fa fa-star text-muted"></i> Last ratings</h5>
+                            <hr/>
+                            {% for c in software.ratings[-5:] %}
+                                <p class="text-center">
+                                    <b>{{ c.user.username }}</b> :
+                                    {% set nb_stars = (c.rate / 10.0)|int %}
+                                    {% for i in range(10) %}
+                                        {% if i <= nb_stars %}
+                                            <i class="fa fa-star"></i>
+                                        {% else %}
+                                            <i class="fa fa-star-o"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                </p>
+                            {% else %}
+                                <p class="well well-lg text-center text-muted">Nothing to show</p>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-4">
+                            <h5 class="text-center"><i class="fa fa-comment text-muted"></i> Last comments</h5>
+                            <hr/>
+                            {% for c in software.comments[-5:] %}
+                                <p class="well">
+                                    <b>{{ c.user.username }}</b>: <br>
+                                    <i class="fa fa-quote-left"></i> {{ c.content }} <i class="fa fa-quote-right"></i>
+                                </p>
+                            {% else %}
+                                <p class="well well-lg text-center text-muted">Nothing to show</p>
+                            {% endfor %}
+
+                        </div>
+                        <div class="col-md-4">
+                            <h5 class="text-center"><i class="fa fa-flash text-muted"></i> Last matches</h5>
+                            <hr/>
+                            <p class="text-center"><label class="label label-danger">Available soon !</label></p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </div>
-    </div>
-
-    <div class="row" style="padding-top: 25px;">
-            <h3><i class="fa fa-github text-muted"></i> Github related statistics</h3>
-            <hr/>
-    </div>
-
-    <div class="row">
-        <div class="col-md-11 col-md-offset-1">
-            <table class="table">
-                <tbody>
-                    {% set issues, opened_issues = software.get_nb_issues() %}
-                    <tr>
-                        <th style="border:none"><i class="fa fa-bug fa-2x"></i></th>
-                        <th style="border:none">ISSUES</th>
-                        <th style="border:none"><span class="badge big-font">{{ issues }}</span>, still opened: <span class="badge big-font">{{ opened_issues }}</span></th>
-                        <th style="border:none"><em>(total issues count referenced on github)</em></th>
-                    </tr>
-                    <tr>
-                        <th style="border:none"><i class="fa fa-institution fa-2x"></i></th>
-                        <th style="border:none">CONTRIBUTORS</th>
-                        <th style="border:none"><span class="badge big-font">{{ software.get_nb_maintainers() }}</span></th>
-                        <th style="border:none"></th>
-                    </tr>
-                    {% set year_activity, month_activity = software.get_nb_commits() %}
-                    <tr>
-                        <th style="border:none"><i class="fa fa-code fa-2x"></i></th>
-                        <th style="border:none">COMMITS(LAST YEAR)</th>
-                        <th style="border:none"><span class="badge big-font">{{ year_activity }}</span></th>
-                        <th style="border:none"><em>(total commits of all contributors on this repository during last year)</em></th>
-                    </tr>
-                    <tr>
-                        <th style="border:none"><i class="fa fa-code-fork fa-2x"></i></th>
-                        <th style="border:none">COMMITS(LAST MONTH)</th>
-                        <th style="border:none"><span class="badge big-font">{{ month_activity }}</span></th>
-                        <th style="border:none"><em>(total commits of all contributors on this repository during last month)</em></th>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <div class="row" style="padding-top: 50px;">
-        <h3><i class="fa fa-globe text-muted"></i> Community view</h3>
-        <hr/>
-    </div>
-
-    <div class="row" style="min-height: 300px;">
-        <div class="col-md-4">
-            <h4 class="text-center">Last ratings</h4>
-            <hr/>
-            {% for c in software.ratings[-5:] %}
-                <p class="text-center">
-                    <b>{{ c.user.username }}</b> :
-                    {% set nb_stars = (c.rate / 10.0)|int %}
-                    {% for i in range(10) %}
-                        {% if i <= nb_stars %}
-                            <i class="fa fa-star"></i>
-                        {% else %}
-                            <i class="fa fa-star-o"></i>
-                        {% endif %}
-                    {% endfor %}
-                </p>
-            {% else %}
-                <p class="text-center text-muted">Nothing to show</p>
-            {% endfor %}
-        </div>
-        <div class="col-md-4">
-            <h4 class="text-center">Last comments</h4>
-            <hr/>
-            {% for c in software.comments[-5:] %}
-                <p class="well">
-                    <b>{{ c.user.username }}</b>: <br>
-                    <i class="fa fa-quote-left"></i> {{ c.content }} <i class="fa fa-quote-right"></i>
-                </p>
-            {% else %}
-                <p class="text-center text-muted">Nothing to show</p>
-            {% endfor %}
-
-        </div>
-        <div class="col-md-4">
-            <h4 class="text-center">Last match</h4>
-            <hr/>
-            <p class="text-center"><label class="label label-danger">Available soon !</label></p>
-        </div>
-    </div>
+    </div> {# end row  #}
 
     {% if current_user.is_authenticated() %}
         <div class="row">
             {% if not current_user.has_commented(software.name) or not current_user.has_commented or show_comment_form %}
-            <h4>Post a review about this software...</h4>
+            <h4 style="padding: 20px 0 20px 0">Post a review about this software...</h4>
             <form class="form-horizontal" method="post" action="{{ url_for('softwares.comment', name=software.name) }}">
 
                 {% if not current_user.has_commented(software.name) or show_comment_form %}
@@ -304,5 +405,7 @@
           styleText:    true
         });
     </script>
+
+    <script src="{{ url_for('static', filename='js/jquery.sparklines.min.js') }}"></script>
 
 {% endblock %}

@@ -79,9 +79,11 @@ def info(name):
 @softwares.route('/<name>/comment', methods=['POST'])
 @login_required
 def comment(name):
-    #comment stuff
-    content, rating = request.form['content'], request.form['rating']
-    if not content and not rating:
+    print 'comment called'
+
+    content, rating = request.form.get('content'), request.form.get('rating')
+
+    if content is None and rating is None:
         flash("Must post a comment or/and a rate", "danger")
 
     if content:
@@ -90,7 +92,7 @@ def comment(name):
         c.software_id = name
         c.save()
     if rating:
-        r = Rating(request.form['rating'], current_user.id, name)
+        r = Rating(rating, current_user.id, name)
         r.save()
     return redirect(url_for('softwares.info', name=name))
 

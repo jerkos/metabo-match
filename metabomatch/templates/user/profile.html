@@ -87,7 +87,7 @@
 </table>
 
 <h3>Softwares you are using to drive your metabolomic analyses</h3>
-<hr>
+<hr/>
 
 <ul class="list-group">
     {% for software in user.softwares_used %}
@@ -99,7 +99,7 @@
 </ul>
 
 
-<h3>Propsed scripts</h3>
+<h3>Proposed scripts</h3>
 <hr>
     {% for name, script in user.scripts|groupby('software.name') %}
         <ul style="list-style-type: circle">
@@ -113,8 +113,8 @@
 
         </ul>
     {% else %}
-        <p>You did not propsed any scripts yet.</p>
-        <p class="alert-info">You can send a script from the script page.</p>
+        <p>You did not proposed any scripts yet.</p>
+        <p class="alert-info">You can upload a script from the register script page.</p>
     {% endfor %}
 </ul>
 {% endblock %}

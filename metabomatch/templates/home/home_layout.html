@@ -3,38 +3,22 @@
 {% block css %}
     {{ super() }}
     <style>
-        .container {
-            min-width: 100%;
-            padding: 0;
-        }
-
         .navbar {
-            padding: 0 20% 0 20%;
+            padding: 0 23% 0 22%;
             margin-bottom: 0
         }
 
-        #particles-js {
-            max-height: 600px;
-            /*margin-bottom: 60px;*/
-            background: #b61924;
-            overflow: hidden;
+        .container {
+            min-width: 100%;
         }
 
         .jumbotron {
-            color:white;
-            height: auto;
-            z-index: 500;
-            position: absolute;
-            top: 15%;
-            bottom: auto;
-            left: 0;
-            right: 0;
-            background: none;
-            /*background: url('../img/computer.jpg') 50% 40%;*/
+            color: white;
+            min-width: 100%;
+            background-color: #2196f3;
         }
-
         h3 {
-            color: #f44336;
+            color: #1565c0;
         }
 
         #software-access {
@@ -44,26 +28,55 @@
             padding: 10px 10px 10px 10px;
             text-decoration: none;
         }
+
+        #footer {
+            display: none;
+        }
     </style>
 {% endblock %}
 {% block content %}
     <!---->
-    <div id="particles-js">
-    </div>
 
     <div class="jumbotron">
         <div class="container text-center">
-            <h1 class="text-center text-muted"> Metabomatch: fit your needs</h1>
+{#            <h2 class="text-center text-muted">Just fit your needs</h2>#}
 
             <h2 class="text-center">Find the best metabolomic software for your need.</h2>
 
-            <p>All metabolomic are tested againsted several reference datasets. You can test providing your own
-                dataset</p>
+            <p>All metabolomic are tested againsted several reference datasets. You can test providing your own.</p>
             <a id="software-access" href="/forum">access to the forum</a>
         </div>
     </div>
 
-    <div class="container" style="padding: 50px 15% 0 15%">
+    <div class="container" style="padding: 50px 20% 0 20%">
+        <div class="row">
+            <h3 class="text-center">Motivation</h3>
+            <p class="text-justify text-left lead">More and more softwares are released everyday to tackle biological data processing
+                (<em>Big Data problem</em>). Especially metabolomics data coming from mass spectrometry. Machines are
+                constantly evolving and community adapt their workflow to get more insight in their biological problem.
+            </p>
+            <p class="text-justify text-left">
+                Many softwares have common functionalities, they can do it well or not, they can do it fast or not. We aim
+                to guide researchers, clinicians to find the best tool to fit their needs quickly with confidence. We tried
+                to class softwares in different part of the cassical metabolomics analysis pipeline and attribute mark based
+                on rigourous criteria so that user can very quickly identify the best tools established by the community.
+            </p>
+
+            <p> On this website, you will be able to:
+                <ul>
+                    <li><strong>find metabolomics softwares</strong> for each step of the standard metabolomics pipeline analysis.</li>
+                    <li>get some informations on it</li>
+                    <li>find the <strong>best softwares for your needs</strong> thanks to our <strong>notation system</strong> based on the community feedback.</li>
+                    <li>be aware of the feedback on each tool of the community</li>
+                    <li><strong>Share</strong> your favorites scripts</li>
+                    <li>Discuss about softwares algorithm, installtion problem... Why not new idea and <strong>crowdsourcing</strong> ?</li>
+                </ul>
+            </p>
+
+        </div>
+
+        <hr/>
+
         <div class="row">
             <div class="col-md-4 text-center">
                 <i class="fa fa-thumbs-o-up fa-5x"></i>
@@ -73,7 +86,7 @@
                 <p class="text-left"><b>metabomatch</b> organize `match` between different tools. Submit your dataset,
                     select tools you want to compare and check the result.</p>
 {#                <p class="text-left label label-danger">Available soon</p>#}
-                <p class="text-left"><a href="{{ url_for('softwares.index') }}" class="btn btn-default">View details &raquo;</a></p>
+                <p class="text-left"><a href="{{ url_for('softwares.index') }}" class="btn btn-info">View details &raquo;</a></p>
             </div>
 
             <div class="col-md-4 text-center">
@@ -84,7 +97,7 @@
                 <p class="text-left">With all mass sepctrometers available, it is sometimes hard to find a good tuning
                     of algorihtm. We proposed a space to share your scripts to help the community.</p>
 
-                <p class="text-left"><a href="{{ url_for('scripts.index') }}" class="btn btn-default">View details &raquo;</a></p>
+                <p class="text-left"><a href="{{ url_for('scripts.index') }}" class="btn btn-info">View details &raquo;</a></p>
 
             </div>
             <div class="col-md-4 text-center">
@@ -95,65 +108,73 @@
                 <p class="text-left">We offer the possibilty to discuss about available tools. You can post a question
                     about a parameters of an algorihtm and be sure that a community member will be able to answer.</p>
 
-                <p class="text-left"><a href="{{ url_for('forum.index') }}" class="btn btn-default">View details &raquo;</a></p>
+                <p class="text-left"><a href="{{ url_for('forum.index') }}" class="btn btn-info">View details &raquo;</a></p>
             </div>
 
         </div>
+        <p class="lead">And much more...</p>
+
+        <hr/>
+        <p class="text-muted"><strong>Copyright Marc Dubois 2015. All rights reserved.</strong></p>
+{#        <p>Release 0.1 <label class="label label-success">beta</label></p>#}
     </div>
 
+    </hr>
+{#    <div class=""#}
 
-    {% block scripts %}
 
-        <script src="{{ url_for('static', filename='js/particles.min.js') }}"></script>
-        <script>
-            particlesJS('particles-js', {
-                particles: {
-                    color: '#000',
-                    shape: 'circle', // "circle", "edge" or "triangle"
-                    opacity: 1,
-                    size: 4,
-                    size_random: true,
-                    nb: 150,
-                    line_linked: {
-                        enable_auto: true,
-                        distance: 100,
-                        color: '#000',
-                        opacity: 1,
-                        width: 1,
-                        condensed_mode: {
-                            enable: false,
-                            rotateX: 600,
-                            rotateY: 600
-                        }
-                    },
-                    anim: {
-                        enable: true,
-                        speed: 1
-                    }
-                },
-                interactivity: {
-                    enable: false,
-                    mouse: {
-                        distance: 250
-                    },
-                    detect_on: 'canvas', // "canvas" or "window"
-                    mode: 'grab',
-                    line_linked: {
-                        opacity: .5
-                    },
-                    events: {
-                        onclick: {
-                            enable: true,
-                            mode: 'push', // "push" or "remove" (particles)
-                            nb: 4
-                        }
-                    }
-                },
-                /* Retina Display Support */
-                retina_detect: true
-            });
-        </script>
-    {% endblock %}
+{#    {% block scripts %}#}
+{##}
+{#        <script src="{{ url_for('static', filename='js/particles.min.js') }}"></script>#}
+{#        <script>#}
+{#            particlesJS('particles-js', {#}
+{#                particles: {#}
+{#                    color: '#000',#}
+{#                    shape: 'circle', // "circle", "edge" or "triangle"#}
+{#                    opacity: 1,#}
+{#                    size: 4,#}
+{#                    size_random: true,#}
+{#                    nb: 150,#}
+{#                    line_linked: {#}
+{#                        enable_auto: true,#}
+{#                        distance: 100,#}
+{#                        color: '#000',#}
+{#                        opacity: 1,#}
+{#                        width: 1,#}
+{#                        condensed_mode: {#}
+{#                            enable: false,#}
+{#                            rotateX: 600,#}
+{#                            rotateY: 600#}
+{#                        }#}
+{#                    },#}
+{#                    anim: {#}
+{#                        enable: true,#}
+{#                        speed: 1#}
+{#                    }#}
+{#                },#}
+{#                interactivity: {#}
+{#                    enable: false,#}
+{#                    mouse: {#}
+{#                        distance: 250#}
+{#                    },#}
+{#                    detect_on: 'canvas', // "canvas" or "window"#}
+{#                    mode: 'grab',#}
+{#                    line_linked: {#}
+{#                        opacity: .5#}
+{#                    },#}
+{#                    events: {#}
+{#                        onclick: {#}
+{#                            enable: true,#}
+{#                            mode: 'push', // "push" or "remove" (particles)#}
+{#                            nb: 4#}
+{#                        }#}
+{#                    }#}
+{#                },#}
+{#                /* Retina Display Support */#}
+{#                retina_detect: true#}
+{#            });#}
+{#        </script>#}
+{#    {% endblock %}#}
 
 {% endblock %}
 

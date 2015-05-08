@@ -21,7 +21,7 @@ flask_app = create_app(Config)
 manager = Manager(flask_app)
 
 # Run local server
-manager.add_command("runserver", Server("localhost", port=8080))
+manager.add_command("runserver", Server("localhost", port=5000))
 
 # Migration commands
 manager.add_command('db', MigrateCommand)

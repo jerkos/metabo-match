@@ -27,6 +27,13 @@
             <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" >
             <link rel="stylesheet" href="{{ url_for('static', filename='css/code.css') }}">
             <link rel="stylesheet" href="{{ url_for('static', filename='css/flaskbb.css') }}">
+            <style>
+                 #beta {
+                     display: inline-block;
+                  -webkit-transform: rotate(-15deg);
+                     transform: rotate(-15deg);
+                 }
+            </style>
         {% endblock %}
     </head>
 
@@ -44,7 +51,11 @@
                             <span class="icon-bar"></span>
                             <span class="icon-bar"></span>
                         </button>
-                        <a class="navbar-brand" href="/">metabomatch</a>
+                        <a class="navbar-brand" href="/">
+                            <img src="{{ url_for('static', filename='img/elephant.png') }}"/>
+                            <small><label id="beta" class="label label-info">beta release</label></small>
+{#                            metabomatch <small><label class="label label-info">beta release</label></small>#}
+                        </a>
                     </div>
                     <div class="collapse navbar-collapse navbar-ex1-collapse">
                         <ul class="nav navbar-nav">
@@ -56,6 +67,7 @@
                             {{ topnav(endpoint='scripts.index' , name='Scripts', icon='fa fa-file-text-o') }}
                             {{ topnav(endpoint='forum.index', name='Forum', icon='fa fa-comment', active=active_forum_nav) }}
                             {{ topnav(endpoint='jobs.index', name='Jobs', icon='fa fa-rocket') }}
+                            {{ topnav(endpoint='home.index', name='Crowdsourcing') }}
 {#                            {{ topnav(endpoint='forum.memberlist', name='Memberlist', icon='fa fa-user') }}#}
 {#                            {{ topnav(endpoint='forum.search', name='forumSearch', icon='fa fa-search') }}#}
 
@@ -136,7 +148,8 @@
 
         {% block javascript %}
             <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
-            <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+{#            <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>#}
         {% endblock %}
 
         {% block scripts %}

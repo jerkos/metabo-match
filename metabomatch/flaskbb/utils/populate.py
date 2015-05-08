@@ -148,14 +148,17 @@ def create_test_data():
     db.session.add_all([t1, t2, t3, t4])
     db.session.commit()
 
-    s1 = Sentence("provide a clear documentation")
-    s2 = Sentence("is fast")
-    s3 = Sentence("has good support")
-    s4 = Sentence("has regurarly releases")
-    s5 = Sentence("has stable code base")
-    s6 = Sentence("has few parameters")
+    #performance sentences
+    sentences = [Sentence('is fast', 'PERFORMANCE'),
+                 Sentence('has good results', 'PERFORMANCE'),
+                 #UI
+                 Sentence('as intuitive user interface', 'UI'),
+                 Sentence('is portable', 'UI'),
+                 #SUPPORT
+                 Sentence('provide a clear documentation', 'SUPPORT'),
+                 Sentence('has good support', 'SUPPORT'),
+                 Sentence('has regurar releases, updates and bug fixes', 'SUPPORT')]
 
-    sentences = [s1, s2, s3, s4, s5, s6]
     db.session.add_all(sentences)
     db.session.commit()
 
