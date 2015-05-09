@@ -34,7 +34,11 @@
         <div class="col-md-offset-1">
             <pre>
                 <code>
-                    {{ script.content }}
+                    {% if not gist_content is none %}
+                        {{ gist_content }}
+                    {% else %}
+                        {{ script.content }}
+                    {% endif %}
                 </code>
             </pre>
         </div>

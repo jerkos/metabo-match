@@ -13,7 +13,7 @@
 {%- macro field_errors(field) -%}
     {% if field.errors %}
         {%- for error in field.errors -%}
-        <span class="help-block">{{error}}</span>
+        <span class="text-danger">{{error}}</span>
         {%- endfor -%}
     {% endif %}
 {%- endmacro -%}

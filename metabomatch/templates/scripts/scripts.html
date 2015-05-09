@@ -1,35 +1,55 @@
 {% extends theme("layout.html") %}
 {% block content %}
+    <p class="help-block">You can provide here some piece of code you find useful and or refer a <strong>gist</strong> file from <a href="github.com">github</a></p>
     <h3><i class="fa fa-code-fork text-muted"></i> # available scripts: {{ scripts | length }}</h3>
     <hr/>
 
     <div class="row" style="padding: 20px 0 50px 0">
-    {% for name, script in scripts|groupby('software.name') %}
-        <ul style="list-style-type: circle">
-            <li><h3><a href="{{ url_for('softwares.info', name=name) }}">{{ name }}</a>:</h3></li>
-                <ul class="list-group">
-    {#                    style="list-style-type: none">#}
-                    {% for s in script %}
-                        <li class="list-group-item">
-    {#                        style="padding-left: 20px">#}
-                            <span class="badge">{{ s.up_votes }}</span>
-                            <h4>
-                                <a href="{{ url_for('user.profile', username=s.user.username)}}">{{ s.user.username }}</a>
-                                /
-                                <a href="{{ url_for('scripts.info', script_id=s.id) }}">{{ s.title }} </a>
+
+        <ul class="list-group">
+
+            {% for script in scripts %}
+        {#        | groupby('software.name') %}#}
+        {#        <ul style="list-style-type: circle">#}
+        {#            <li><h4><a href="{{ url_for('softwares.info', name=name) }}">{{ name }}</a>:</h4></li>#}
+        {#                    style="list-style-type: none">#}
+{#                {% for s in script %}#}
+                    <li class="list-group-item">
+{#                        style="padding-left: 20px">#}
+                        <span class="badge">{{ script.up_votes }}</span>
+                        <h5>
+                            <a href="{{ url_for('user.profile', username=script.user.username)}}">{{ script.user.username }}</a>
+                            /
+                            <a href="{{ url_for('scripts.info', script_id=script.id) }}">{{ script.title }} </a>
 {#                                <small>by <a href="{{ url_for('user.profile', username=s.user.username)}}">{{ s.user.username }}</a></small>#}
-                                <small><label class="label label-success">{{ s.creation_date | time_since }}</label></small>
-                            </h4>
-                        </li>
-                    {% endfor %}
-                </ul>
+                            <small><label class="label label-success">{{ script.creation_date | time_since }}</label></small>
+                        </h5>
+                        {% if script.content %}
+                            <div id="script{{ script.id }}">{{ script.content }}</div>
+                        {% endif %}
+                    </li>
+{#                {% endfor %}#}
+        {#        </ul>#}
+            {% else %}
+        {#        <p class="text-muted">No scripts found</p>#}
+                <div class="well well-lg"><p class="text-center"><strong>No scripts found</strong></p></div>
+            {% endfor %}
         </ul>
-    {% else %}
-{#        <p class="text-muted">No scripts found</p>#}
-        <div class="well well-lg"><p class="text-center"><strong>No scripts found</strong></p></div>
-    {% endfor %}
+
     </div>
     <hr/>
     <h3>You want to submit a piece of code ? <a class="btn btn-default" href="{{ url_for('scripts.register') }}">Register new script</a></h3>
 
+{% endblock %}
+{% block javascript %}
+    {{ super() }}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.9/ace.js"></script>
+    <script>
+        {% for script in scripts %}
+            var editor{{ script.id }}= ace.edit("script{{ script.id }}");
+            editor{{ script.id }}.setTheme("ace/theme/monokai");
+            editor{{ script.id }}.getSession().setMode("ace/mode/javascript");
+        {% endfor %}
+
+    </script>
 {% endblock %}

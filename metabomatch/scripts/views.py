@@ -1,7 +1,8 @@
 """
 scripts views
 """
-
+from sqlalchemy import desc
+import requests
 from flask import Blueprint, request, abort, redirect, url_for
 
 from flask.ext.login import login_required
@@ -17,7 +18,7 @@ scripts = Blueprint('scripts', __name__, template_folder="../templates")
 @scripts.route('/')
 @login_required
 def index():
-    sc = Script.query.all()
+    sc = Script.query.order_by(desc(Script.creation_date)).limit(10).all()
     return render_template('scripts/scripts.html',
                            scripts=sc)
 
@@ -39,7 +40,7 @@ def info(script_id):
     sc = Script.query.filter(Script.id == script_id).first()
     if sc is None:
         return abort(404)
-    return render_template('scripts/script.html', script=sc)
+    return render_template('scripts/script.html', script=sc, gist_content=gist_content)
 
 
 @scripts.route('/<int:script_id>/upvote')

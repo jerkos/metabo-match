@@ -147,9 +147,7 @@ class Comment(db.Model):
 
 
 class Software(db.Model):
-    """
-    Software models
-    """
+    """Software models"""
     __tablename__ = "softwares"
 
     name = db.Column(db.String(200), primary_key=True)
