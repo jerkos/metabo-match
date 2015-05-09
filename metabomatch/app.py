@@ -37,12 +37,12 @@ from metabomatch.flaskbb.forum.models import Post, Topic, Category, Forum
 
 # extensions
 from metabomatch.extensions import db, login_manager, mail, cache, redis_store, \
-    debugtoolbar, migrate, themes, plugin_manager, github
+    migrate, themes, plugin_manager, github  # ,debugtoolbar
 
 # various helpers
 from metabomatch.flaskbb.utils.helpers import format_date, time_since, crop_title, \
     is_online, render_markup, mark_online, forum_is_unread, topic_is_unread, \
-    render_template
+    render_template, older_than_one_month
 
 # permission checks (here they are used for the jinja filters)
 from metabomatch.flaskbb.utils.permissions import can_post_reply, can_post_topic, \
@@ -115,7 +115,7 @@ def configure_extensions(app):
     cache.init_app(app)
 
     # Flask-Debugtoolbar
-    debugtoolbar.init_app(app)
+    #debugtoolbar.init_app(app)
 
     # Flask-Themes
     themes.init_themes(app, app_identifier="flaskbb")
@@ -166,6 +166,7 @@ def configure_template_filters(app):
     app.jinja_env.filters['markup'] = render_markup
     app.jinja_env.filters['format_date'] = format_date
     app.jinja_env.filters['time_since'] = time_since
+    app.jinja_env.filters['older_than_one_month'] = older_than_one_month
     app.jinja_env.filters['is_online'] = is_online
     app.jinja_env.filters['crop_title'] = crop_title
     app.jinja_env.filters['forum_is_unread'] = forum_is_unread

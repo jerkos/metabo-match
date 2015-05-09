@@ -14,8 +14,11 @@
     {#                        style="padding-left: 20px">#}
                             <span class="badge">{{ s.up_votes }}</span>
                             <h4>
+                                <a href="{{ url_for('user.profile', username=s.user.username)}}">{{ s.user.username }}</a>
+                                /
                                 <a href="{{ url_for('scripts.info', script_id=s.id) }}">{{ s.title }} </a>
-                                <small>by <a href="{{ url_for('user.profile', username=s.user.username)}}">{{ s.user.username }}</a></small>
+{#                                <small>by <a href="{{ url_for('user.profile', username=s.user.username)}}">{{ s.user.username }}</a></small>#}
+                                <small><label class="label label-success">{{ s.creation_date | time_since }}</label></small>
                             </h4>
                         </li>
                     {% endfor %}

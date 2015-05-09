@@ -5,7 +5,8 @@ Software views
 
 from flask import Blueprint, request, redirect, url_for, session, flash, abort
 
-from flask.ext.login import login_required, current_user
+from flask.ext.login import login_required, current_user, current_app
+
 
 from metabomatch.extensions import db
 from metabomatch.flaskbb.utils.helpers import render_template

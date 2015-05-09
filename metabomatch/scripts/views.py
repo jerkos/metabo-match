@@ -29,7 +29,7 @@ def register():
     form.get_softwares()
     if form.validate_on_submit():
         form.save(request.form['software'])
-        return render_template('scripts/scripts.html', form=form)
+        return redirect(url_for('scripts.index'))
     return render_template('scripts/register_script.html', form=form)
 
 

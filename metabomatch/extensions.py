@@ -36,7 +36,7 @@ cache = Cache()
 redis_store = Redis()
 
 # Debugtoolbar
-debugtoolbar = DebugToolbarExtension()
+#debugtoolbar = DebugToolbarExtension()
 
 # Migrations
 migrate = Migrate()

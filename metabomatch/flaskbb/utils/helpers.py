@@ -356,6 +356,17 @@ def time_delta_format(dt, default=None):
     return default
 
 
+def older_than_one_month(dt):
+    """used to new content from old content"""
+    now = datetime.utcnow()
+    diff = now - dt
+
+    period = diff.days / 30
+    if period < 1:
+        return False
+    return True
+
+
 def format_quote(post):
     """Returns a formatted quote depending on the markup language.
 
