@@ -13,7 +13,7 @@ class Script(db.Model):
 
     programming_language = db.Column(db.String(200))
     dependancies = db.Column(db.String(200))
-    script_description = db.Column(db.Text())
+    description = db.Column(db.Text())
 
     github_gist_url = db.Column(db.Text())
     content = db.Column(db.Text())
@@ -43,3 +43,6 @@ class Script(db.Model):
         db.session.add(self)
         db.session.commit()
         return self
+
+    def preview_content(self):
+        return self.content.split('\n')[0:10]

@@ -40,7 +40,7 @@ def info(script_id):
     sc = Script.query.filter(Script.id == script_id).first()
     if sc is None:
         return abort(404)
-    return render_template('scripts/script.html', script=sc, gist_content=gist_content)
+    return render_template('scripts/script.html', script=sc)
 
 
 @scripts.route('/<int:script_id>/upvote')

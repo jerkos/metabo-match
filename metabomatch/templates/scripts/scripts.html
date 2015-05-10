@@ -1,8 +1,31 @@
 {% extends theme("layout.html") %}
+{% block css %}
+    {{ super() }}
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/default.min.css">
+    <style>
+        .ace_scrollbar {
+            display: none !important;
+        }
+    </style>
+{% endblock %}
+
 {% block content %}
-    <p class="help-block">You can provide here some piece of code you find useful and or refer a <strong>gist</strong> file from <a href="github.com">github</a></p>
+    <p class="help-block"><strong>Help ?</strong><br/>You can provide here some piece of code you find useful and or refer a <strong>gist</strong> file from <a href="github.com">github</a>.
+    For more complex scripts or example, we strongly encourage to use Gist and its versioning system.</p>
     <h3><i class="fa fa-code-fork text-muted"></i> # available scripts: {{ scripts | length }}</h3>
     <hr/>
+
+    <form class="form-inline">
+        <div class="form-group">
+            <label for="exampleInputEmail2">Software</label>
+            <select type="email" class="form-control" id="exampleInputEmail2" placeholder="jane.doe@example.com">
+            </select>
+        </div>
+        <div class="form-group">
+            <input type="text" class="form-control" id="exampleInputEmail2" placeholder="jane.doe@example.com">
+        </div>
+        <button type="submit" class="btn btn-default">Filter</button>
+    </form>
 
     <div class="row" style="padding: 20px 0 50px 0">
 
@@ -22,16 +45,19 @@
                             /
                             <a href="{{ url_for('scripts.info', script_id=script.id) }}">{{ script.title }} </a>
 {#                                <small>by <a href="{{ url_for('user.profile', username=s.user.username)}}">{{ s.user.username }}</a></small>#}
-                            <small><label class="label label-success">{{ script.creation_date | time_since }}</label></small>
+                            <small><label class="label label-success">{{ script.creation_date | time_since }}</label></small><br/>
+                            <small><strong>{{ script.programming_language }}</strong>, <strong>{{ script.software.name }}</strong></small><br/><br/>
+                            <small>{{ script.description }}</small>
                         </h5>
-                        {% if script.content %}
-                            <div id="script{{ script.id }}">{{ script.content }}</div>
-                        {% endif %}
+{#                        <div id="script{{ script.id }}">{{ script.content }}</div>#}
+
+                        <pre class="{{ script.programming_language | lower }}">
+                                    {{ script.preview_content() | join('\n')}}
+                            </pre>
                     </li>
 {#                {% endfor %}#}
         {#        </ul>#}
             {% else %}
-        {#        <p class="text-muted">No scripts found</p>#}
                 <div class="well well-lg"><p class="text-center"><strong>No scripts found</strong></p></div>
             {% endfor %}
         </ul>
@@ -41,15 +67,35 @@
     <h3>You want to submit a piece of code ? <a class="btn btn-default" href="{{ url_for('scripts.register') }}">Register new script</a></h3>
 
 {% endblock %}
+
+
 {% block javascript %}
     {{ super() }}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.9/ace.js"></script>
-    <script>
-        {% for script in scripts %}
-            var editor{{ script.id }}= ace.edit("script{{ script.id }}");
-            editor{{ script.id }}.setTheme("ace/theme/monokai");
-            editor{{ script.id }}.getSession().setMode("ace/mode/javascript");
-        {% endfor %}
+{#    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.9/ace.js"></script>#}
+{#    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.9/mode-python.js"></script>#}
+{#    <script>#}
+{#        {% for script in scripts %}#}
+{#            var editor = ace.edit("editor");#}
+{#            editor.getSession().setUseWorker(true);#}
+{#            editor.resize();#}
+{#            editor.setTheme("ace/theme/monokai");#}
+{#            editor.getSession().setMode("ace/mode/python");#}
+{#            editor.setOptions({#}
+{##}
+{#                maxLines: 10#}
+{#            });#}
+{##}
+{#        {% endfor %}#}
+{#    </script>#}
 
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js"></script>
+    <script>
+        $(document).ready(function() {
+        $('pre').each(function(i, block) {
+            hljs.highlightBlock(block);
+        });
+        });
+        //hljs.initHighlightingOnLoad();
     </script>
+
 {% endblock %}
