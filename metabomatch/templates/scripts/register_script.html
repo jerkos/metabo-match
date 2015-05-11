@@ -5,13 +5,20 @@
 {% from theme("macros.html") import field_description %}
 {% from theme("macros.html") import field_errors %}
 
+{% block css %}
+    {{ super() }}
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/monokai.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/selectize.bootstrap3.css') }}">
+{% endblock %}
+
+
 {% block content %}
 
     <h3>Register Script</h3>
     <p class="help-block">Choose the right programming language to get the right coloration syntax. There is also a simple text mode.</p>
     <hr/>
 
-    <form class="form-horizontal" role="form" method="POST">
+    <form id="register-script-form" class="form-horizontal" role="form" method="POST">
         {{ form.hidden_tag() }}
 
 {#        {{ render_select_field(form.software, div_class='col-md-9 col-md-offset-3', label_class='col-md-3') }}#}
@@ -40,6 +47,13 @@
             </div>
         </div>
 
+        <div class="form-group row">
+            <label class="control-label col-md-3">tags</label>
+            <div class="col-md-9">
+                <input id="select-tags" type="text" name="tags">
+            </div>
+        </div>
+
         {{ horizontal_field(form.dependancies) }}
 
         {{ horizontal_field(form.github_gist_url) }}
@@ -56,16 +70,17 @@
             <label class="control-label col-md-3">Content</label>
 
             <div class="col-md-9">
-                <textarea id="editor" name="content" class="form-control" rows="20"></textarea>
-                {{ field_description(form.content) }}
-                {{ field_errors(form.content) }}
+                <div id="editor">
+                    {{ field_description(form.content) }}
+                    {{ field_errors(form.content) }}
+                </div>
             </div>
 
         </div>
 
         <div class="form-group">
             <div class="col-sm-offset-3 col-sm-9">
-                <button type="submit" class="btn btn-success">Register</button>
+                <a id="submit" type="submit" class="btn btn-success">Register</a>
             </div>
         </div>
     </form>
@@ -75,31 +90,65 @@
 {% block javascript %}
     {{ super() }}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.9/ace.js"></script>
+    <script src="{{url_for('static', filename='js/selectize.js')}}"></script>
+
     <script>
 
         var editor = ace.edit("editor");
-        editor.getSession().setUseWorker(true);
+        editor.getSession().setUseWorker(false);
         editor.setTheme("ace/theme/monokai");
         editor.setOptions({maxLines: 100, minLines:20});
+
+        var selection = "";
+        $( "#prog_lang option:selected" ).each(function() {
+            selection += $( this ).text();
+        });
+        editor.getSession().setMode("ace/mode/" + selection.toLowerCase());
+
 
         $('#prog_lang').change(function() {
             var selection = "";
             $( "#prog_lang option:selected" ).each(function() {
                 selection += $( this ).text();
             });
-            if ( selection === "Python") {
-                editor.getSession().setMode("ace/mode/python");
-            } else if (selection === "R") {
-                editor.getSession().setMode("ace/mode/r");
-            } else if (selection === "Java") {
-                editor.getSession().setMode("ace/mode/java");
-            } else if (selection === "Javascript") {
-                editor.getSession().setMode("ace/mode/javascript");
-            } else {
-                console.log("text mode");
-            }
+            editor.getSession().setMode("ace/mode/" + selection.toLowerCase());
+
+{#            if ( selection === "Python") {#}
+{#                editor.getSession().setMode("ace/mode/" + selection.toLowerCase());#}
+{#            } else if (selection === "R") {#}
+{#                editor.getSession().setMode("ace/mode/r");#}
+{#            } else if (selection === "Java") {#}
+{#                editor.getSession().setMode("ace/mode/java");#}
+{#            } else if (selection === "Javascript") {#}
+{#                editor.getSession().setMode("ace/mode/javascript");#}
+{#            } else {#}
+{#                console.log("text mode");#}
+{#            }#}
         });
 
+        $('#submit').click(function(event){
+            event.preventDefault();
+            var code = editor.getSession().getValue();
+
+            var f = document.getElementById("register-script-form");
+            var script_content = document.createElement("textarea");
+            script_content.name = 'content';
+            script_content.value = code;
+            script_content.style.display = 'none';
+            f.appendChild(script_content);
+            f.submit();
+        });
 
     </script>
+
+    <script>
+         $('#select-tags').selectize({delimiter: ',',
+            persist: false,
+            create: function(input) {
+                return {
+                    value: input,
+                    text: input
+                }
+            }});
+     </script>
 {% endblock %}

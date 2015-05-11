@@ -73,6 +73,7 @@
             var script_content = document.createElement("textarea");
             script_content.name = 'content';
             script_content.value = code;
+            script_content.style.display = 'none';
             f.appendChild(script_content);
             f.submit();
         });

@@ -1,7 +1,11 @@
 {% extends theme("layout.html") %}
+{% from theme('macros.html') import render_pagination %}
+
 {% block css %}
     {{ super() }}
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/monokai.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/selectize.bootstrap3.css') }}">
+
     <style>
         .ace_scrollbar {
             display: none !important;
@@ -12,38 +16,42 @@
 {% block content %}
     <p class="help-block"><strong>Help ?</strong><br/>You can provide here some piece of code you find useful and or refer a <strong>gist</strong> file from <a href="github.com">github</a>.
     For more complex scripts or example, we strongly encourage to use Gist and its versioning system.</p>
-    <h3><i class="fa fa-code-fork text-muted"></i> # available scripts: {{ scripts | length }}</h3>
+    <h3><i class="fa fa-code-fork text-muted"></i> # available scripts: {{ scripts.total }}</h3>
     <hr/>
 
     <h4>Search</h4>
-    <form class="form-inline">
+    <form class="form-inline" method="get" action="{{ url_for('scripts.index') }}">
         <div class="form-group">
-            <select class="form-control" id="exampleInputEmail2">
+            <select class="form-control" id="exampleInputEmail2" name="software">
                 <option>---</option>
                 {% for s in softwares %}
                     <option value="{{ s }}">{{ s }}</option>
                 {% endfor %}
             </select>
         </div>
-        <div class="form-group">
-            <input type="text" class="form-control" id="exampleInputEmail2" placeholder="peak-picking, alignement...">
+        <div style="padding-top:5px;" class="form-group">
+            <input type="text" name="tags" class="form-control" id="select-tags" placeholder="peak-picking,alignment">
         </div>
         <button type="submit" class="btn btn-default">Filter</button>
     </form>
-    <p class="help-block">You can search for scripts using <em>tags</em></p>
+    <p class="help-block">You can search for scripts using <em>tags</em> separated by a simple <code>,</code></p>
 
     <div class="row" style="padding: 20px 0 50px 0">
 
         <ul class="list-group">
 
-            {% for script in scripts %}
+            {% for script in scripts.items %}
                 <li class="list-group-item">
                     <span class="badge">{{ script.up_votes }}</span>
                     <h5>
                         <a href="{{ url_for('user.profile', username=script.user.username)}}">{{ script.user.username }}</a>
                         /
                         <a href="{{ url_for('scripts.info', script_id=script.id) }}">{{ script.title }} </a>
-                        <small><label class="label label-success">{{ script.creation_date | time_since }}</label></small><br/>
+                        <small><label class="label label-success">{{ script.creation_date | time_since }}</label></small>
+                        {% for tag in  script.script_tags %}
+                            <label class="label label-default"> {{ tag.name }}</label>
+                        {% endfor %}
+                        <br/>
                         <small><strong>{{ script.programming_language }}</strong>, <strong>{{ script.software.name }}</strong></small><br/><br/>
                         <small>{{ script.description }}</small>
                     </h5>
@@ -56,6 +64,7 @@
                 <div class="well well-lg"><p class="text-center"><strong>No scripts found</strong></p></div>
             {% endfor %}
         </ul>
+        {{ render_pagination(scripts, url_for('scripts.index')) }}
 
     </div>
     <hr/>
@@ -68,13 +77,24 @@
     {{ super() }}
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js"></script>
+    <script src="{{url_for('static', filename='js/selectize.js')}}"></script>
+
     <script>
         $(document).ready(function() {
         $('pre').each(function(i, block) {
             hljs.highlightBlock(block);
         });
         });
-        //hljs.initHighlightingOnLoad();
     </script>
 
+    <script>
+         $('#select-tags').selectize({delimiter: ',',
+            persist: false,
+            create: function(input) {
+                return {
+                    value: input,
+                    text: input
+                }
+            }});
+     </script>
 {% endblock %}

@@ -8,7 +8,7 @@ from flask.ext.login import current_user
 from wtforms import StringField, SelectField, TextAreaField
 from wtforms.validators import DataRequired, URL, Optional
 
-from metabomatch.scripts.models import Script
+from metabomatch.scripts.models import Script, ScriptTags
 from metabomatch.extensions import db
 from metabomatch.softwares.models import Software
 
@@ -22,6 +22,8 @@ class ScriptForm(Form):
     software = SelectField("software")
     title = StringField("title", validators=[DataRequired(message="title is required")])
     programming_language = SelectField("programming language", choices=[(p, p) for p in pg])
+    tags = StringField("tags", default="")
+
     github_gist_url = StringField('github gist url', validators=[Optional(), URL(message="Not a valid url")])
     dependancies = StringField("dependancies", default='NA')
     description = TextAreaField("description", default='NA')
@@ -39,6 +41,18 @@ class ScriptForm(Form):
             script.content = '\n' + requests.get(self.github_gist_url.data + '/raw').text
         else:
             script.content = '\n' + self.content.data
+
+        #tags
+        tags = self.tags.data.split(",")
+        l = []
+        for tag in tags:
+            t = db.session.query(ScriptTags).get(tag)
+            if t is None:
+                new_tag = ScriptTags(tag).save()
+                l.append(new_tag)
+            else:
+                l.append(t)
+        script.script_tags = l
 
         return script.save()
 

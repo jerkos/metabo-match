@@ -3,6 +3,33 @@ from datetime import datetime
 from metabomatch.extensions import db, cache, github
 
 
+script_tags_script_mapping = db.Table(
+    'script_tags_script_mapping',
+    db.Column('script.id',
+              db.Integer(),
+              db.ForeignKey('scripts.id'),
+              nullable=False),
+    db.Column('script_tag_name',
+              db.String(),
+              db.ForeignKey('script_tags.name'),
+              nullable=False)
+)
+
+
+class ScriptTags(db.Model):
+    __tablename__ = 'script_tags'
+
+    name = db.Column(db.String(200), primary_key=True)
+
+    def __init__(self, name):
+        self.name = name
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+        return self
+
+
 class Script(db.Model):
     """Script model"""
     __tablename__ = "scripts"
@@ -24,6 +51,8 @@ class Script(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     #defined in software as software
     software_id = db.Column(db.String(), db.ForeignKey("softwares.name"), nullable=False)
+
+    script_tags = db.relationship('ScriptTags', secondary=script_tags_script_mapping, backref='scripts', lazy='joined')
 
     def __init__(self, title, pg_language, dependancies):
         self.title = title
