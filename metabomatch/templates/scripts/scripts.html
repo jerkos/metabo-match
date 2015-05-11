@@ -1,7 +1,7 @@
 {% extends theme("layout.html") %}
 {% block css %}
     {{ super() }}
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/default.min.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/monokai.min.css">
     <style>
         .ace_scrollbar {
             display: none !important;
@@ -15,48 +15,43 @@
     <h3><i class="fa fa-code-fork text-muted"></i> # available scripts: {{ scripts | length }}</h3>
     <hr/>
 
+    <h4>Search</h4>
     <form class="form-inline">
         <div class="form-group">
-            <label for="exampleInputEmail2">Software</label>
-            <select type="email" class="form-control" id="exampleInputEmail2" placeholder="jane.doe@example.com">
+            <select class="form-control" id="exampleInputEmail2">
+                <option>---</option>
+                {% for s in softwares %}
+                    <option value="{{ s }}">{{ s }}</option>
+                {% endfor %}
             </select>
         </div>
         <div class="form-group">
-            <input type="text" class="form-control" id="exampleInputEmail2" placeholder="jane.doe@example.com">
+            <input type="text" class="form-control" id="exampleInputEmail2" placeholder="peak-picking, alignement...">
         </div>
         <button type="submit" class="btn btn-default">Filter</button>
     </form>
+    <p class="help-block">You can search for scripts using <em>tags</em></p>
 
     <div class="row" style="padding: 20px 0 50px 0">
 
         <ul class="list-group">
 
             {% for script in scripts %}
-        {#        | groupby('software.name') %}#}
-        {#        <ul style="list-style-type: circle">#}
-        {#            <li><h4><a href="{{ url_for('softwares.info', name=name) }}">{{ name }}</a>:</h4></li>#}
-        {#                    style="list-style-type: none">#}
-{#                {% for s in script %}#}
-                    <li class="list-group-item">
-{#                        style="padding-left: 20px">#}
-                        <span class="badge">{{ script.up_votes }}</span>
-                        <h5>
-                            <a href="{{ url_for('user.profile', username=script.user.username)}}">{{ script.user.username }}</a>
-                            /
-                            <a href="{{ url_for('scripts.info', script_id=script.id) }}">{{ script.title }} </a>
-{#                                <small>by <a href="{{ url_for('user.profile', username=s.user.username)}}">{{ s.user.username }}</a></small>#}
-                            <small><label class="label label-success">{{ script.creation_date | time_since }}</label></small><br/>
-                            <small><strong>{{ script.programming_language }}</strong>, <strong>{{ script.software.name }}</strong></small><br/><br/>
-                            <small>{{ script.description }}</small>
-                        </h5>
-{#                        <div id="script{{ script.id }}">{{ script.content }}</div>#}
+                <li class="list-group-item">
+                    <span class="badge">{{ script.up_votes }}</span>
+                    <h5>
+                        <a href="{{ url_for('user.profile', username=script.user.username)}}">{{ script.user.username }}</a>
+                        /
+                        <a href="{{ url_for('scripts.info', script_id=script.id) }}">{{ script.title }} </a>
+                        <small><label class="label label-success">{{ script.creation_date | time_since }}</label></small><br/>
+                        <small><strong>{{ script.programming_language }}</strong>, <strong>{{ script.software.name }}</strong></small><br/><br/>
+                        <small>{{ script.description }}</small>
+                    </h5>
 
-                        <pre class="{{ script.programming_language | lower }}">
-                                    {{ script.preview_content() | join('\n')}}
-                            </pre>
-                    </li>
-{#                {% endfor %}#}
-        {#        </ul>#}
+                    <pre class="{{ script.programming_language | lower }}">
+                                {{ script.preview_content() | join('\n')}}
+                    </pre>
+                </li>
             {% else %}
                 <div class="well well-lg"><p class="text-center"><strong>No scripts found</strong></p></div>
             {% endfor %}
@@ -71,22 +66,6 @@
 
 {% block javascript %}
     {{ super() }}
-{#    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.9/ace.js"></script>#}
-{#    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.9/mode-python.js"></script>#}
-{#    <script>#}
-{#        {% for script in scripts %}#}
-{#            var editor = ace.edit("editor");#}
-{#            editor.getSession().setUseWorker(true);#}
-{#            editor.resize();#}
-{#            editor.setTheme("ace/theme/monokai");#}
-{#            editor.getSession().setMode("ace/mode/python");#}
-{#            editor.setOptions({#}
-{##}
-{#                maxLines: 10#}
-{#            });#}
-{##}
-{#        {% endfor %}#}
-{#    </script>#}
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js"></script>
     <script>
