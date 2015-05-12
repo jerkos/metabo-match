@@ -19,7 +19,7 @@ SOFT_MAP = {'1': 'Signal Extraction',
             '3': 'Database Search',
             '4': 'Statistical Analysis'}
 
-SOFT_PAR_PAGE = 5
+SOFT_PAR_PAGE = 10
 
 @softwares.route('/')
 def index():
