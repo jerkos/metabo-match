@@ -2,6 +2,11 @@
     <label for="{{ field.id }}">{{ field.label.text }}</label>
 {% endmacro %}
 
+{%- macro field_label_fa(field, icon_class) -%}
+    <label class="col-sm-3 control-label" for="{{ field.id }}"><span class="{{ icon_class }}"></span> {{ field.label.text }}</label>
+{#    {{ field.label.text }}</label>#}
+{% endmacro %}
+
 
 {%- macro field_description(field) -%}
     {% if field.description %}
@@ -166,6 +171,37 @@
 {%- endmacro -%}
 
 
+{%- macro horizontal_field_fa(field, label_text='', label_class='', icon_class='') -%}
+<div class="form-group row {%- if field.errors %} has-error{%- endif %}">
+
+    {% if class %}
+        {{ field_label(class=class, icon_class=icon_class) }}
+    {% else %}
+        {{ field_label_fa(field, icon_class=icon_class) }}
+    {% endif %}
+    <div class="col-sm-9">
+
+    {%- if kwargs['required'] or field.flags.required -%}
+        {% if label_text %}
+            {{ field(class='form-control', placeholder=label_text, required="required", **kwargs) }}
+        {% else %}
+            {{ field(class='form-control', placeholder=field.label.text, required="required", **kwargs) }}
+        {% endif %}
+    {%- else -%}
+        {% if label_text %}
+            {{ field(class='form-control', placeholder=label_text, **kwargs) }}
+        {% else %}
+            {{ field(class='form-control', placeholder=field.label.text, **kwargs) }}
+        {% endif %}
+    {%- endif -%}
+
+    {{ field_description(field) }}
+    {{ field_errors(field) }}
+    </div>
+</div>
+{%- endmacro -%}
+
+
 {% macro topnav(endpoint, name, icon='', active=False) %}
 <li {% if endpoint == request.endpoint or active == True %}class="active"{% endif %}>
     <a href={{ url_for(endpoint) }}>
@@ -183,7 +219,7 @@
 
 
 {% macro render_pagination(page_obj, url) %}
-<ul class="pagination" style="margin: 0; float:right">
+<ul class="pagination">
     <li><span class="pages-label">Pages: </span></li>
     {%- for page in page_obj.iter_pages() %}
         {% if page %}

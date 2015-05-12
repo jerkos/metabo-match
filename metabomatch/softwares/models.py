@@ -228,7 +228,6 @@ class Software(db.Model):
             return 'NA'
         return sum([r.rate for r in self.ratings]) / float(len(self.ratings))
 
-
     @cache.memoize(timeout=24 * 3600)
     def get_publication_citation_nb(self):
         h = Entrez.elink(dbfrom="pubmed", db="pmc", LinkName="pubmed_pmc_refs", from_uid=self.get_publication_id())
@@ -266,7 +265,7 @@ class Software(db.Model):
         return year_activity, last_month_activity
 
 
-    @cache.memoize(timeout=86400)
+    @cache.memoize(timeout=24 * 3600)
     def get_nb_issues(self):
         """GET /repos/:owner/:repo/issues"""
         owner, repo = self.github_owner_repo()

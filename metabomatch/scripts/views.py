@@ -1,13 +1,10 @@
 """
 scripts views
 """
-from flask.ext.sqlalchemy import Pagination
 from sqlalchemy import desc, and_
-import requests
 from flask import Blueprint, request, abort, redirect, url_for
 
 from flask.ext.login import login_required
-from metabomatch.extensions import db
 
 from metabomatch.flaskbb.utils.helpers import render_template
 from metabomatch.scripts.models import Script, ScriptTags
@@ -17,33 +14,37 @@ from metabomatch.scripts.forms import ScriptForm
 
 scripts = Blueprint('scripts', __name__, template_folder="../templates")
 
+SCRIPTS_PER_PAGE = 5
+
 
 
 @scripts.route('/')
 @login_required
 def index():
-    #filtered_scripts = None
     page = request.args.get("page", 1, type=int)
     software, tags = request.args.get('software'), request.args.get('tags')
     softwares = [s.name for s in Software.query.distinct(Software.name)]
 
-    if software is not None and (tags is None or not tags):
+    not_tags = tags is None or not tags
+    tags = tags is not None and tags
+
+    if software is not None and not_tags:
         if software == '---':
-            print "all_scripts"
-            filtered_scripts = Script.query.order_by(desc(Script.creation_date)).paginate(page, 2, True)
+            filtered_scripts = Script.query.order_by(desc(Script.creation_date)).paginate(page, SCRIPTS_PER_PAGE, True)
         else:
-            filtered_scripts = Script.query.join(Software).filter(Software.name == software).paginate(page, 2, True)
-    elif software is None and (tags is not None and tags):
+            filtered_scripts = Script.query.join(Software).filter(Software.name == software)\
+                .paginate(page, SCRIPTS_PER_PAGE, True)
+    elif (software is None or software == '---') and tags:
         tags_list = tags.split(',')
-        filtered_scripts = Script.query.join(Script.script_tags).filter(ScriptTags.name.in_(tags_list)).paginate(page, 2, True)
-    elif software is not None and (tags is not None and tags):
+        filtered_scripts = Script.query.join(Script.script_tags).filter(ScriptTags.name.in_(tags_list))\
+            .paginate(page, SCRIPTS_PER_PAGE, True)
+    elif software is not None and tags:
         tags_list = tags.split(',')
         filtered_scripts = Script.query.join(Software).join(Script.script_tags)\
-                                                      .filter(and_(Software.name == software,
-                                                                   ScriptTags.name.in_(tags_list)))\
-                                                      .paginate(page, 2, True)
+                                                      .filter(and_(Software.name == software, ScriptTags.name.in_(tags_list)))\
+            .paginate(page, SCRIPTS_PER_PAGE, True)
     else:
-        filtered_scripts = Script.query.order_by(desc(Script.creation_date)).paginate(page, 2, True)
+        filtered_scripts = Script.query.order_by(desc(Script.creation_date)).paginate(page, SCRIPTS_PER_PAGE, True)
     return render_template('scripts/scripts.html',
                            scripts=filtered_scripts,
                            softwares=softwares)

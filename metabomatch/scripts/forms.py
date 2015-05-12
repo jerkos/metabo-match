@@ -25,12 +25,12 @@ class ScriptForm(Form):
     tags = StringField("tags", default="")
 
     github_gist_url = StringField('github gist url', validators=[Optional(), URL(message="Not a valid url")])
-    dependancies = StringField("dependancies", default='NA')
+    #dependancies = StringField("dependancies", default='NA')
     description = TextAreaField("description", default='NA')
     content = TextAreaField("content", validators=[Optional()])
 
     def save(self, software_name):
-        script = Script(self.title.data, self.programming_language.data, self.dependancies.data)
+        script = Script(self.title.data, self.programming_language.data)  # , self.dependancies.data)
         script.description = self.description.data
         script.user_id = current_user.id
         script.software_id = software_name

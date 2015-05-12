@@ -66,8 +66,11 @@
                             {{ topnav(endpoint='softwares.index' , name='Softwares', icon='fa fa-bar-chart') }}
                             {{ topnav(endpoint='scripts.index' , name='Scripts', icon='fa fa-file-text-o') }}
                             {{ topnav(endpoint='forum.index', name='Forum', icon='fa fa-comment', active=active_forum_nav) }}
-                            {{ topnav(endpoint='jobs.index', name='Jobs', icon='fa fa-rocket') }}
-                            {{ topnav(endpoint='home.index', name='Crowdsourcing') }}
+
+{#                            {{ topnav(endpoint='jobs.index', name='Jobs', icon='fa fa-rocket') }}#}
+                            <li><a><span class="fa fa-rocket"></span> Jobs<small><label class="label label-info">soon</label></small></a></li>
+                            <li><a>Crowdsourcing<small><label class="label label-info">soon</label></small></a></li>
+{#                            {{ topnav(endpoint='home.index', name='Crowdsourcing') }}#}
 {#                            {{ topnav(endpoint='forum.memberlist', name='Memberlist', icon='fa fa-user') }}#}
 {#                            {{ topnav(endpoint='forum.search', name='forumSearch', icon='fa fa-search') }}#}
 

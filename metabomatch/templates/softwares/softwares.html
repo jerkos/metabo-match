@@ -1,4 +1,5 @@
 {% extends theme("layout.html") %}
+{% from theme('macros.html') import render_pagination %}
 
 {% block keywords %}
     <meta name="keywords" content="omics services, metabolomics, softwares, LC-MS, workflow, peak-picking, alignment, identification, database search, statistical analysis">
@@ -57,13 +58,14 @@
                         <th>Programming Language</th>
                         <th>Institute</th>
                         <th>Tags</th>
+                        <th>Current Rate</th>
                         {% if current_user.is_authenticated() %}
                             <th></th>
                         {% endif %}
                     </tr>
                 </thead>
                 <tbody>
-                    {% for soft in softwares %}
+                    {% for soft in softwares.items %}
 
                         <tr>
                             <th><a href="{{ url_for('softwares.info', name=soft.name) }}">{{ soft.name }}</a>
@@ -89,14 +91,30 @@
                                 {% endif %}
 
                             </th>
+                            {% if current_user.is_authenticated() %}
+                                {% set rate = soft.compute_rate() %}
+                                {% if rate >=70 %}
+                                    <th class="text-center"><label class="label label-primary">{{ rate }}</label></th>
+                                {% elif  50 <= rate < 70  %}
+                                    <th class="text-center"><label class="label label-success">{{ rate }}</label></th>
+                                {% elif  30 <= rate < 50  %}
+                                    <th class="text-center"><label class="label label-warning">{{ rate }}</label></th>
+                                {% elif  rate < 30 %}
+                                    <th class="text-center"><label class="label label-danger">{{ rate }}</label></th>
+                                {% endif %}
+                            {% else %}
+                                <th><label class="label label-default">hidden</label></th>
+                            {% endif %}
                             {% if current_user.is_authenticated() and not soft.name in (current_user.softwares_used | map(attribute='name')) %}
-                                <th><a class="btn btn-default" href="{{ url_for('softwares.register_user', name=soft.name) }}">Do you use this software ?</a></th>
+                                <th><a class="btn btn-sm btn-default" href="{{ url_for('softwares.register_user', name=soft.name) }}">Using this software ?</a></th>
                             {% elif current_user.is_authenticated() and soft.name in (current_user.softwares_used | map(attribute='name')) %}
-                                <th><a class="btn btn-primary" href="/"><i class="fa fa-certificate"></i> software user !</a></th>
+                                <th><a class="btn btn-sm btn-primary" href="/"><i class="fa fa-certificate"></i> software user !</a></th>
                             {% endif %}
                         </tr>
                     {% endfor %}
                 </tbody>
             </table>
+
+            {{ render_pagination(softwares, url_for('softwares.index')) }}
     </div>
 {% endblock %}

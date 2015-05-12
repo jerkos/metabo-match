@@ -15,13 +15,22 @@
         .jumbotron {
             color: white;
             min-width: 100%;
+            min-height: 400px;
             background-color: #2196f3;
         }
         h3 {
             color: #1565c0;
         }
 
-        #software-access {
+{#        #software-access {#}
+{#            color:white;#}
+{#            border: 1px solid white;#}
+{#            border-radius: 10px;#}
+{#            padding: 10px 10px 10px 10px;#}
+{#            text-decoration: none;#}
+{#        }#}
+
+        .custom-button {
             color:white;
             border: 1px solid white;
             border-radius: 10px;
@@ -29,8 +38,23 @@
             text-decoration: none;
         }
 
+        .custom-button:hover {
+            text-decoration: none;
+            color:white;
+        }
+
         #footer {
             display: none;
+        }
+
+        #register-a{
+            color:white;
+            border-bottom: 2px solid #D26911;
+        }
+
+        #register-a:hover {
+            color:white;
+            text-decoration: none;
         }
     </style>
 {% endblock %}
@@ -39,45 +63,55 @@
 
     <div class="jumbotron">
         <div class="container text-center">
-{#            <h2 class="text-center text-muted">Just fit your needs</h2>#}
-
             <h2 class="text-center">Find the best metabolomic software for your need.</h2>
+            <a id="software-chooser" class="custom-button" href="/">Start <label class="label label-info">Soon</label></a><br/>
+            <small style="color:#ffffff; font-size: 0.7em;">(Need to have some statistics...)</small>
 
-            <p>All metabolomic are tested againsted several reference datasets. You can test providing your own.</p>
-            <a id="software-access" href="/forum">access to the forum</a>
+            <p class="text-center">Did not find the software you use ? Do not hesitate to <a id="register-a" href="/softwares/register">register</a> it.</p>
+
+            <p >Discuss about <em>softwares algorithms, problems, features</em> in our forums.</p>
+            <a id="software-access" class="custom-button" href="/forum">access to the forum</a>
         </div>
     </div>
 
-    <div class="container" style="padding: 50px 20% 0 20%">
-        <div class="row">
-            <h3 class="text-center">Motivation</h3>
-            <p class="text-justify text-left lead">More and more softwares are released everyday to tackle biological data processing
-                (<em>Big Data problem</em>). Especially metabolomics data coming from mass spectrometry. Machines are
+    <div class="container" style="padding: 0px 20% 0px 20%">
+        <div class="row text-left">
+            <h3 class="text-info">Many softwares...</h3>
+            <p class="text-justify text-left">More and more softwares are released everyday to tackle biological data processing
+                (<em>Big Data problem</em>). Especially <strong>metabolomics data</strong> coming from mass spectrometry. Machines are
                 constantly evolving and community adapt their workflow to get more insight in their biological problem.
             </p>
+
+        </div>
+
+        <div class="row text-left" style="padding: 30px 0 30px 0">
+            <h3 class="text-info">Which one may fit best your needs in terms of quality and performance ?</h3>
             <p class="text-justify text-left">
                 Many softwares have common functionalities, they can do it well or not, they can do it fast or not. We aim
                 to guide researchers, clinicians to find the best tool to fit their needs quickly with confidence. We tried
                 to class softwares in different part of the cassical metabolomics analysis pipeline and attribute mark based
                 on rigourous criteria so that user can very quickly identify the best tools established by the community.
             </p>
+        </div>
 
-            <p> On this website, you will be able to:
-                <ul>
-                    <li><strong>find metabolomics softwares</strong> for each step of the standard metabolomics pipeline analysis.</li>
-                    <li>get some informations on it</li>
-                    <li>find the <strong>best softwares for your needs</strong> thanks to our <strong>notation system</strong> based on the community feedback.</li>
-                    <li>be aware of the feedback on each tool of the community</li>
-                    <li><strong>Share</strong> your favorites scripts</li>
-                    <li>Discuss about softwares algorithm, installtion problem... Why not new idea and <strong>crowdsourcing</strong> ?</li>
-                </ul>
-            </p>
+        <div class="row text-left">
+                <h3 class="text-info">Helping you in that task !</h3>
+                <p> On this website, you will be able to:
+                    <ul>
+                        <li><strong>find <em>free</em> metabolomics softwares</strong> for each step of the standard metabolomics pipeline analysis.</li>
+                        <li>get some informations on it</li>
+                        <li>find the <strong>best softwares for your needs</strong> thanks to our <strong>notation system</strong> based on the community feedback.</li>
+                        <li>be aware of the feedback on each tool of the community</li>
+                        <li><strong>Share</strong> your favorites scripts</li>
+                        <li>Discuss about softwares algorithm, installtion problem... Why not new idea and <strong>crowdsourcing</strong> ?</li>
+                    </ul>
+                </p>
 
         </div>
 
         <hr/>
 
-        <div class="row">
+        <div class="row" style="padding-top: 20px">
             <div class="col-md-4 text-center">
                 <i class="fa fa-thumbs-o-up fa-5x"></i>
 
@@ -112,69 +146,13 @@
             </div>
 
         </div>
-        <p class="lead">And much more...</p>
 
         <hr/>
         <p class="text-muted"><strong>Copyright Marc Dubois 2015. All rights reserved.</strong></p>
 {#        <p>Release 0.1 <label class="label label-success">beta</label></p>#}
     </div>
 
-    </hr>
-{#    <div class=""#}
-
-
-{#    {% block scripts %}#}
-{##}
-{#        <script src="{{ url_for('static', filename='js/particles.min.js') }}"></script>#}
-{#        <script>#}
-{#            particlesJS('particles-js', {#}
-{#                particles: {#}
-{#                    color: '#000',#}
-{#                    shape: 'circle', // "circle", "edge" or "triangle"#}
-{#                    opacity: 1,#}
-{#                    size: 4,#}
-{#                    size_random: true,#}
-{#                    nb: 150,#}
-{#                    line_linked: {#}
-{#                        enable_auto: true,#}
-{#                        distance: 100,#}
-{#                        color: '#000',#}
-{#                        opacity: 1,#}
-{#                        width: 1,#}
-{#                        condensed_mode: {#}
-{#                            enable: false,#}
-{#                            rotateX: 600,#}
-{#                            rotateY: 600#}
-{#                        }#}
-{#                    },#}
-{#                    anim: {#}
-{#                        enable: true,#}
-{#                        speed: 1#}
-{#                    }#}
-{#                },#}
-{#                interactivity: {#}
-{#                    enable: false,#}
-{#                    mouse: {#}
-{#                        distance: 250#}
-{#                    },#}
-{#                    detect_on: 'canvas', // "canvas" or "window"#}
-{#                    mode: 'grab',#}
-{#                    line_linked: {#}
-{#                        opacity: .5#}
-{#                    },#}
-{#                    events: {#}
-{#                        onclick: {#}
-{#                            enable: true,#}
-{#                            mode: 'push', // "push" or "remove" (particles)#}
-{#                            nb: 4#}
-{#                        }#}
-{#                    }#}
-{#                },#}
-{#                /* Retina Display Support */#}
-{#                retina_detect: true#}
-{#            });#}
-{#        </script>#}
-{#    {% endblock %}#}
+    <hr/>
 
 {% endblock %}
 

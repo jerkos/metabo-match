@@ -151,9 +151,12 @@ def create_test_data():
     #performance sentences
     sentences = [Sentence('is fast', 'PERFORMANCE'),
                  Sentence('has good results', 'PERFORMANCE'),
+                 Sentence('provide innovative features or algorihtms', 'PERFORMANCE'),
                  #UI
-                 Sentence('as intuitive user interface', 'UI'),
                  Sentence('is portable', 'UI'),
+                 Sentence('has an intuitive user interface', 'UI'),
+                 Sentence('is easy for non-coding users', 'UI'),
+                 Sentence('provide nice graphics', 'UI'),
                  #SUPPORT
                  Sentence('provide a clear documentation', 'SUPPORT'),
                  Sentence('has good support', 'SUPPORT'),

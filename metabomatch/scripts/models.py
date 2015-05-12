@@ -39,7 +39,7 @@ class Script(db.Model):
     creation_date = db.Column(db.DateTime, default=datetime.utcnow())
 
     programming_language = db.Column(db.String(200))
-    dependancies = db.Column(db.String(200))
+    #dependancies = db.Column(db.String(200))
     description = db.Column(db.Text())
 
     github_gist_url = db.Column(db.Text())
@@ -54,10 +54,10 @@ class Script(db.Model):
 
     script_tags = db.relationship('ScriptTags', secondary=script_tags_script_mapping, backref='scripts', lazy='joined')
 
-    def __init__(self, title, pg_language, dependancies):
+    def __init__(self, title, pg_language):  # , dependancies):
         self.title = title
         self.programming_language = pg_language
-        self.dependancies = dependancies
+        #self.dependancies = dependancies
 
     def __repr__(self):
         return "<{} {}>".format(self.__class__.__name__, self.name)

@@ -1,5 +1,7 @@
 {% extends theme("layout.html") %}
 {% from theme("macros.html") import horizontal_field %}
+{% from theme("macros.html") import horizontal_field_fa %}
+
 {% from theme("macros.html") import field_label %}
 {% from theme("macros.html") import render_boolean_field %}
 
@@ -17,13 +19,15 @@
 
  <form class="form-horizontal" role="form" method="POST">
 
-     <h2>Register software</h2>
+     <h3>Register software</h3>
 
-     <h3>Basic</h3>
-     <hr>
+     <h4>Basic</h4>
+     <hr/>
         {{ form.hidden_tag() }}
-        {{ horizontal_field(form.name) }}
-        {{ horizontal_field(form.pg_language) }}
+        {{ horizontal_field(form.name, icon_class='fa fa-laptop fa-2x') }}
+        {{ horizontal_field(form.organization, icon_class='fa fa-briefcase fa-2x') }}
+        {{ horizontal_field(form.pg_language, icon_class='fa fa-terminal fa-2x') }}
+        {{ horizontal_field(form.github_url, label_text='github repository url', icon_class='fa fa-github fa-2x') }}
 
 {#         <div class="form-group">#}
 {#            <label class="col-md-3 control-label">rating</label>#}
@@ -33,7 +37,8 @@
 {#         </div>#}
 
          <div class="form-group">
-             <div class="col-md-9 col-md-offset-3">
+             <label class="col-md-3 control-label"><span class="fa fa-tags fa-2x"></span> </label>
+             <div class="col-md-9">
                  <select id="select-tags"  name="selected_tags" multiple placeholder="Select tags...">
                     <option value="Signal Extraction">Signal Extraction</option>
                     <option value="LC-Alignment">LC-Alignment</option>
@@ -43,8 +48,8 @@
              </div>
          </div>
 
-     <h3>Version</h3>
-     <hr>
+     <h4>Version</h4>
+     <hr/>
         <div class="form-group">
             <div class="col-md-9 col-md-offset-3">
                 {{ render_boolean_field(form.is_maintained) }}
@@ -52,10 +57,9 @@
         </div>
         {{ horizontal_field(form.current_version) }}
 
-     <h3>Publications</h3>
-     <hr>
+     <h4>Publications</h4>
+     <hr/>
         {{ horizontal_field(form.publication_link) }}
-{#        {{ horizontal_field(form.publication_id) }}#}
         {{ horizontal_field(form.download_link) }}
 
 

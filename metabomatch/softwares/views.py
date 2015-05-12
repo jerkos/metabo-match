@@ -5,36 +5,38 @@ Software views
 
 from flask import Blueprint, request, redirect, url_for, session, flash, abort
 
-from flask.ext.login import login_required, current_user, current_app
+from flask.ext.login import login_required, current_user
 
-
-from metabomatch.extensions import db
 from metabomatch.flaskbb.utils.helpers import render_template
 from metabomatch.softwares.models import Software, Tag, Comment, Rating
 from metabomatch.softwares.forms import SoftwareForm
+from sqlalchemy import desc
 
 softwares = Blueprint("softwares", __name__, template_folder="../../templates")
 
-soft_map = {'1': 'Signal Extraction',
+SOFT_MAP = {'1': 'Signal Extraction',
             '2': 'LC Alignment',
             '3': 'Database Search',
             '4': 'Statistical Analysis'}
+
+SOFT_PAR_PAGE = 5
 
 @softwares.route('/')
 def index():
     """
     dealing with args
     """
-    if request.args:
-        if request.args.get('category') is not None:
-            keyword = soft_map[request.args['category']]
-            softs = db.session.query(Software).join(Software.tags).filter(Tag.tag == keyword)
-        elif request.args.get('text') is not None:
-            text = request.args['text']
-            softs = Software.query.filter(Software.name.ilike('%' + text + '%'))
+    page = request.args.get("page", 1, type=int)
+    if request.args.get('category') is not None:
+        keyword = SOFT_MAP[request.args['category']]
+        softs = Software.query.join(Software.tags).filter(Tag.tag == keyword).paginate(page, SOFT_PAR_PAGE, True)
+    elif request.args.get('text') is not None:
+        text = request.args['text']
+        softs = Software.query.filter(Software.name.ilike('%' + text + '%')).paginate(page, SOFT_PAR_PAGE, True)
     else:
-        softs = Software.query.all()
-        softs.sort(key=lambda _: -len(_.tags))
+        softs = Software.query.order_by(desc(Software.insertion_date)).paginate(page, SOFT_PAR_PAGE, True)
+        # --- i used to sort by tags number
+        # softs.sort(key=lambda _: -len(_.tags))
 
     return render_template('softwares/softwares.html', softwares=softs)
 
