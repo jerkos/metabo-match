@@ -19,7 +19,7 @@
             background-color: #2196f3;
         }
         h3 {
-            color: #1565c0;
+            color: #2196f3; /*#1565c0;*/
         }
 
 {#        #software-access {#}
@@ -56,6 +56,10 @@
             color:white;
             text-decoration: none;
         }
+
+        p {
+            text-indent: 20px;
+        }
     </style>
 {% endblock %}
 {% block content %}
@@ -78,8 +82,8 @@
         <div class="row text-left">
             <h3 class="text-info">Many softwares...</h3>
             <p class="text-justify text-left">More and more softwares are released everyday to tackle biological data processing
-                (<em>Big Data problem</em>). Especially <strong>metabolomics data</strong> coming from mass spectrometry. Machines are
-                constantly evolving and community adapt their workflow to get more insight in their biological problem.
+                (<em>Big Data problem</em>). Especially <strong>metabolomics data</strong> coming from <em>mass spectrometry</em>. Machines are
+                constantly evolving and community adapt their workflow to get more insight in the biological problem they study.
             </p>
 
         </div>
@@ -87,10 +91,11 @@
         <div class="row text-left" style="padding: 30px 0 30px 0">
             <h3 class="text-info">Which one may fit best your needs in terms of quality and performance ?</h3>
             <p class="text-justify text-left">
-                Many softwares have common functionalities, they can do it well or not, they can do it fast or not. We aim
-                to guide researchers, clinicians to find the best tool to fit their needs quickly with confidence. We tried
-                to class softwares in different part of the cassical metabolomics analysis pipeline and attribute mark based
-                on rigourous criteria so that user can very quickly identify the best tools established by the community.
+                <em>Many softwares have common functionalities, they can do it well or not, they can do it fast or not.
+                </em> We aim to guide <strong>bioinformaticians, researchers, clinicians to find the best tool</strong>
+                to fit their needs quickly with confidence. We tried to class softwares in different part of the cassical
+                metabolomics analysis pipeline and attribute mark based on rigourous criteria so that user can identify
+                the best tools established by the community.
             </p>
         </div>
 
@@ -117,9 +122,8 @@
 
                 <h3>Find the right tool for your needs</h3>
 
-                <p class="text-left"><b>metabomatch</b> organize `match` between different tools. Submit your dataset,
-                    select tools you want to compare and check the result.</p>
-{#                <p class="text-left label label-danger">Available soon</p>#}
+                <p class="text-left"><b>metabomatch</b> evaluate each tools thanks to community feedback, guide you to pick-up the best for your needs. Register your <em>own software</em>,
+                    and compare it to others.</p>
                 <p class="text-left"><a href="{{ url_for('softwares.index') }}" class="btn btn-info">View details &raquo;</a></p>
             </div>
 
@@ -148,11 +152,31 @@
         </div>
 
         <hr/>
-        <p class="text-muted"><strong>Copyright Marc Dubois 2015. All rights reserved.</strong></p>
+
+        <div class="row">
+            <h3 class="text-info">Contact</h3>
+            <p>For any questions do not hesitate to send an email to <a href="mailto:contact@metabomatch.com">contact@metabomatch.com</a></p>
+        </div>
+
+        <hr/>
+
+        <div class="row">
+            <h4>Tools used to build this website</h4>
+            <ul>
+                <li><a href="http://flaskbb.org/">flaskbb</a> for managing user registration and forums</li>
+                <li><a href="https://www.heroku.com/">Heroku</a> making application deployment easy</li>
+                <li><a href="http://getbootstrap.com/">bootstrap</a> for front end design</li>
+            </ul>
+        </div>
+
+
+        <hr/>
+
+        <p class="text-muted"><strong>Copyright Marc Dubois 2015. All rights reserved.</strong>
+            <small>Some icons from: <a href="http://www.visualpharm.com">http://www.visualpharm.com</a></small></p>
 {#        <p>Release 0.1 <label class="label label-success">beta</label></p>#}
     </div>
 
-    <hr/>
 
 {% endblock %}
 
