@@ -38,9 +38,9 @@ class ScriptForm(Form):
 
         if self.github_gist_url.data:
             script.github_gist_url = self.github_gist_url.data
-            script.content = '\n' + requests.get(self.github_gist_url.data + '/raw').text
+            script.content = requests.get(self.github_gist_url.data + '/raw').text
         else:
-            script.content = '\n' + self.content.data
+            script.content = self.content.data
 
         #tags
         tags = self.tags.data.split(",")

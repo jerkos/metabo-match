@@ -1,0 +1,52 @@
+{% extends theme("layout.html") %}
+{% from theme("macros.html") import horizontal_field %}
+{% from theme("macros.html") import field_label %}
+{% from theme("macros.html") import render_select_field %}
+{% from theme("macros.html") import field_description %}
+{% from theme("macros.html") import field_errors %}
+
+{% block css %}
+    {{ super() }}
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/monokai.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/selectize.bootstrap3.css') }}">
+{% endblock %}
+
+
+{% block content %}
+
+    <h3>Register Script</h3>
+
+    <form id="register-script-form" class="form-horizontal" role="form" method="POST">
+        {{ horizontal_field(form.company) }}
+        {{ horizontal_field(form.company_url) }}
+
+        {{ horizontal_field(form.name) }}
+
+        <div class="form-group row">
+            <label class="control-label col-md-3">Content</label>
+
+            <div class="col-md-9">
+                <div id="editor">
+                    {{ field_description(form.content) }}
+                    {{ field_errors(form.content) }}
+                </div>
+            </div>
+
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-offset-3 col-sm-9">
+                <a id="submit" type="submit" class="btn btn-success">Register</a>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="control-label col-md-3">tags</label>
+            <div class="col-md-9">
+                <input id="select-tags" type="text" name="tags">
+            </div>
+        </div>
+
+        {{ horizontal_field(form.contact_email) }}
+    </form>
+{% endblock %}
