@@ -16,15 +16,15 @@ class SoftwareForm(Form):
     """
     Software form
     """
-    name = StringField("name", validators=[DataRequired(message="You must provide a software name")])
+    name = StringField("name*", validators=[DataRequired(message="You must provide a software name")])
     organization = StringField("organization")
     pg_language = StringField("programming language")
     #rating = IntegerField("overall rating")
 
     github_url = StringField('github_url', validators=[Optional(), URL(message="Not a valid url")])
 
-    is_maintained = BooleanField("is maintained ?")
-    current_version = StringField("current version")
+    is_maintained = BooleanField("is maintained ?", validators=[Optional()])
+    current_version = StringField("current version", validators=[Optional()])
 
     publication_link = StringField("publication link", validators=[Optional(), URL(message="Not a valid url")])
     omictools_id = StringField("omictools id")

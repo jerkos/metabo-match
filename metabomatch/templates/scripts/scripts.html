@@ -37,7 +37,7 @@
 
             {% for script in scripts.items %}
                 <li class="list-group-item">
-                    <span class="badge">{{ script.up_votes }}</span>
+                    <span class="badge fa fa-thumbs-o-up"> {{ script.up_votes }}</span>
                     <h5>
                         <a href="{{ url_for('user.profile', username=script.user.username)}}">{{ script.user.username }}</a>
                         /

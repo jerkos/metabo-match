@@ -36,14 +36,12 @@ manager.add_command("shell", Shell(make_context=make_shell_context))
 @manager.command
 def initdb():
     """Creates the database."""
-
     db.create_all()
 
 
 @manager.command
 def dropdb():
     """Deletes the database"""
-
     db.drop_all()
 
 
@@ -53,7 +51,6 @@ def createall(dropdb=False, createdb=False):
     If you do not want to drop or create the db add
     '-c' (to not create the db) and '-d' (to not drop the db)
     """
-
     if not dropdb:
         flask_app.logger.info("Dropping database...")
         db.drop_all()
@@ -70,8 +67,6 @@ def createall(dropdb=False, createdb=False):
 @manager.option('-p', '--password', dest='password')
 @manager.option('-e', '--email', dest='email')
 def create_admin(username=None, password=None, email=None):
-    """Creates the admin user"""
-
     if not (username and password and email):
         username = prompt("Username")
         email = prompt("A valid email address")
@@ -85,7 +80,6 @@ def create_admin(username=None, password=None, email=None):
 @manager.option('-e', '--email', dest='email')
 def initflaskbb(username=None, password=None, email=None):
     """Initializes FlaskBB with all necessary data"""
-
     flask_app.logger.info("Creating default data...")
     try:
         create_default_groups()

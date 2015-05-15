@@ -22,7 +22,8 @@
 {% block content %}
     <p  class="help-block"><strong>Help ?</strong><br/>Posting a job here may help you to find the best candidate in metabolomics bioinformatics !</p>
 
-    <h3 style="padding-bottom: 50px;"><span class="fa fa-briefcase text-muted"></span> Find the job of your dream in <em>metabolomics</em> area <small class="text-muted">or post a new <a href="{{ url_for('jobs.register') }}">job offer</a></small></h3>
+    <h3><span class="fa fa-briefcase text-muted"></span> Find the job of your dream in <em>metabolomics</em> area <small class="text-muted">or post a new <a href="{{ url_for('jobs.register') }}">job offer</a></small></h3>
+    <hr/>
 
     {% if jobs.total %}
         <table class="table table-condensed">
@@ -66,7 +67,18 @@
                             </th>
 
                             <th>
-                                <small><label class="label label-primary">{{ job.apply_date_limit | time_left_to }}</label></small>
+                                {% set time_left = job.apply_date_limit | time_left_to %}
+                                <small>
+                                    {% if "months" in time_left or "month" in time_left %}
+                                        <label class="label label-success">
+                                    {% elif "week" in time_left or "weeks" in time_left %}
+                                        <label class="label label-warning">
+                                    {% elif "day" in time_left or "days" in time_left %}
+                                        <label class="label label-danger">
+                                    {% endif %}
+                                        {{ time_left }}
+                                    </label>
+                                </small>
                             </th>
                             <th>
                                 <span class="badge">{{ job.nb_viewed }}</span>

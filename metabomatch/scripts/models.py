@@ -43,7 +43,7 @@ class Script(db.Model):
     description = db.Column(db.Text())
 
     github_gist_url = db.Column(db.Text())
-    content = db.Column(db.Text())
+    content = db.Column(db.Text(), nullable=False)
 
     up_votes = db.Column(db.Integer())
 

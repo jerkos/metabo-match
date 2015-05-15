@@ -16,19 +16,14 @@
             color: white;
             min-width: 100%;
             min-height: 300px;
-            background-color: #2196f3;
+            background: -webkit-linear-gradient(#1565c0, #2196f3);
+              background: -o-linear-gradient(#1565c0, #2196f3);
+              background: -moz-linear-gradient(#1565c0, #2196f3);
+              background: linear-gradient(#1565c0, #2196f3);
         }
         h3 {
             color: #2196f3; /*#1565c0;*/
         }
-
-{#        #software-access {#}
-{#            color:white;#}
-{#            border: 1px solid white;#}
-{#            border-radius: 10px;#}
-{#            padding: 10px 10px 10px 10px;#}
-{#            text-decoration: none;#}
-{#        }#}
 
         .custom-button {
             color:white;
@@ -47,14 +42,14 @@
             display: none;
         }
 
-        #register-a{
-            color:white;
-            border-bottom: 2px solid #D26911;
+        .blank-link{
+            color:#0d47a1;
+{#            border-bottom: 2px solid #D26911;#}
         }
 
-        #register-a:hover {
-            color:white;
-            text-decoration: none;
+        .blank-link:hover {
+            color: #0d47a1;
+{#            text-decoration: none;#}
         }
 
         p {
@@ -70,8 +65,8 @@
             <h1 style="font-family: Consolas">Metabomatch</h1>
             <h2 class="text-center">Find the <em>best metabolomic software</em> for your needs.</h2>
             <p><a id="software-chooser" class="custom-button" href="{{ url_for('softwares.index') }}">Start</a></p>
-            <p class="text-center" style="padding-top: 20px;">Did not find the software you use ? Do not hesitate to <a class="custom-button" href="{{ url_for('softwares.register') }}">register</a> it.</p>
-            <p style="padding-top: 5px;">Discuss about <em>softwares algorithms, problems, features</em> in our <a class="custom-button" href="/forum">forums</a>.</p>
+            <p class="text-center" style="padding-top: 20px;">Did not find the software you use ? Do not hesitate to <a class="blank-link" href="{{ url_for('softwares.register') }}">register</a> it.</p>
+            <p style="padding-top: 5px;">Discuss about <em>softwares algorithms, problems, features</em> in our <a class="blank-link" href="/forum">forums</a>.</p>
         </div>
     </div>
 

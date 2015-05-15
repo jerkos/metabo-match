@@ -86,6 +86,7 @@
     </tbody>
 </table>
 
+<p class="help-block">The following informations are visible by all users.</p>
 <h3>Softwares you are using to drive your metabolomic analyses</h3>
 <hr/>
 
@@ -94,27 +95,35 @@
         <li class="list-group-item">{{ software.name }}............................<a href="{{ url_for('softwares.remove_user', name=software.name) }}"><i class="fa fa-trash-o"></i>Remove</a></li>
     {% else %}
         <p>You do not have prefered softwares.</p>
-        <p class="alert-info">You can choose your favorites softwares on the softwares page.</p>
+        <p class="alert-info">You can choose your favorites softwares on the <a href="{{ url_for('softwares.index') }}">software page</a>.</p>
     {% endfor %}
 </ul>
 
 
 <h3>Proposed scripts</h3>
-<hr>
-    {% for name, script in user.scripts|groupby('software.name') %}
-        <ul style="list-style-type: circle">
-            <li><h3><a href="{{ url_for('softwares.info', name=name) }}">{{ name }}</a>:</h3></li>
-                        <ul class="list-group">
-
-        {% for s in script %}
-            <li class="list-group-item"><a href="{{ url_for('scripts.info', script_id=s.id) }}">{{ s.title }}</a></li>
-        {% endfor %}
-                                    </ul>
-
-        </ul>
+<hr/>
+    <ul class="list-group">
+    {%  for script in user.scripts %}
+        <li class="list-group-item"><a href="{{ url_for('scripts.info', script_id=script.id) }}"> {{ script.title }}, <strong>{{ script.software.name }}</strong></a><span class="pull-right badge">{{ script.up_votes }}</span></li>
     {% else %}
         <p>You did not proposed any scripts yet.</p>
-        <p class="alert-info">You can upload a script from the register script page.</p>
+        <p class="alert-info">You can upload a script from the register <a href="{{ url_for('scripts.index') }}">script page</a>.</p>
     {% endfor %}
+    </ul>
 </ul>
+
+<h3>Job offers</h3>
+<hr/>
+{% if user.jobs %}
+
+<ul class="list-group">
+    {% for job in user.jobs %}
+        <li><a href="{{ ulr_for('jobs.info', job_id=job.id) }}"> {{ job.name }}, {{ job.company }}</a></li>
+    {% endfor %}
+
+</ul>
+{% else %}
+    <p class="well text-center"><strong>No posted job</strong></p>
+    <p class="alert-info">Find best candidates posting your job offer on our <a href="{{ url_for('jobs.index') }}">job page</a></p>
+{% endif %}
 {% endblock %}
