@@ -23,7 +23,9 @@
         <link rel="shortcut icon" href="{{ url_for('static', filename='elephant.png') }}">
 
         {% block css %}
-            <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+{#            <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">#}
+            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+{#            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">#}
             <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" >
             <link rel="stylesheet" href="{{ url_for('static', filename='css/code.css') }}">
             <link rel="stylesheet" href="{{ url_for('static', filename='css/flaskbb.css') }}">
@@ -32,6 +34,7 @@
                     display: inline-block;
                     -webkit-transform: rotate(-15deg);
                     transform: rotate(-15deg);
+                     padding: -10px 0 0 25px;
                  }
             </style>
         {% endblock %}
@@ -66,11 +69,10 @@
                         <a class="navbar-brand" href="/">
                             <img src="{{ url_for('static', filename='img/elephant.png') }}"/>
                             <small><label id="beta" class="label label-info">beta release</label></small>
-{#                            metabomatch <small><label class="label label-info">beta release</label></small>#}
                         </a>
                     </div>
                     <div class="collapse navbar-collapse navbar-ex1-collapse">
-                        <ul class="nav navbar-nav">
+                        <ul style="padding-top: 20px" class="nav navbar-nav">
                             {{ emit_event("before-first-navigation-element") }}
 
                             {# active_forum_nav is set in {forum, category, topic}.html and new_{topic, post}.html #}
@@ -79,8 +81,7 @@
                             {{ topnav(endpoint='scripts.index' , name='Scripts', icon='fa fa-file-text-o') }}
                             {{ topnav(endpoint='forum.index', name='Forum', icon='fa fa-comment', active=active_forum_nav) }}
 
-{#                            {{ topnav(endpoint='jobs.index', name='Jobs', icon='fa fa-rocket') }}#}
-                            <li><a><span class="fa fa-rocket"></span> Jobs<small><label class="label label-info">soon</label></small></a></li>
+                            {{ topnav(endpoint='jobs.index', name='Jobs', icon='fa fa-rocket') }}
                             <li><a>Crowdsourcing<small><label class="label label-info">soon</label></small></a></li>
 {#                            {{ topnav(endpoint='home.index', name='Crowdsourcing') }}#}
 {#                            {{ topnav(endpoint='forum.memberlist', name='Memberlist', icon='fa fa-user') }}#}
@@ -90,7 +91,7 @@
                         </ul>
 
                     {% if current_user and current_user.is_authenticated() %}
-                        <div class="btn-group navbar-btn navbar-right" style="padding-left: 15px; margin-right: -10px">
+                        <div style="padding-top:20px" class="btn-group navbar-btn navbar-right" style="padding-left: 15px; margin-right: -10px">
                             <a class="btn btn-primary" href="{{ url_for('user.profile', username=current_user.username) }}">
                                 <span class="fa fa-user"></span> {{ current_user.username }}
                             </a>
@@ -111,7 +112,7 @@
                             </ul>
                         </div>
 
-                        <div class="btn-group navbar-btn navbar-right">
+                        <div style="padding-top:20px" class="btn-group navbar-btn navbar-right">
                             <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
                                 <span class="fa fa-envelope"></span> <span class="badge">{{ current_user.pm_unread }}</span>
                             </button>
@@ -121,7 +122,7 @@
                             </ul>
                         </div>
                     {% else %}
-                        <div class="btn-group navbar-btn navbar-right">
+                        <div style="padding-top:20px" class="btn-group navbar-btn navbar-right">
                             <a class="btn btn-primary" href="{{ url_for('auth.login') }}">
                                 <span class="fa fa-user"></span> Login
                             </a>

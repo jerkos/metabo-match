@@ -15,7 +15,7 @@
         .jumbotron {
             color: white;
             min-width: 100%;
-            min-height: 400px;
+            min-height: 300px;
             background-color: #2196f3;
         }
         h3 {
@@ -32,7 +32,7 @@
 
         .custom-button {
             color:white;
-            border: 1px solid white;
+            border: 2px solid white;
             border-radius: 10px;
             padding: 10px 10px 10px 10px;
             text-decoration: none;
@@ -67,14 +67,11 @@
 
     <div class="jumbotron">
         <div class="container text-center">
-            <h2 class="text-center">Find the best metabolomic software for your need.</h2>
-            <a id="software-chooser" class="custom-button" href="/">Start <label class="label label-info">Soon</label></a><br/>
-            <small style="color:#ffffff; font-size: 0.7em;">(Need to have some statistics...)</small>
-
-            <p class="text-center">Did not find the software you use ? Do not hesitate to <a id="register-a" href="/softwares/register">register</a> it.</p>
-
-            <p >Discuss about <em>softwares algorithms, problems, features</em> in our forums.</p>
-            <a id="software-access" class="custom-button" href="/forum">access to the forum</a>
+            <h1 style="font-family: Consolas">Metabomatch</h1>
+            <h2 class="text-center">Find the <em>best metabolomic software</em> for your needs.</h2>
+            <p><a id="software-chooser" class="custom-button" href="{{ url_for('softwares.index') }}">Start</a></p>
+            <p class="text-center" style="padding-top: 20px;">Did not find the software you use ? Do not hesitate to <a class="custom-button" href="{{ url_for('softwares.register') }}">register</a> it.</p>
+            <p style="padding-top: 5px;">Discuss about <em>softwares algorithms, problems, features</em> in our <a class="custom-button" href="/forum">forums</a>.</p>
         </div>
     </div>
 

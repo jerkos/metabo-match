@@ -102,6 +102,7 @@ class User(db.Model, UserMixin):
     comments = db.relationship("Comment", backref="user")
     ratings = db.relationship("Rating", backref="user")
     scripts = db.relationship("Script", backref="user")
+    posted_jobs = db.relationship("Job", backref="user")
 
     posts = db.relationship("Post", backref="user", lazy="dynamic")
     topics = db.relationship("Topic", backref="user", lazy="dynamic")

@@ -33,7 +33,6 @@
     <form id="update_content_form" method="post" action="{{ url_for('scripts.update_content', script_id=script.id) }}">
         <div class="row">
             <div id="editor">
-                {{ script.content }}
             </div>
         </div>
 
@@ -46,13 +45,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.9/ace.js"></script>
     <script>
         var editor = ace.edit("editor");
-        editor.getSession().setUseWorker(true);
+        editor.getSession().setUseWorker(false);
         editor.setTheme("ace/theme/monokai");
         editor.getSession().setMode("ace/mode/{{ script.programming_language | lower }}");
         editor.setOptions({
             maxLines: 100,
             minLines: 25
         });
+        editor.setValue("{{ (script.preview_content() | join('\\n')) | safe }}");
         editor.setReadOnly(true);
         $('#edition_mode').css('display', 'none');
 

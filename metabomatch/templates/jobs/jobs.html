@@ -1,0 +1,83 @@
+{% extends theme("layout.html") %}
+{% from theme('macros.html') import render_pagination %}
+
+{% block keywords %}
+    <meta name="keywords" content="metabolomics, softwares, LC-MS, workflow, peak-picking, alignment, identification, database search, statistical analysis">
+    <meta name="description" content="Shows all registered softwares on Metabomatch classified by LC-MS workflow categories">
+{% endblock %}
+
+{% block css %}
+    {{ super() }}
+    <style>
+        .tag {
+            color:white;
+        }
+        .tag:hover {
+            color:white;
+        }
+
+    </style>
+{% endblock %}
+
+{% block content %}
+    <p  class="help-block"><strong>Help ?</strong><br/>Posting a job here may help you to find the best candidate in metabolomics bioinformatics !</p>
+
+    <h3 style="padding-bottom: 50px;"><span class="fa fa-briefcase text-muted"></span> Find the job of your dream in <em>metabolomics</em> area <small class="text-muted">or post a new <a href="{{ url_for('jobs.register') }}">job offer</a></small></h3>
+
+    {% if jobs.total %}
+        <table class="table table-condensed">
+            <thead>
+                <tr>
+                    <th>Job name</th>
+                    <th>Company</th>
+                    <th><span class="fa fa-street-view"></span> Location</th>
+                    <th><span class="fa fa-tags"></span> Tags</th>
+                    <th>Time left</th>
+                    <th>#views</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for job in jobs.items %}
+                    {% if not job.is_closed %}
+                        <tr>
+                            <th>
+                                <p><strong><a href="{{ url_for('jobs.info', job_id=job.id) }}">{{ job.name }}</a></strong></p>
+                            </th>
+                            <th>
+                                <p>
+                                    {% if job.company_url %}
+                                        <a href="{{ job.company_url }}"><strong>{{ job.company }}</strong></a>
+                                    {% else %}
+                                        <strong>{{ job.company }}</strong>
+                                    {% endif %}
+                                </p>
+                            </th>
+                            <th>
+                                {{ job.workplace }}
+                            </th>
+                            <th>
+                                {% for tag in job.job_tags %}
+                                    {% if tag.name %}
+                                        <label class="label label-info"><a class="tag" href="{{ url_for('jobs.index') + '?tag=' + tag.name}}">{{ tag.name }}</a></label>
+                                    {% endif %}
+                                {% else %}
+                                    <p>No tags defined</p>
+                                {% endfor %}
+                            </th>
+
+                            <th>
+                                <small><label class="label label-primary">{{ job.apply_date_limit | time_left_to }}</label></small>
+                            </th>
+                            <th>
+                                <span class="badge">{{ job.nb_viewed }}</span>
+                            </th>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="well text-center"><strong><span class="fa fa-eye-slash fa-2x"></span><br/>No job offer for the moment</strong></p>
+    {% endif %}
+
+{% endblock %}

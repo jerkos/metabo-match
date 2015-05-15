@@ -74,4 +74,4 @@ class Script(db.Model):
         return self
 
     def preview_content(self):
-        return self.content.split('\n')[0:10]
+        return [x.rstrip() for x in self.content.split('\n')[0:10]]

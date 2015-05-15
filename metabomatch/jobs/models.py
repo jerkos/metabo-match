@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from metabomatch.extensions import db
 
@@ -36,15 +36,26 @@ class Job(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     creation_date = db.Column(db.DateTime, default=datetime.utcnow())
-    company = db.Column(db.String(200), nullable=False)
+    company = db.Column(db.String(200))
     company_url = db.Column(db.String(200))
 
-    name = db.Column(db.String(400), nullable=False)
-    description = db.Column(db.Text(), nullable=False)
+    workplace = db.Column(db.String(400))
 
-    contact_email = db.Column(db.String(200), nullable=False)
+    name = db.Column(db.String(400))
+    description = db.Column(db.Text())
+
+    motivation = db.Column(db.Text())
+
+    contact_email = db.Column(db.String(200))
+    apply_date_limit = db.Column(db.DateTime, default=datetime.utcnow() + timedelta(days=15))
+
+    nb_viewed = db.Column(db.Integer(), default=0)
+
+    is_closed = db.Column(db.Boolean, default=False)
 
     job_tags = db.relationship('JobTags', secondary=job_tags_job_mapping, backref='jobs', lazy='joined')
+
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
 
     def __init__(self, company, company_url):
         self.company = company

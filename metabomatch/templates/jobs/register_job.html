@@ -9,44 +9,165 @@
     {{ super() }}
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/monokai.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/selectize.bootstrap3.css') }}">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/css/datepicker.min.css" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/css/datepicker3.min.css" />
 {% endblock %}
 
 
 {% block content %}
 
-    <h3>Register Script</h3>
+    <h3 style="padding-bottom: 50px;">Post a new job <small class="text-muted">Fields marked with <code>*</code> are mandatory.</small></h3>
+{#    <p class="help-block">Fields marked with <code>*</code> are mandatory.</p>#}
+    <div class="row">
 
-    <form id="register-script-form" class="form-horizontal" role="form" method="POST">
-        {{ horizontal_field(form.company) }}
-        {{ horizontal_field(form.company_url) }}
+        <div class="col-md-8">
+            <form id="register-job-form" class="form-horizontal" role="form" method="POST" action="{{ url_for('jobs.register') }}">
+                {{ form.hidden_tag() }}
 
-        {{ horizontal_field(form.name) }}
+                {{ horizontal_field(form.company, label_text='company') }}
+                {{ horizontal_field(form.company_url) }}
 
-        <div class="form-group row">
-            <label class="control-label col-md-3">Content</label>
+                {{ horizontal_field(form.name, label_text='job name') }}
+                {{ horizontal_field(form.workplace, label_text='workplace') }}
 
-            <div class="col-md-9">
-                <div id="editor">
-                    {{ field_description(form.content) }}
-                    {{ field_errors(form.content) }}
+                <div class="form-group row">
+                    <label class="control-label col-md-3">description*</label>
+
+                    <div class="col-md-9">
+                        <div id="editor">
+
+                        </div>
+                        {{ field_description(form.description) }}
+                        {{ field_errors(form.description) }}
+                    </div>
+
+                </div>
+
+                <div class="form-group row">
+                    <label class="control-label col-md-3">motivation</label>
+
+                    <div class="col-md-9">
+                        <div id="editor2">
+
+                        </div>
+                        {{ field_description(form.motivation) }}
+                        {{ field_errors(form.motivation) }}
+                    </div>
+
+                </div>
+
+                <div class="form-group row">
+                    <label class="control-label col-md-3">apply limit</label>
+                    <div class="col-md-9 date">
+{#                        <input id="apply_date_limit" type="text" name="apply_date_limit">#}
+                        <div class="input-group input-append date" id="apply_date_limit">
+                            <input type="text" class="form-control" name="apply_date_limit" />
+                            <span class="input-group-addon add-on"><span class="glyphicon glyphicon-calendar"></span></span>
+                        </div>
+                        {{ field_description(form.apply_date_limit) }}
+                        {{ field_errors(form.apply_date_limit) }}
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="control-label col-md-3">tags</label>
+                    <div class="col-md-9">
+                        <input id="select-tags" type="text" name="job_tags">
+                        {{ field_description(form.job_tags) }}
+                        {{ field_errors(form.job_tags) }}
+                    </div>
+                </div>
+
+                {{ horizontal_field(form.contact_email, label_text='email') }}
+
+                <div class="form-group">
+                    <div class="col-sm-offset-3 col-sm-9">
+                        <a id="submit" type="submit" class="btn btn-success">Post</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-md-4">
+            <div class="container">
+                <div class="row">
+                    <h4>Total job offers: <span class="badge">{{ jobs_count }}</span></h4>
+                    <h4>Total job views: <span class="badge">{{ sum_views }}</span></h4>
+                </div>
+                <div class="row">
+                    <h4>Top 5 companies</h4>
+                        <ul>
+                            {% for nb, company in top_companies %}
+                                <li><a href="#">{{ company }}</a></li>
+                            {% endfor %}
+                        </ul>
                 </div>
             </div>
 
         </div>
 
-        <div class="form-group">
-            <div class="col-sm-offset-3 col-sm-9">
-                <a id="submit" type="submit" class="btn btn-success">Register</a>
-            </div>
-        </div>
 
-        <div class="form-group row">
-            <label class="control-label col-md-3">tags</label>
-            <div class="col-md-9">
-                <input id="select-tags" type="text" name="tags">
-            </div>
-        </div>
+    </div>
+{% endblock %}
 
-        {{ horizontal_field(form.contact_email) }}
-    </form>
+
+{% block javascript %}
+    {{ super() }}
+    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.9/ace.js"></script>
+    <script src="{{url_for('static', filename='js/selectize.js')}}"></script>
+
+    <script>
+        var editor = ace.edit("editor");
+        editor.getSession().setUseWorker(false);
+        editor.setTheme("ace/theme/xcode");
+        editor.setValue('');
+        editor.setOptions({maxLines: 50});
+        editor.getSession().setMode("ace/mode/markdown");
+
+        var editor2 = ace.edit("editor2");
+        editor2.getSession().setUseWorker(false);
+        editor2.setTheme("ace/theme/xcode");
+        editor2.setOptions({maxLines: 10});
+        editor2.setValue('');
+        editor2.getSession().setMode("ace/mode/markdown");
+
+
+        $('#submit').click(function(event){
+            event.preventDefault();
+            var code = editor.getSession().getValue();
+
+            var f = document.getElementById("register-job-form");
+            var job_description = document.createElement("textarea");
+            job_description.name = 'description';
+            job_description.value = code;
+            job_description.style.display = 'none';
+            f.appendChild(job_description);
+
+            var code2 = editor2.getSession().getValue();
+            var motivation = document.createElement("textarea");
+            motivation.name = 'motivation';
+            motivation.value = code2;
+            motivation.style.display = 'none';
+            f.appendChild(motivation);
+
+            f.submit();
+        });
+
+    </script>
+
+    <script>
+         $('#select-tags').selectize({delimiter: ',',
+            persist: false,
+            create: function(input) {
+                return {
+                    value: input,
+                    text: input
+                }
+            }});
+
+         $('#apply_date_limit').datepicker({
+				format: 'dd-mm-yyyy'
+			});
+     </script>
 {% endblock %}

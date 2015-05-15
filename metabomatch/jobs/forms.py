@@ -1,29 +1,49 @@
+from datetime import datetime
+
 from flask.ext.wtf import Form
 from flask.ext.login import current_user
 from metabomatch.extensions import db
 from metabomatch.jobs.models import Job, JobTags
 
-from wtforms import StringField, TextAreaField
-from wtforms.validators import DataRequired, URL, Optional
+from wtforms import StringField, TextAreaField, DateField
+from wtforms.validators import DataRequired, URL, Optional, Email
 
 
 class JobForm(Form):
-    company = StringField('company*', validators=[DataRequired(message='company name must be field')])
-    company_url = StringField('company link', validators=[Optional(), URL()])
+    company = StringField('company*', validators=[DataRequired(message='missing company name')])
+    company_url = StringField('company link', validators=[Optional(), URL(message='not a valid url')])
+    workplace = StringField('workplace*', validators=[DataRequired(message='workplace is missing')])
 
-    name = StringField('job name*', validators=[DataRequired()])
-    description = TextAreaField('description*', validators=[DataRequired()])
+    name = StringField('name*', validators=[DataRequired(message='missing job name')])
 
-    contact_email = StringField('contact_email*', validators=[DataRequired()])
+    description = TextAreaField('description*',
+                                validators=[DataRequired(message='missing job description')],
+                                description='Use markdown to write your job offer')
 
-    job_tags = StringField('tags', default='')
+    motivation = TextAreaField('motivation', validators=[Optional()],
+                               description='Describe in one sentence why programmers should join your company')
+
+    apply_date_limit = DateField('apply limit date', format='%d-%m-%Y', validators=[Optional()])
+    contact_email = StringField('contact_email*',
+                                validators=[DataRequired(message="missing contact email"),
+                                            Email(message="not a valid email")])
+
+    job_tags = StringField('tags', description='programming languages, expertise...', default='')
 
     def save(self):
+
         job = Job(self.company.data, self.company_url.data)
         job.name = self.name.data
+
+        job.workplace = self.workplace.data
+
         job.description = self.description.data
+        job.motivation = self.motivation.data
+        job.apply_date_limit = self.apply_date_limit.data
         job.contact_email = self.contact_email.data
 
+        job.user_id = current_user.id
+        job.is_closed = False
         #tags
         tags = self.job_tags.data.split(",")
         l = []

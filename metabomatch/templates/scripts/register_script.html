@@ -98,6 +98,7 @@
         editor.getSession().setUseWorker(false);
         editor.setTheme("ace/theme/monokai");
         editor.setOptions({maxLines: 100, minLines:20});
+        editor.setValue('');
 
         var selection = "";
         $( "#prog_lang option:selected" ).each(function() {

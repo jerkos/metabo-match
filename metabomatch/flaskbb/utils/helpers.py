@@ -367,6 +367,39 @@ def older_than_one_month(dt):
     return True
 
 
+def time_left_to(date, default_message=None):
+    """
+    :param date: dd-mm-yyyy
+    :return: string
+    """
+    now = datetime.utcnow()
+    diff = date - now
+
+    periods = (
+        (diff.days / 365, 'year', 'years'),
+        (diff.days / 30, 'month', 'months'),
+        (diff.days / 7, 'week', 'weeks'),
+        (diff.days, 'day', 'days'),
+        (diff.seconds / 3600, 'hour', 'hours'),
+        (diff.seconds / 60, 'minute', 'minutes'),
+        (diff.seconds, 'second', 'seconds'),
+    )
+
+    if default_message is None:
+        default_message = 'right now...'
+
+    for period, singular, plural in periods:
+        if period < 1:
+            continue
+
+        if 1 <= period < 2:
+            return u'%d %s left' % (period, singular)
+        else:
+            return u'%d %s left' % (period, plural)
+
+    return default_message
+
+
 def format_quote(post):
     """Returns a formatted quote depending on the markup language.
 

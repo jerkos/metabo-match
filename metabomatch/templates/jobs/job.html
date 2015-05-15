@@ -1,0 +1,31 @@
+{% extends theme("layout.html") %}
+{% from theme('macros.html') import render_pagination %}
+
+{% block keywords %}
+    <meta name="keywords" content="jobs, metabolomics, {{ job.company }}, {{ job.name }}, {{ job.job_tags | join(',') }}">
+    <meta name="description" content="Job offer posted by {{ job.company }}. Users can find some useful information here.">
+{% endblock %}
+
+{% block css %}
+    {{ super() }}
+{% endblock %}
+
+{% block content %}
+    <p><strong><span class="fa fa-briefcase"></span> Job name</strong>: {{ job.name }} <label class="label label-info">{{ job.apply_date_limit | time_left_to }}</label></p>
+    <p><strong><span class="fa fa-bank"></span> Company</strong>: {{ job.company }}</p>
+    <p><strong><span class="fa fa-street-view"></span> Location</strong>: {{ job.workplace }}</p>
+
+    <div class="well">
+        {{ html_description | safe }}
+        {{ html_motivation | safe }}
+    </div>
+    <p><strong><span class="fa fa-tags"></span> Tags</strong> {% for t in job.job_tags %}<label class="label label-success">{{ t.name }}</label>{% endfor %}</p>
+    <p><strong><span class="fa fa-info"></span> Contact mail</strong>: <a href="mailto:{{ job.contact_email }}">{{ job.contact_email }}</a></p>
+
+
+    {% if current_user.id == job.user_id and (not job.is_closed) %}
+{#        {% if not job.is_closed %}#}
+            <a href="{{ url_for('jobs.close', job_id=job.id) }}" class="btn btn-danger">Close job offer</a>
+{#            {% endif %}#}
+    {% endif %}
+{% endblock %}

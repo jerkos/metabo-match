@@ -6,11 +6,6 @@
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/monokai.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/selectize.bootstrap3.css') }}">
 
-    <style>
-        .ace_scrollbar {
-            display: none !important;
-        }
-    </style>
 {% endblock %}
 
 {% block content %}
@@ -57,19 +52,21 @@
                     </h5>
 
                     <pre class="{{ script.programming_language | lower }}">
-                                {{ script.preview_content() | join('\n')}}
+                        <code>{{ ('\n' + script.preview_content() | join('\n') + '\n') | safe }}</code>
                     </pre>
                 </li>
             {% else %}
-                <div class="well well-lg"><p class="text-center"><strong>No scripts found</strong></p></div>
+                <div class="well well-lg"><p class="text-center"><strong><span class="fa fa-code fa-2x"></span><br/>No scripts found</strong></p></div>
             {% endfor %}
         </ul>
-        {{ render_pagination(scripts, url_for('scripts.index')) }}
+        {% if scripts.total %}
+            {{ render_pagination(scripts, url_for('scripts.index')) }}
+        {% endif %}
 
     </div>
     <hr/>
     <h3>You want to submit a piece of code ? <a class="btn btn-default" href="{{ url_for('scripts.register') }}">Register new script</a></h3>
-
+    <p class="help-block">All users will be able to see your script: share something useful !</p>
 {% endblock %}
 
 
