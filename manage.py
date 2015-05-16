@@ -1,6 +1,7 @@
 import sys
 
 from flask import current_app
+from metabomatch.softwares.models import Software
 from sqlalchemy.exc import IntegrityError, OperationalError
 from flask.ext.script import (Manager, Shell, Server, prompt, prompt_pass,
                               prompt_bool)
@@ -116,6 +117,11 @@ def initflaskbb(username=None, password=None, email=None):
 
     flask_app.logger.info("Congratulations! FlaskBB has been successfully installed")
 
+@manager.command
+def update_softwares_rates():
+    softwares = Software.query.all()
+    for s in softwares:
+        s.populate()
 
 if __name__ == "__main__":
     manager.run()
