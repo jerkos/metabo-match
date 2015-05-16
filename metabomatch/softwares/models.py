@@ -307,14 +307,14 @@ def get_publication_citation_nb(publication_id):
 # GITHUB BACKEND
 def get_nb_maintainers(owner, repo):
     if owner is None:
-        return 'NA'
+        return 0
 
     rep = github.get("".join(['repos/', owner, '/', repo, '/contributors']))
     return len(rep)
 
 def get_nb_commits(owner, repo):
     if owner is None:
-        return 'NA', 'NA'
+        return 0, 0
     rep = github.get("".join(['repos/', owner, '/', repo, '/stats/commit_activity']))
 
     if not rep:
@@ -328,7 +328,7 @@ def get_nb_commits(owner, repo):
 def get_nb_issues(owner, repo):
     """GET /repos/:owner/:repo/issues"""
     if owner is None:
-        return 'NA', 'NA'
+        return 0, 0
     rep = github.get("".join(['repos/', owner, '/', repo, '/issues']))
     opened = 0
     for r in rep:
@@ -338,7 +338,7 @@ def get_nb_issues(owner, repo):
 
 def get_nb_downloads(owner, repo):
     if owner is None:
-        return 'NA'
+        return 0
     rep = github.get("".join(['repos/', owner, '/', repo, '/releases']))
 
     c = 0
