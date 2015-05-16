@@ -53,7 +53,7 @@
     <h3>
         <i class="fa fa-desktop text-muted"></i> Software informations
         {% if current_user.id == software.owner_id %}
-            <a href="/" class="btn btn-info">Edit</a>
+            <a href="{{ url_for('softwares.update', name=software.name) }}" class="btn btn-info">Edit</a>
         {% else %}
             <small>You can not edit this sheet</small>
         {% endif %}
@@ -113,33 +113,6 @@
 
     </div>
      <div class="row">
-{#        <ul class="list-group">#}
-{#            {% for s_mapping in software.sentences_mapping %}#}
-{#                <li class="list-group-item"> <strong>{{ s_mapping.sentence.sentence }}</strong>#}
-{#                    <span class="badge">{{ s_mapping.upvote }}</span>#}
-{#                    <a href="{{ url_for('softwares.upvote', name=software.name, mapping_id=s_mapping.id)}}">#}
-{#                        <i class="fa fa-chevron-circle-up"></i>#}
-{#                    </a>#}
-{#                </li>#}
-{#            {% endfor %}#}
-{#        </ul>#}
-
-
-{#        <ul class="nav nav-tabs>#}
-{#            {% for category, l in software.sentences_mapping|groupby('sentence.category') %}#}
-{#                <h5 class="text-left"><strong>{{ category }}</strong></h5>#}
-{#                <ul class="list-group">#}
-{#                    {% for sentence_mapping in l %}#}
-{#                        <li class="list-group-item"> <strong>{{ sentence_mapping.sentence.sentence }}</strong>#}
-{#                            <span class="badge">{{ sentence_mapping.upvote }}</span>#}
-{#                            <a href="{{ url_for('softwares.upvote', name=software.name, mapping_id=sentence_mapping.id)}}">#}
-{#                                <i class="fa fa-chevron-circle-up"></i>#}
-{#                            </a>#}
-{#                        </li>#}
-{#                    {% endfor %}#}
-{#                </ul>#}
-{#            {% endfor %}#}
-{#        </ul>#}
 
          <div role="tabpanel">
 
@@ -244,7 +217,7 @@
                         <tr>
                             <th style="border:none"><i class="fa fa-quote-left fa-2x"></i></th>
                             <th style="border:none">CITATIONS</th>
-                            <th style="border:none"><span class="badge big-font">{{ software.get_publication_citation_nb() }}</span></th>
+                            <th style="border:none"><span class="badge big-font">{{ software.nb_citations }}</span></th>
                             <th style="border:none"><em>(total citations referenced on Pubmed)</em></th>
                         </tr>
                         <tr>
@@ -256,8 +229,8 @@
                         <tr>
                             <th style="border:none"><i class="fa fa-download fa-2x"></i></th>
                             <th style="border:none">DOWNLOADS</th>
-                            <th style="border:none"><span class="badge big-font">{{ software.get_nb_downloads() }}</span></th>
-                            <th style="border:none"></th>
+                            <th style="border:none"><span class="badge big-font">{{ software.nb_downloads }}</span></th>
+                            <th style="border:none"><em>(total # downloads of releases on github</em></th>
                         </tr>
                     </tbody>
                     </table>
@@ -269,7 +242,7 @@
 
                     <table class="table">
                     <tbody>
-                        {% set issues, opened_issues = software.get_nb_issues() %}
+                        {% set issues, opened_issues = software.nb_issues, software.nb_opened_issues %}
                         <tr>
                             <th style="border:none"><i class="fa fa-bug fa-2x"></i></th>
                             <th style="border:none">ISSUES</th>
@@ -279,10 +252,10 @@
                         <tr>
                             <th style="border:none"><i class="fa fa-institution fa-2x"></i></th>
                             <th style="border:none">CONTRIBUTORS</th>
-                            <th style="border:none"><span class="badge big-font">{{ software.get_nb_maintainers() }}</span></th>
+                            <th style="border:none"><span class="badge big-font">{{ software.nb_maintainers }}</span></th>
                             <th style="border:none"></th>
                         </tr>
-                        {% set year_activity, month_activity = software.get_nb_commits() %}
+                        {% set year_activity, month_activity = software.nb_commits_year, software.nb_commits_month %}
                         <tr>
                             <th style="border:none"><i class="fa fa-code fa-2x"></i></th>
                             <th style="border:none">COMMITS(LAST YEAR)</th>

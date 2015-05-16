@@ -1,5 +1,5 @@
 """
-Softwares form
+Softwares forms
 """
 from flask.ext.wtf import Form, RecaptchaField
 from wtforms import StringField, IntegerField, BooleanField, SelectField
@@ -73,3 +73,34 @@ class SoftwareForm(Form):
 
         #---finally return newly created software
         return soft
+
+
+class SoftwareUpdateForm(SoftwareForm):
+
+    def __init__(self):
+        super(SoftwareForm, self).__init__()
+
+    def validate(self):
+        return super(Form, self).validate()
+
+    def save(self, soft, selected_tags):
+        """
+        :param soft: passed from the view function ensuring that name exists in the database
+        :param selected_tags:
+        :return:
+        """
+        soft.organization = self.organization.data
+        soft.github_link = self.github_url.data
+        soft.is_maintained = self.is_maintained.data
+
+        soft.current_version = self.current_version.data
+
+        soft.publication_link = self.publication_link.data
+        soft.download_link = self.download_link.data
+
+        #---associate tags
+        soft.tags = [db.session.query(Tag).filter(Tag.tag == t).first() for t in selected_tags]
+
+        return soft.save()
+
+

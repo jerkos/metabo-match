@@ -1,3 +1,4 @@
+# -*- coding:utf-8 -*-
 """
 Software views
 """
@@ -6,10 +7,12 @@ Software views
 from flask import Blueprint, request, redirect, url_for, session, flash, abort
 
 from flask.ext.login import login_required, current_user
+from metabomatch.flaskbb.utils.decorators import admin_required
 
 from metabomatch.flaskbb.utils.helpers import render_template
+from metabomatch.flaskbb.utils.permissions import is_admin
 from metabomatch.softwares.models import Software, Tag, Comment, Rating
-from metabomatch.softwares.forms import SoftwareForm
+from metabomatch.softwares.forms import SoftwareForm, SoftwareUpdateForm
 from sqlalchemy import desc
 
 softwares = Blueprint("softwares", __name__, template_folder="../../templates")
@@ -44,9 +47,7 @@ def index():
 @softwares.route('/register', methods=['GET', 'POST'])
 @login_required
 def register():
-    """
-    register a new software
-    """
+    """register a new software"""
     form = SoftwareForm(request.form)
     if form.validate_on_submit():
         form.save(request.form.getlist('selected_tags'))
@@ -57,7 +58,14 @@ def register():
 
 @softwares.route('/<name>')
 def info(name):
+    """
+    get some infos on requested software name being the primary key
+    count number of times no logged user call this endpoint. If > 3
+    user us automatically redirected to authentification login default
 
+    :param name: software name PK
+    :return:
+    """
     soft = Software.query.filter(Software.name == name).first()
     if soft is None:
         abort(404)
@@ -72,7 +80,10 @@ def info(name):
             return redirect(url_for('auth.login', next='/softwares'))
 
     show_comment_form = True if 'show_comment_form' in request.args else False
+
+    #todo
     rate = soft.compute_rate()
+
     return render_template('softwares/software.html',
                            software=soft,
                            software_rating=rate,
@@ -82,8 +93,11 @@ def info(name):
 @softwares.route('/<name>/comment', methods=['POST'])
 @login_required
 def comment(name):
-    print 'comment called'
-
+    """
+    add a comment or a rating on a software
+    :param name: software name PK
+    :return:
+    """
     content, rating = request.form.get('content'), request.form.get('rating')
 
     if content is None and rating is None:
@@ -137,3 +151,22 @@ def remove_user(name):
     current_user.save()
     return redirect(url_for('user.profile', username=current_user.username))
 
+
+@softwares.route('/<name>/update', methods=['GET', 'POST'])
+@login_required
+def update(name):
+    """
+    only logged creator user or eventualy can edit software properties
+    :param name: software PK
+    :return:
+    """
+    soft = Software.query.get(name)
+    if soft is None:
+        return abort(404)
+    if soft.owner_id != current_user.id and not is_admin(current_user):
+        return abort(401)
+    form = SoftwareUpdateForm()
+    if form.validate_on_submit():
+        form.save(soft, request.form.getlist('selected_tags'))
+        return redirect(url_for('softwares.info', name=name))
+    return render_template('softwares/update_software.html', form=form, software=soft)

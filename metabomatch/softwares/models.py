@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 metabomatch: softwares model
 """
@@ -38,9 +39,8 @@ user_softwares_mapping = db.Table(
 
 
 class Sentence(db.Model):
-    """
-    Description sentence
-    """
+    """Description sentence"""
+
     __tablename__ = 'sentences'
 
     categories = {'UI', 'PERFORMANCE', 'SUPPORT'}
@@ -82,9 +82,8 @@ class SentenceSoftwareMapping(db.Model):
 
 
 class Tag(db.Model):
-    """
-    Tag model representing step in the pipeline
-    """
+    """Tag model representing step in the classical metabolomic pipeline"""
+
     __tablename__ = "tags"
 
     tag = db.Column(db.String(200), primary_key=True)
@@ -94,6 +93,8 @@ class Tag(db.Model):
 
 
 class Rating(db.Model):
+    """Represents the rate a user can add to a software"""
+
     __tablename__ = 'ratings'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -102,8 +103,8 @@ class Rating(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     software_id = db.Column(db.String, db.ForeignKey("softwares.name"), nullable=False)
 
-    #defined in user model
-    # user = db.relationship('User', foreign_keys=[user_id])
+    #fixed defined in user model
+    #user = db.relationship('User', foreign_keys=[user_id])
     #software = db.relationship('Software', foreign_keys=[software_id])
 
     def __init__(self, rate, user_id, software_id):
@@ -112,17 +113,14 @@ class Rating(db.Model):
         self.software_id = software_id
 
     def save(self):
-        """
-        todo: add a count of comments
-        """
         db.session.add(self)
         db.session.commit()
+        return self
 
 
 class Comment(db.Model):
-    """
-    Comment by user on software
-    """
+    """Comment by user on software"""
+
     __tablename__ = 'comments'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -131,7 +129,7 @@ class Comment(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     software_id = db.Column(db.String, db.ForeignKey("softwares.name"), nullable=False)
 
-    ### define in user model
+    #fixed --- defined in user model
     # user = db.relationship('User', foreign_keys=[user_id])
     #software = db.relationship('Software', foreign_keys=[software_id])
 
@@ -139,15 +137,19 @@ class Comment(db.Model):
         self.content = content
 
     def save(self):
-        """
-        todo: add a count of comments
-        """
+        """todo: add a count of comments"""
         db.session.add(self)
         db.session.commit()
+        return self
 
 
 class Software(db.Model):
-    """Software models"""
+    """
+    Software models
+
+    removed column: `nb_users` unecessary duplicated information (relationship with users instread)
+
+    """
     __tablename__ = "softwares"
 
     name = db.Column(db.String(200), primary_key=True)
@@ -155,6 +157,7 @@ class Software(db.Model):
     organization = db.Column(db.String(200))  # institute or company which created the software
     programming_language = db.Column(db.String(200))
 
+    #todo what to do with these ?
     algorithm_description = db.Column(db.Text())
     algorithm_originality = db.Column(db.Integer())
     additional_info = db.Column(db.Text())
@@ -169,9 +172,22 @@ class Software(db.Model):
     download_link = db.Column(db.String(200))
 
     #  for comparisons
-    nb_citations = db.Column(db.Integer())
-    nb_downloads = db.Column(db.Integer())
-    nb_users = db.Column(db.Integer())
+    nb_citations = db.Column(db.Integer(), default=0)  # Entrez biopython module
+    nb_downloads = db.Column(db.Integer(), default=0)  # on Github
+    nb_commits_month = db.Column(db.Integer(), default=0)
+    nb_commits_year = db.Column(db.Integer(), default=0)
+    nb_maintainers = db.Column(db.Integer(), default=0)
+    nb_issues = db.Column(db.Integer(), default=0)
+    nb_opened_issues = db.Column(db.Integer(), default=0)
+
+    #fixed will be a function call inside template
+    #mean_user_rate
+
+    #fixed---this is a duplicate list users
+    #nb_users = db.Column(db.Integer())
+
+    #fixed will be a function call inside template
+    # global_rate = db.Column(db.Float(), default=0.0)
 
     owner_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
 
@@ -192,11 +208,10 @@ class Software(db.Model):
     def __repr__(self):
         return "<{} {}>".format(self.__class__.__name__, self.name)
 
-    def save(self):
-        """
+    def _format_tags(self):
+        return [str(tag.tag) for tag in self.tags]
 
-        @return:
-        """
+    def save(self):
         db.session.add(self)
         db.session.commit()
         return self
@@ -222,75 +237,11 @@ class Software(db.Model):
             return self.publication_link.split('/')[-1]
         return None
 
-    @cache.memoize(timeout=24 * 3600)
     def mean_rate(self):
         if not self.ratings:
             return 'NA'
         return sum([r.rate for r in self.ratings]) / float(len(self.ratings))
 
-    @cache.memoize(timeout=24 * 3600)
-    def get_publication_citation_nb(self):
-        h = Entrez.elink(dbfrom="pubmed", db="pmc", LinkName="pubmed_pmc_refs", from_uid=self.get_publication_id())
-        result = Entrez.read(h)
-        nb_citations = 0
-        try:
-            nb_citations = len([link["Id"] for link in result[0]["LinkSetDb"][0]["Link"]])
-        except IndexError:
-            pass
-        return nb_citations
-
-    # github api
-    @cache.memoize(timeout=24 * 3600)
-    def get_nb_maintainers(self):
-        owner, repo = self.github_owner_repo()
-        if owner is None:
-            return 'NA'
-
-        rep = github.get("".join(['repos/', owner, '/', repo, '/contributors']))
-        return len(rep)
-
-    @cache.memoize(timeout=24 * 3600)
-    def get_nb_commits(self):
-        owner, repo = self.github_owner_repo()
-        if owner is None:
-            return 'NA', 'NA'
-        rep = github.get("".join(['repos/', owner, '/', repo, '/stats/commit_activity']))
-
-        if not rep:
-            return 0, 0
-
-        year_activity = sum([r['total'] for r in rep])
-        # get only last foour weeks
-        last_month_activity = sum([r['total'] for r in rep[-4:]])
-        return year_activity, last_month_activity
-
-
-    @cache.memoize(timeout=24 * 3600)
-    def get_nb_issues(self):
-        """GET /repos/:owner/:repo/issues"""
-        owner, repo = self.github_owner_repo()
-        if owner is None:
-            return 'NA', 'NA'
-        rep = github.get("".join(['repos/', owner, '/', repo, '/issues']))
-        opened = 0
-        for r in rep:
-            if r['state'] == 'open':
-                opened += 1
-        return len(rep), opened
-
-    @cache.memoize(timeout=24 * 3600)
-    def get_nb_downloads(self):
-        owner, repo = self.github_owner_repo()
-        if owner is None:
-            return 'NA'
-        rep = github.get("".join(['repos/', owner, '/', repo, '/releases']))
-
-        c = 0
-        for r in rep:
-            c += r.get('downloads_count', 0)
-        return c
-
-    @cache.memoize(timeout=3600)
     def compute_rate(self):
         max_val = 0
         if self.publication_link is not None:
@@ -304,8 +255,8 @@ class Software(db.Model):
 
         #malus
         if self.github_link is not None:
-            issues, opened_issues = self.get_nb_issues()
-            year_commits, month_commits = self.get_nb_commits()
+            issues, opened_issues = self.nb_issues, self.nb_opened_issues
+            year_commits, month_commits = self.nb_commits_year, self.nb_commits_month
 
             max_val -= (issues * 0.1 + opened_issues * 0.2)
             if year_commits <= 20:
@@ -314,10 +265,87 @@ class Software(db.Model):
                 max_val += 6
 
             #bonus
-            max_val += min(4, self.get_nb_maintainers() * 0.75)
+            max_val += min(4, self.nb_maintainers * 0.75)
 
-        max_val += min(25, self.get_publication_citation_nb() * 0.75)
+        max_val += min(25, self.nb_citations * 0.75)
         return round(max_val)
+
+    def populate(self):
+        #todo parallel processing of get requests
+        # from multiprocessing import Pool
+        # p = Pool(processes=4)
+        # github_infos = self.github_owner_repo()
+        # func_args = ((get_publication_citation_nb, (self.get_publication_id(),)),
+        #              (get_nb_maintainers, github_infos),
+        #              (get_nb_commits, github_infos),
+        #              (get_nb_issues, github_infos),
+        #              (get_nb_downloads, github_infos))
+        #
+        # for func, args in func_args:
+        #     p.apply(func, *args)
+
+        self.nb_citations = get_publication_citation_nb(self.get_publication_id())
+
+        github_infos = self.github_owner_repo()
+        self.nb_maintainers = get_nb_maintainers(*github_infos)
+        self.nb_commits_year, self.nb_commits_month = get_nb_commits(*github_infos)
+        self.nb_issues, self.nb_opened_issues = get_nb_issues(*github_infos)
+        self.nb_downloads = get_nb_downloads(*github_infos)
+
+
+###---multiprocessing for requesting github API
+def get_publication_citation_nb(publication_id):
+    h = Entrez.elink(dbfrom="pubmed", db="pmc", LinkName="pubmed_pmc_refs", from_uid=publication_id)
+    result = Entrez.read(h)
+    nb_citations = 0
+    try:
+        nb_citations = len([link["Id"] for link in result[0]["LinkSetDb"][0]["Link"]])
+    except IndexError:
+        pass
+    return nb_citations
+
+# GITHUB BACKEND
+def get_nb_maintainers(owner, repo):
+    if owner is None:
+        return 'NA'
+
+    rep = github.get("".join(['repos/', owner, '/', repo, '/contributors']))
+    return len(rep)
+
+def get_nb_commits(owner, repo):
+    if owner is None:
+        return 'NA', 'NA'
+    rep = github.get("".join(['repos/', owner, '/', repo, '/stats/commit_activity']))
+
+    if not rep:
+        return 0, 0
+
+    year_activity = sum([r['total'] for r in rep])
+    # get only last four weeks
+    last_month_activity = sum([r['total'] for r in rep[-4:]])
+    return year_activity, last_month_activity
+
+def get_nb_issues(owner, repo):
+    """GET /repos/:owner/:repo/issues"""
+    if owner is None:
+        return 'NA', 'NA'
+    rep = github.get("".join(['repos/', owner, '/', repo, '/issues']))
+    opened = 0
+    for r in rep:
+        if r['state'] == 'open':
+            opened += 1
+    return len(rep), opened
+
+def get_nb_downloads(owner, repo):
+    if owner is None:
+        return 'NA'
+    rep = github.get("".join(['repos/', owner, '/', repo, '/releases']))
+
+    c = 0
+    for r in rep:
+        c += r.get('downloads_count', 0)
+    return c
+
 
 
 

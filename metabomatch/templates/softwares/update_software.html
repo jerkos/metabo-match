@@ -19,16 +19,15 @@
 
  <form class="form-horizontal" role="form" method="POST">
 
-     <h3>Register software</h3>
+     <h3>Update software</h3>
 
      <h4>Basic</h4>
      <hr/>
         {{ form.hidden_tag() }}
-
-        {{ horizontal_field(form.name, icon_class='fa fa-laptop fa-2x') }}
-        {{ horizontal_field(form.organization, icon_class='fa fa-briefcase fa-2x') }}
-        {{ horizontal_field(form.pg_language, icon_class='fa fa-terminal fa-2x') }}
-        {{ horizontal_field(form.github_url, label_text='github repository url', icon_class='fa fa-github fa-2x') }}
+        {{ horizontal_field(form.name, icon_class='fa fa-laptop fa-2x', value=software.name, readonly='readonly') }}
+        {{ horizontal_field(form.organization, icon_class='fa fa-briefcase fa-2x', value=software.organization) }}
+        {{ horizontal_field(form.pg_language, icon_class='fa fa-terminal fa-2x', value=software.programming_language) }}
+        {{ horizontal_field(form.github_url, label_text='github repository url', icon_class='fa fa-github fa-2x', value=software.github_link) }}
 
 {#         <div class="form-group">#}
 {#            <label class="col-md-3 control-label">rating</label>#}
@@ -53,20 +52,24 @@
      <hr/>
         <div class="form-group">
             <div class="col-md-9 col-md-offset-3">
-                {{ render_boolean_field(form.is_maintained) }}
+                {% if software.is_maintained %}
+                    {{ render_boolean_field(form.is_maintained, checked='checked') }}
+                {% else %}
+                    {{ render_boolean_field(form.is_maintained) }}
+                {% endif %}
             </div>
         </div>
-        {{ horizontal_field(form.current_version) }}
+        {{ horizontal_field(form.current_version, value=software.current_version) }}
 
      <h4>Publications</h4>
      <hr/>
-        {{ horizontal_field(form.publication_link) }}
-        {{ horizontal_field(form.download_link) }}
+        {{ horizontal_field(form.publication_link, value=software.publication_link) }}
+        {{ horizontal_field(form.download_link, value=software.download_link) }}
 
 
     <div class="form-group">
         <div class="col-sm-offset-3 col-sm-9">
-            <button type="submit" class="btn btn-success">Register</button>
+            <button type="submit" class="btn btn-success">Update</button>
         </div>
     </div>
 </form>
@@ -75,9 +78,11 @@
 {% block javascript %}
     {{super()}}
     <script src="{{url_for('static', filename='js/selectize.js')}}"></script>
-
+    {% set tags_name = software.tags | map(attribute='tag') %}
     <script>
-         $('#select-tags').selectize({create: true});
+{#         $('#select-tags').selectize({create: true, items: {{ software.tags | map(attribute='tag') | list | safe}} });#}
+             $('#select-tags').selectize({create: true, items: {{ software._format_tags() | safe }} });
+
      </script>
 
 {% endblock %}
