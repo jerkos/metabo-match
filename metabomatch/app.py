@@ -11,6 +11,7 @@
 import os
 import logging
 import datetime
+import urlparse
 
 from flask import Flask, request
 from flask.ext.login import current_user

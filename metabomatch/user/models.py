@@ -12,6 +12,7 @@ from datetime import datetime
 
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from itsdangerous import SignatureExpired
+from metabomatch.softwares.models import Software
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import current_app, url_for
 from flask.ext.login import UserMixin, AnonymousUserMixin
@@ -22,6 +23,8 @@ from metabomatch.extensions import db, cache, github
 from metabomatch.flaskbb.utils.settings import flaskbb_config
 from metabomatch.flaskbb.forum.models import (Post, Topic, topictracker, TopicsRead,
                                   ForumsRead)
+
+from metabomatch.achievements import SoftwareAchievement, ScriptAchievement, ForumAchievement, JobAchievement
 
 
 groups_users = db.Table(
@@ -97,6 +100,8 @@ class User(db.Model, UserMixin):
     avatar = db.Column(db.String(200))
     notes = db.Column(db.Text)
 
+    global_score = db.Column(db.Integer, default=0)
+
     theme = db.Column(db.String(15))
 
     comments = db.relationship("Comment", backref="user")
@@ -129,7 +134,6 @@ class User(db.Model, UserMixin):
                         backref=db.backref("topicstracked", lazy="dynamic"),
                         lazy="dynamic")
 
-
     @staticmethod
     def create_github_account(oauth_token):
         u = User()
@@ -151,6 +155,31 @@ class User(db.Model, UserMixin):
 
     def has_rated(self, software_name):
         return any([c.software.name == software_name for c in self.ratings])
+
+    def software_achievements(self):
+        c = db.session.query(Software.name).filter(Software.owner_id == self.id).count()
+        achieved = SoftwareAchievement.achieved(c)
+        if achieved:
+            return SoftwareAchievement.name, achieved[-1]
+        return None, None
+
+    def job_achievements(self):
+        achieved = JobAchievement.achieved(len(self.posted_jobs))
+        if achieved:
+            return JobAchievement.name, achieved[-1]
+        return None, None
+
+    def script_achievements(self):
+        achieved = ScriptAchievement.achieved(len(self.scripts))
+        if achieved:
+            return ScriptAchievement.name, achieved[-1]
+        return None, None
+
+    def forum_achievements(self):
+        achieved = ForumAchievement.achieved(self.post_count + self.topic_count)
+        if achieved:
+            return ForumAchievement.name, achieved[-1]
+        return None, None
 
     # Properties
     @property

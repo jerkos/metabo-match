@@ -37,8 +37,7 @@ def login():
             #remove this key when a user is authenticated
             session.pop('nb_views', None)
             login_user(user, remember=form.remember_me.data)
-            return redirect(request.args.get("next") or
-                            url_for("home.index"))
+            return redirect(request.args.get("next") or url_for("home.index"))
 
         flash("Wrong username or password", "danger")
     return render_template("auth/login.html", form=form)

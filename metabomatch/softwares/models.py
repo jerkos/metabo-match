@@ -189,7 +189,7 @@ class Software(db.Model):
     #fixed will be a function call inside template
     # global_rate = db.Column(db.Float(), default=0.0)
 
-    owner_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    owner_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
 
     # relationships
     owner = db.relationship('User', uselist=False, backref='software_owner', foreign_keys=[owner_id])

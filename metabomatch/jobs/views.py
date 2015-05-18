@@ -2,13 +2,14 @@ from sqlalchemy import func, desc
 import markdown2
 
 from flask import Blueprint, request, redirect, url_for, flash
-from flask.ext.login import login_required
+from flask.ext.login import login_required, current_user
 
 from metabomatch.extensions import db
 
 from metabomatch.flaskbb.utils.helpers import render_template
 from metabomatch.jobs.forms import JobForm
 from metabomatch.jobs.models import Job, JobTags
+from metabomatch.achievements import JobAchievement, SCORE_JOB
 
 jobs = Blueprint("jobs", __name__, template_folder="../../templates")
 
@@ -35,7 +36,11 @@ def register():
     print request.form
     if form.validate_on_submit():
         form.save()
-        flash('jobs posted', 'success')
+        goal = JobAchievement.unlocked_level(len(current_user.posted_jobs))
+        if goal:
+            flash("Achievement unlock: {}, {}, level {}".format(JobAchievement.name, goal['name'], goal['level']), 'success')
+        current_user.global_score += SCORE_JOB
+        current_user.save()
         return redirect(url_for('jobs.index'))
 
     #---perform some queries to get some statistics

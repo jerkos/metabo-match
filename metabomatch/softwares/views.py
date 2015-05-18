@@ -2,18 +2,21 @@
 """
 Software views
 """
+from flask.ext.wtf import Form
 
-
+from sqlalchemy import desc
 from flask import Blueprint, request, redirect, url_for, session, flash, abort
 
 from flask.ext.login import login_required, current_user
 from metabomatch.flaskbb.utils.decorators import admin_required
 
+from metabomatch.achievements import SoftwareAchievement, SCORE_SOFT
+from metabomatch.extensions import db
 from metabomatch.flaskbb.utils.helpers import render_template
 from metabomatch.flaskbb.utils.permissions import is_admin
 from metabomatch.softwares.models import Software, Tag, Comment, Rating
 from metabomatch.softwares.forms import SoftwareForm, SoftwareUpdateForm
-from sqlalchemy import desc
+
 
 softwares = Blueprint("softwares", __name__, template_folder="../../templates")
 
@@ -24,11 +27,10 @@ SOFT_MAP = {'1': 'Signal Extraction',
 
 SOFT_PAR_PAGE = 10
 
+
 @softwares.route('/')
 def index():
-    """
-    dealing with args
-    """
+    """dealing with GET args"""
     page = request.args.get("page", 1, type=int)
     if request.args.get('category') is not None:
         keyword = SOFT_MAP[request.args['category']]
@@ -51,6 +53,11 @@ def register():
     form = SoftwareForm(request.form)
     if form.validate_on_submit():
         form.save(request.form.getlist('selected_tags'))
+        c = db.session.query(Software.name).filter(Software.owner_id == current_user.id).count()
+        goal = SoftwareAchievement.unlocked_level(c)
+        if goal:
+            flash('Achievement unlocked\n {} \n {}'.format(goal['name'], goal['description']), 'success')
+        current_user.global_score += SCORE_SOFT
         return redirect(url_for('softwares.index'))
     return render_template('softwares/register_software.html', form=form)
 
@@ -75,19 +82,16 @@ def info(name):
         session['nb_views'] = v + 1
 
         if session['nb_views'] > 3:
-            flash("Please register or log in to see more about softwares")
+            flash("Please register or log in to see more about softwares", "info")
             #redirect to softwares by default
-            return redirect(url_for('auth.login', next='/softwares'))
+            return redirect(url_for('auth.login', next=url_for('softwares.info', name=name)))
 
     show_comment_form = True if 'show_comment_form' in request.args else False
 
-    #todo
-    rate = soft.compute_rate()
-
     return render_template('softwares/software.html',
                            software=soft,
-                           software_rating=rate,
-                           show_comment_form=show_comment_form)
+                           show_comment_form=show_comment_form,
+                           form=Form())
 
 
 @softwares.route('/<name>/comment', methods=['POST'])
@@ -170,3 +174,18 @@ def update(name):
         form.save(soft, request.form.getlist('selected_tags'))
         return redirect(url_for('softwares.info', name=name))
     return render_template('softwares/update_software.html', form=form, software=soft)
+
+
+@softwares.route('/<name>/update_description', methods=['POST'])
+@login_required
+def update_description(name):
+    soft = Software.query.get(name)
+    if soft is None:
+        return abort(404)
+    if soft.owner_id != current_user.id and not is_admin(current_user):
+        return abort(401)
+    print request.form
+    soft.algorithm_description = request.form['description']
+    soft.save()
+    flash('description updated', 'success')
+    return redirect(url_for('softwares.info', name=name, form=Form()))

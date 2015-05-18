@@ -1,10 +1,11 @@
 """
 scripts views
 """
+from metabomatch.achievements import ScriptAchievement, SCORE_SCRIPT
 from sqlalchemy import desc, and_
-from flask import Blueprint, request, abort, redirect, url_for
+from flask import Blueprint, request, abort, redirect, url_for, flash
 
-from flask.ext.login import login_required
+from flask.ext.login import login_required, current_user
 
 from metabomatch.flaskbb.utils.helpers import render_template
 from metabomatch.scripts.models import Script, ScriptTags
@@ -57,6 +58,11 @@ def register():
     form.get_softwares()
     if form.validate_on_submit():
         form.save(request.form['software'])
+        goal = ScriptAchievement.unlocked_level(len(current_user.scripts))
+        if goal:
+            flash("Achievement unlock: {}, {}, level {}".format(ScriptAchievement.name, goal['name'], goal['level']), 'success')
+        current_user.global_score += SCORE_SCRIPT
+        current_user.save()
         return redirect(url_for('scripts.index'))
     return render_template('scripts/register_script.html', form=form)
 

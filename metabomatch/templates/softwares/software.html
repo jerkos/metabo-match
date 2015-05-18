@@ -23,37 +23,59 @@
 {% block content %}
 
     <div class="row">
-        <div class="col-md-8">
-            <h1>{{ software.name }} <small><label style="font-size: 0.4em;" class="label label-success">{{ software.insertion_date | time_since }}</label> <a href='/'>{{ software.omictools_id }}</a>, <a href="{{ software.get_category_url() }}">Forum link</a></small></h1>
-            <div class="container">
+        <div class="col-md-9">
+            <h1>{{ software.name }}
+                <small>
+                    <label style="font-size: 0.4em;" class="label label-success">{{ software.insertion_date | time_since }}</label>
+                    {% if software.omictools_id %}
+                        <a href='/'>{{ software.omictools_id }}</a>,
+                    {% endif %}
+                    <a href="{{ software.get_category_url() }}">Forum link</a>
+                </small>
+            </h1>
+            <div class="container" style="width:100%">
                 <div class="row">
-                    <div class="col-md-4">
-                        <img src="{{ url_for('static', filename=["img/", software.name|lower, ".png"] |join("")) }}"/>
-                    </div>
+                        <img src="{{ url_for('static', filename=["img/", software.name|lower, ".png"] |join("")) }}" class="img-responsive" width="200" height="84"/>
+                </div>
 
-                    {% if software.owner and current_user.id == software.owner.id %}
-                        <div class="col-md-7">
-                            <textarea style="resize: none" class="form-control" rows="5" placeholder="Edit this to send your software !"></textarea>
+                <div class="row" style="padding-top: 20px;">
+                    {% set can_edit_description = software.owner and current_user.id == software.owner.id %}
+                    {% if can_edit_description %}
+                        <form action="{{ url_for('softwares.update_description', name=software.name) }}" method="post">
+                                {{ form.hidden_tag() }}
+
+                    {% endif %}
+                    <div class="col-md-10">
+                        {% if can_edit_description %}
+                            <textarea name="description" style="resize: none" class="form-control" rows="5" placeholder="You can write a tagline here">{{ software.algorithm_description }}</textarea>
+                        {% else %}
+                            {% if software.algorithm_description %}
+                                <p style="font-size: 1.2em">{{ software.algorithm_description| replace('\r\n', '<br/>') | safe }}</p>
+                            {% endif %}
+                        {% endif %}
+
+                    </div>
+                    {% if can_edit_description %}
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-primary">Save</button>
                         </div>
-                        <div class="col-md-1">
-                            <a href="/">Edit</a>
-                            <a href="/">Save</a>
-                        </div>
+                    </form>
                     {% endif %}
                 </div>
             </div>
 
         </div>
-        <div id="circles-1" class="col-md-4"></div>
+        <div id="circles-1" class="col-md-3"></div>
     </div>
-
-{#    <h3><a href="{{ software.get_category_url() }}">Forum link</a></h3>#}
 
     <div class="row" style="padding-top: 50px;">
     <h3>
         <i class="fa fa-desktop text-muted"></i> Software informations
         {% if current_user.id == software.owner_id %}
-            <a href="{{ url_for('softwares.update', name=software.name) }}" class="btn btn-info">Edit</a>
+            <small>
+                <a href="{{ url_for('softwares.update', name=software.name) }}" class="btn btn-info btn-sm">Edit</a>
+{#                <a href="/" class="btn btn-danger btn-sm">Transfer ownership</a><select><option>Marco</option></select>#}
+            </small>
         {% else %}
             <small>You can not edit this sheet</small>
         {% endif %}
@@ -366,7 +388,7 @@
         var myCircle = Circles.create({
           id:           'circles-1',
           radius:       100,
-          value:        '{{ software_rating }}',
+          value:        '{{ software.compute_rate() }}',
           maxValue:     100,
           width:        10,
           text:         function(value){return value + '%';},

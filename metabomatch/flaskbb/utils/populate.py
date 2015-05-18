@@ -189,6 +189,7 @@ def create_test_data():
     openms.download_link = 'https://github.com/OpenMS/OpenMS/archive/Release1.11.1.tar.gz'
     openms.tags = [t1, t2, t3, t4]
     openms.sentences_mapping = create_sentences_mapping(sentences, openms.name)
+    openms.owner_id = jerkos.id
     openms.populate()
     openms.save()
     #######################################
@@ -201,6 +202,7 @@ def create_test_data():
     mzmine.download_link = 'http://prdownloads.sourceforge.net/mzmine/MZmine-2.11.zip?download'
     mzmine.tags = [t1, t2, t3, t4]
     mzmine.sentences_mapping = create_sentences_mapping(sentences, mzmine.name)
+    mzmine.owner_id = jerkos.id
     mzmine.populate()
     mzmine.save()
     ########################################
@@ -212,6 +214,7 @@ def create_test_data():
     mzos.download_link = 'https://github.com/jerkos/mzOS/archive/master.zip'
     mzos.tags = [t3]
     mzos.sentences_mapping = create_sentences_mapping(sentences, mzos.name)
+    mzos.owner_id = jerkos.id
     mzos.populate()
     mzos.save()
     ###############################################
@@ -223,6 +226,7 @@ def create_test_data():
     metabo_analyst.omictools_id = 'OMICS_02652'
     metabo_analyst.tags = [t3, t4]
     metabo_analyst.sentences_mapping = create_sentences_mapping(sentences, metabo_analyst.name)
+    metabo_analyst.owner_id = jerkos.id
     metabo_analyst.populate()
     metabo_analyst.save()
     ################################################
@@ -236,6 +240,7 @@ def create_test_data():
     camera.download_link = 'http://www.bioconductor.org/packages/release/bioc/src/contrib/CAMERA_1.22.0.tar.gz'
     camera.tags = [t3]
     camera.sentences_mapping = create_sentences_mapping(sentences, camera.name)
+    camera.owner_id = jerkos.id
     camera.populate()
     camera.save()
     ################################################
@@ -250,6 +255,7 @@ def create_test_data():
     probmetab.download_link = 'http://labpib.fmrp.usp.br/methods/probmetab/resources/ProbMetab_1.0.zip'
     probmetab.tags = [t3]
     probmetab.sentences_mapping = create_sentences_mapping(sentences, probmetab.name)
+    probmetab.owner_id = jerkos.id
     probmetab.populate()
     probmetab.save()
     ################################################
@@ -261,6 +267,7 @@ def create_test_data():
     mzmatch.download_link = 'http://labpib.fmrp.usp.br/methods/probmetab/resources/ProbMetab_1.0.zip'
     mzmatch.tags = [t1, t2, t3, t4]
     mzmatch.sentences_mapping = create_sentences_mapping(sentences, mzmatch.name)
+    mzmatch.owner_id = jerkos.id
     mzmatch.populate()
     mzmatch.save()
     ###############################################
@@ -275,6 +282,7 @@ def create_test_data():
     metassign.additional_info = "This software is implemented in mzMatch software."
     metassign.tags = [t3]
     metassign.sentences_mapping = create_sentences_mapping(sentences, metassign.name)
+    metassign.owner_id = jerkos.id
     metassign.populate()
     metassign.save()
     #------------------------------END init softwares

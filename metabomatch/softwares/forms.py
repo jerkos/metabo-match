@@ -1,6 +1,7 @@
 """
 Softwares forms
 """
+from flask.ext.login import current_user
 from flask.ext.wtf import Form, RecaptchaField
 from wtforms import StringField, IntegerField, BooleanField, SelectField
 from wtforms.validators import DataRequired, Email, EqualTo, regexp, ValidationError, Optional, URL
@@ -13,9 +14,7 @@ from metabomatch.softwares.models import Software, Tag, Sentence
 
 
 class SoftwareForm(Form):
-    """
-    Software form
-    """
+    """Software form"""
     name = StringField("name*", validators=[DataRequired(message="You must provide a software name")])
     organization = StringField("organization")
     pg_language = StringField("programming language")
@@ -55,6 +54,9 @@ class SoftwareForm(Form):
 
         #---create sentence mapping
         soft.sentences_mapping = create_sentences_mapping(Sentence.query.all(), soft.name)
+
+        soft.owner_id = current_user.id
+
         soft.save()
 
         #---create a new category and associated forum

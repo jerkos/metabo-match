@@ -11,7 +11,9 @@ from wtforms.validators import DataRequired, URL, Optional, Email
 
 class JobForm(Form):
     company = StringField('company*', validators=[DataRequired(message='missing company name')])
-    company_url = StringField('company link', validators=[Optional(), URL(message='not a valid url')])
+
+    #fixed ace was empty if validator fails that lead to a TODO
+    company_url = StringField('company link', validators=[Optional()])  # , URL(message='not a valid url')])
     workplace = StringField('workplace*', validators=[DataRequired(message='workplace is missing')])
 
     name = StringField('name*', validators=[DataRequired(message='missing job name')])

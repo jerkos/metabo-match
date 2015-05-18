@@ -1,12 +1,25 @@
 {% extends theme("layout.html") %}
 
 {% block content %}
+
+{% set soft_name, software_achievements = user.software_achievements() %}
+{% set job_name, job_achievements = user.job_achievements() %}
+{% set script_name, script_achievements = user.script_achievements() %}
+{% set forum_name, forum_achievements = user.forum_achievements() %}
+
 <ul class="breadcrumb">
     <li><a href="{{ url_for('forum.index') }}">Forum</a></li>
     <li class="active">{{ user.username }}</li>
 </ul>
 
+{% if software_achievements['name'] %}, <blockquote>{{ software_achievements['name'] }} </blockquote>{% endif %}
+
 <table class="table table-bordered">
+    {% set soft_name, software_achievements = user.software_achievements() %}
+    {% set job_name, job_achievements = user.job_achievements() %}
+    {% set script_name, script_achievements = user.script_achievements() %}
+    {% set forum_name, forum_achievements = user.forum_achievements() %}
+
     <thead>
       <th><a href="{{ user.url }}">{{ user.username }}</a></th>
       <th>Info</th>
@@ -86,9 +99,29 @@
     </tbody>
 </table>
 
-<p class="help-block">The following informations are visible by all users.</p>
-<h3>Softwares you are using to drive your metabolomic analyses</h3>
+<p class="help-block"><strong>The following informations are visible by all users.</strong></p>
+
+<p class="help-block">Post new softwares, new scripts and talk in our forums to get more achievements !</p>
+<h3>Achievements</h3>
 <hr/>
+<ul class="list-group">
+    {% if software_achievements %}
+        <li class="list-group-item"><strong>{{ soft_name }}</strong> <em>{{ software_achievements['name'] }}</em> <badge class="badge">level {{ software_achievements['level'] }}</badge></li>
+    {% endif %}
+    {% if script_achievements %}
+        <li class="list-group-item"><strong>{{ script_name }}</strong> <em>{{ script_achievements['name'] }}</em> <badge class="badge">level {{ script_achievements['level'] }}</badge></li>
+    {% endif %}
+    {% if job_achievements %}
+        <li class="list-group-item"><strong>{{ job_name }}</strong> <em>{{ job_achievements['name'] }}</em> <badge class="badge">level {{ job_achievements['level'] }}</badge></li>
+    {% endif %}
+    {% if forum_achievements %}
+        <li class="list-group-item"><strong>{{ forum_name }}</strong> <em>{{ forum_achievements['name'] }}</em> <badge class="badge">level {{ forum_achievements['level'] }}</badge></li>
+    {% endif %}
+</ul>
+
+<h3 style="padding-top: 50px;">Softwares you are using to drive your metabolomic analyses</h3>
+<hr/>
+
 
 <ul class="list-group">
     {% for software in user.softwares_used %}
@@ -100,7 +133,7 @@
 </ul>
 
 
-<h3>Proposed scripts</h3>
+<h3 style="padding-top: 50px;">Proposed scripts</h3>
 <hr/>
     <ul class="list-group">
     {%  for script in user.scripts %}
@@ -112,7 +145,7 @@
     </ul>
 </ul>
 
-<h3>Job offers</h3>
+<h3 style="padding-top: 50px;">Job offers</h3>
 <hr/>
 {% if user.jobs %}
 
