@@ -1,6 +1,7 @@
 """
 scripts views
 """
+from flask.ext.wtf import Form
 from metabomatch.achievements import ScriptAchievement, SCORE_SCRIPT
 from sqlalchemy import desc, and_
 from flask import Blueprint, request, abort, redirect, url_for, flash
@@ -73,7 +74,7 @@ def info(script_id):
     sc = Script.query.filter(Script.id == script_id).first()
     if sc is None:
         return abort(404)
-    return render_template('scripts/script.html', script=sc)
+    return render_template('scripts/script.html', script=sc, form=Form())
 
 
 @scripts.route('/<int:script_id>/upvote')

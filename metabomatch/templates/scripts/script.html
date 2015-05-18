@@ -16,12 +16,6 @@
         <p class="help-block">No description available</p>
     {% endif %}
 
-    {% if script.dependancies  == 'NA' %}
-        <p class="help-block">No dependancies described</p>
-    {%  else %}
-        <p class="help-block"><em>Rely on:</em>{{ script.dependancies }}</p>
-    {% endif %}
-
     {% if current_user.username != script.user.username %}
         <h4 style="padding-top: 20px">Code <small class="text-muted">You can not edit this code</small></h4>
     {% else %}
@@ -31,6 +25,7 @@
 
 
     <form id="update_content_form" method="post" action="{{ url_for('scripts.update_content', script_id=script.id) }}">
+        {{ form.hidden_tag() }}
         <div class="row">
             <div id="editor">
             </div>
