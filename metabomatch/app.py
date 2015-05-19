@@ -81,6 +81,8 @@ def create_app(config=None):
     configure_errorhandlers(app)
     #configure_logging(app)
 
+    app.logger.addHandler(logging.StreamHandler(sys.stdout))
+    app.logger.setLevel(logging.ERROR)
     #app.debug = True
     return app
 
