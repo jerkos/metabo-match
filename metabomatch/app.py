@@ -71,8 +71,7 @@ def create_app(config=None):
 
     #github extensions, TODO put that into configs directory
     app.config['GITHUB_CLIENT_ID'] = 'ed057c9e07f531f0fdb6'
-    app.config['GITHUB_CLIENT_SECRET'] = 'e221675a465c749bddfb93e248a271deb5687485'
-
+    app.config['GITHUB_CLIENT_SECRET'] = os.environ['GITHUB_CLIENT_SECRET']
     configure_blueprints(app)
     configure_extensions(app)
     configure_template_filters(app)
