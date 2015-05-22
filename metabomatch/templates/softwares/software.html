@@ -134,6 +134,17 @@
         </div>
 
     </div>
+
+    <div class="row" style="padding-bottom: 50px;">
+        <h3>
+            <span class="text-muted">Current Version: </span>
+            <span class="badge">{{ software.current_version }}</span>
+        </h3>
+        {%  if not software.is_maintained %}
+            <p class="alert alert-danger"> This software is no longer maintained !</p>
+        {% endif %}
+    </div>
+
      <div class="row">
 
          <div role="tabpanel">

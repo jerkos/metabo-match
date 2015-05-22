@@ -82,9 +82,9 @@
                                     <small><label class="label label-success">new</label></small>
                                 {% endif %}
                             </th>
-                            <th>{{ soft.programming_language }}</th>
-                            <th>{{ soft.organization }}</th>
-                            <th>
+                            <th><small>{{ soft.programming_language }}</small></th>
+                            <th><small>{{ soft.organization }}</small></th>
+                            <th><small>
                                 {% set soft_tags = soft.tags| map(attribute='tag') | join(',') %}
                                 {% if 'Signal Extraction' in soft_tags %}
                                     <i class="btn btn-primary fa fa-tag"></i>
@@ -98,6 +98,7 @@
                                 {% if 'Statistical Analysis' in soft_tags %}
                                     <i class="btn btn-danger fa fa-tag"></i>
                                 {% endif %}
+                                </small>
 
                             </th>
                             {% if current_user.is_authenticated() %}
