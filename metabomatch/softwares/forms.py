@@ -40,6 +40,7 @@ class SoftwareForm(Form):
 
     def save(self, selected_tags):
         soft = Software(self.name.data, self.organization.data, self.pg_language.data)
+        soft.owner_id = current_user.id
 
         soft.github_link = self.github_url.data
         soft.is_maintained = self.is_maintained.data
@@ -55,7 +56,7 @@ class SoftwareForm(Form):
         #---create sentence mapping
         soft.sentences_mapping = create_sentences_mapping(Sentence.query.all(), soft.name)
 
-        soft.owner_id = current_user.id
+        print "CURRENT USER ID:", current_user.id
 
         soft.save()
 
