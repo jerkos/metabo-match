@@ -27,7 +27,7 @@
     <form id="update_content_form" method="post" action="{{ url_for('scripts.update_content', script_id=script.id) }}">
         {{ form.hidden_tag() }}
         <div class="row">
-            <div id="editor">
+            <div id="editor">{{ script.content }}
             </div>
         </div>
 
@@ -47,7 +47,7 @@
             maxLines: 100,
             minLines: 25
         });
-        editor.setValue("{{ (script.preview_content() | join('\\n')) | safe }}");
+        //editor.setValue('{{ script.view_content() | join('\\n') | safe }}');
         editor.setReadOnly(true);
         $('#edition_mode').css('display', 'none');
 
