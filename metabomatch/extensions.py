@@ -19,6 +19,7 @@ from flask.ext.themes2 import Themes
 from flask.ext.plugins import PluginManager
 from flask.ext.github import GitHub
 from flask_wtf.csrf import CsrfProtect
+from flask_gravatar import Gravatar
 
 
 # Database
@@ -50,6 +51,8 @@ plugin_manager = PluginManager()
 
 # performing API call to github
 github = GitHub()
+
+gravatar = Gravatar(default='identicon')
 
 # csrf protection
 csrf = CsrfProtect()

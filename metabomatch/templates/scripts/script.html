@@ -5,8 +5,8 @@
 {% endblock %}
 {% block content %}
 
-    <h3>{{ script.software.name }}</h3>
-    <h3> {{ script.title }} by <a href="{{ url_for('user.profile', username=script.user.username) }}">{{ script.user.username }}</a>
+    <h3><span class="text-muted">Software:</span> {{ script.software.name }}</h3>
+    <h3><span class="text-muted">Script title:</span> {{ script.title }} by <a href="{{ url_for('user.profile', username=script.user.username) }}">{{ script.user.username }}</a>
         <a href="{{ url_for('scripts.upvote', script_id=script.id) }}"><i class="fa fa-thumbs-o-up"></i><span class="badge">{{ script.up_votes }}</span></a></h3>
     <hr/>
 
@@ -17,10 +17,10 @@
     {% endif %}
 
     {% if current_user.username != script.user.username %}
-        <h4 style="padding-top: 20px">Code <small class="text-muted">You can not edit this code</small></h4>
+        <h3 style="padding-top: 20px"><span class="text-muted">Code</span> <small class="text-muted">You can not edit this code</small></h3>
     {% else %}
-        <h4 style="padding-top: 20px">Code <small><button id="edit" class="btn btn-default btn-sm">Edit</button></small>
-            <p id="edition_mode"><small class="text-danger">Warning, edition mode:ON</small></p></h4>
+        <h3 style="padding-top: 20px"><span class="text-muted">Code</span> <small><button id="edit" class="btn btn-default btn-sm">Edit</button></small>
+            <p id="edition_mode"><small class="text-danger">Warning, edition mode:ON</small></p></h3>
     {% endif %}
 
 

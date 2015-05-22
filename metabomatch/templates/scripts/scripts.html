@@ -39,6 +39,11 @@
                 <li class="list-group-item">
                     <span class="badge fa fa-thumbs-o-up"> {{ script.up_votes }}</span>
                     <h5>
+                        {% if script.user.avatar %}
+                            <img class='img-rounded' src="{{ script.user.avatar }}" alt="gravatar" height="50" width="50">
+                        {% else %}
+                            <img class='img-rounded' src="{{ script.user.email | gravatar }}" alt="gravatar" height="50" width="50">
+                        {% endif %}
                         <a href="{{ url_for('user.profile', username=script.user.username)}}">{{ script.user.username }}</a>
                         /
                         <a href="{{ url_for('scripts.info', script_id=script.id) }}">{{ script.title }} </a>
