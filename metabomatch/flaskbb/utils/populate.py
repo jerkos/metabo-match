@@ -166,7 +166,7 @@ def create_test_data():
     db.session.commit()
 
     #-------------------- softwares
-    xcms = Software("XCMS", "None", "R, C")
+    xcms = Software("XCMS", "", "R, C")
     xcms.github_link = 'https://github.com/sneumann/xcms'
     xcms.is_maintained = True
     xcms.current_version = "1.44.0"
@@ -180,7 +180,7 @@ def create_test_data():
     xcms.save()
     ######################################
 
-    openms = Software("OpenMS", "None", "C++, Python bindings")
+    openms = Software("OpenMS", "", "C++, Python bindings")
     openms.github_link = 'https://github.com/OpenMS/OpenMS'
     openms.is_maintained = True
     openms.current_version = "1.11.1"
@@ -194,7 +194,7 @@ def create_test_data():
     openms.save()
     #######################################
 
-    mzmine = Software("Mzmine", "None", "Java")
+    mzmine = Software("Mzmine", "", "Java")
     mzmine.is_maintained = True
     mzmine.current_version = "2.11"
     mzmine.publication_link = 'http://www.ncbi.nlm.nih.gov/pubmed/20650010'
@@ -219,7 +219,7 @@ def create_test_data():
     mzos.save()
     ###############################################
 
-    metabo_analyst = Software("MetaboAnalyst", "None", "Java, R")
+    metabo_analyst = Software("MetaboAnalyst", "", "Java, R")
     metabo_analyst.is_maintained = True
     metabo_analyst.current_version = "2.5"
     metabo_analyst.publication_link = 'http://www.ncbi.nlm.nih.gov/pubmed/22553367'
@@ -231,7 +231,7 @@ def create_test_data():
     metabo_analyst.save()
     ################################################
 
-    camera = Software("CAMERA", "None", "R")
+    camera = Software("CAMERA", "", "R")
     camera.github_link = 'https://github.com/sneumann/CAMERA'
     camera.is_maintained = True
     camera.current_version = "1.22.0"
@@ -245,7 +245,7 @@ def create_test_data():
     camera.save()
     ################################################
 
-    probmetab = Software("probmetab", "None", "R")
+    probmetab = Software("probmetab", "", "R")
     probmetab.github_link = 'https://github.com/rsilvabioinfo/ProbMetab'
     probmetab.is_maintained = True
     probmetab.current_version = "1.0"
@@ -260,8 +260,7 @@ def create_test_data():
     probmetab.save()
     ################################################
 
-    mzmatch = Software("mzMatch", "None", "Java, R")
-    mzmatch.github_link = 'https://github.com/rsilvabioinfo/ProbMetab'
+    mzmatch = Software("mzMatch", "", "Java, R")
     mzmatch.is_maintained = True
     mzmatch.publication_link = 'http://www.ncbi.nlm.nih.gov/pubmed/21401061'
     mzmatch.download_link = 'http://labpib.fmrp.usp.br/methods/probmetab/resources/ProbMetab_1.0.zip'
@@ -272,7 +271,7 @@ def create_test_data():
     mzmatch.save()
     ###############################################
 
-    metassign = Software("metAssign", "None", "R")
+    metassign = Software("metAssign", "", "R")
     metassign.is_maintained = True
     metassign.publication_link = 'http://www.ncbi.nlm.nih.gov/pubmed/24916385'
     metassign.omictools_id = 'OMICS_04679'

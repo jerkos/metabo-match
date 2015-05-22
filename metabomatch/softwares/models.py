@@ -200,7 +200,7 @@ class Software(db.Model):
 
     scripts = db.relationship('Script', backref='software')
 
-    def __init__(self, name, organization, pg_language):
+    def __init__(self, name, organization="", pg_language=""):
         self.name = name
         self.organization = organization
         self.programming_language = pg_language
