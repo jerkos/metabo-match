@@ -97,7 +97,8 @@ def update_content(script_id):
 def update_software(script_id):
     sc = Script.query.filter(Script.id == script_id).first_or_404()
     software_name = request.form['software']
-    if software_name == 'None':
+    print "SOFTWARE_NAME:", software_name
+    if software_name == '---':
         sc.software_id = None
     else:
         sc.software_id = software_name
