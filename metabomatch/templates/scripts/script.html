@@ -45,8 +45,9 @@
             <div id="editor">{{ script.content }}
             </div>
         </div>
-
-        <a id="submit" class="btn btn-success">Save</a>
+        {% if current_user.id == script.user.id %}
+            <a id="submit" class="btn btn-success">Save</a>
+        {% endif %}
     </form>
 {% endblock %}
 
