@@ -69,6 +69,7 @@ class SentenceSoftwareMapping(db.Model):
     sentence_id = db.Column(db.Integer, db.ForeignKey('sentences.id'), nullable=False)
     upvote = db.Column(db.Integer, default=0)
 
+    # fixed deleted manually, find how to do that automatically
     software = db.relationship('Software', backref='sentences_mapping')
     sentence = db.relationship('Sentence', backref='sentences_mapping')
 
@@ -193,8 +194,8 @@ class Software(db.Model):
 
     # relationships
     owner = db.relationship('User', uselist=False, backref='software_owner', foreign_keys=[owner_id])
-    comments = db.relationship('Comment', order_by='Comment.date_created', backref='software')  # lazy='joined')
-    ratings = db.relationship('Rating', order_by='Rating.date_created', backref='software')  # lazy='joined')
+    comments = db.relationship('Comment', order_by='Comment.date_created', backref='software', cascade='all, delete-orphan')
+    ratings = db.relationship('Rating', order_by='Rating.date_created', backref='software', cascade='all, delete-orphan')
     tags = db.relationship('Tag', secondary=tags_software_mapping, backref='softwares', lazy='joined')
     users = db.relationship('User', secondary=user_softwares_mapping, backref='softwares_used')
 
@@ -215,6 +216,21 @@ class Software(db.Model):
         db.session.add(self)
         db.session.commit()
         return self
+
+    def delete(self):
+        mappings = SentenceSoftwareMapping.query.filter(SentenceSoftwareMapping.software_id == self.name).all()
+        error = ""
+        try:
+            for m in mappings:
+                db.session.delete(m)
+            db.session.commit()
+
+            db.session.delete(self)
+            db.session.commit()
+        except Exception as e:
+            error = "Error occured when trying to delete software: " + e.message
+            db.session.rollback()
+        return error
 
     def remove_user(self, user):
         self.users.remove(user)

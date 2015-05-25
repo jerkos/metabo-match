@@ -4,7 +4,7 @@ scripts views
 from flask.ext.wtf import Form
 from metabomatch.achievements import ScriptAchievement, SCORE_SCRIPT
 from sqlalchemy import desc, and_
-from flask import Blueprint, request, abort, redirect, url_for, flash
+from flask import Blueprint, request, redirect, url_for, flash
 
 from flask.ext.login import login_required, current_user
 
@@ -19,7 +19,6 @@ scripts = Blueprint('scripts', __name__, template_folder="../templates")
 SCRIPTS_PER_PAGE = 5
 
 
-
 @scripts.route('/')
 @login_required
 def index():
@@ -32,7 +31,7 @@ def index():
 
     if software is not None and not_tags:
         if software == '---':
-            filtered_scripts = Script.query.order_by(desc(Script.creation_date)).paginate(page, SCRIPTS_PER_PAGE, True)
+            filtered_scripts = Script.query.filter(Script.software_id is None).order_by(desc(Script.creation_date)).paginate(page, SCRIPTS_PER_PAGE, True)
         else:
             filtered_scripts = Script.query.join(Software).filter(Software.name == software)\
                 .paginate(page, SCRIPTS_PER_PAGE, True)
@@ -50,7 +49,6 @@ def index():
     return render_template('scripts/scripts.html',
                            scripts=filtered_scripts,
                            softwares=softwares)
-
 
 @scripts.route('/register', methods=['GET', 'POST'])
 @login_required
@@ -71,10 +69,10 @@ def register():
 @scripts.route('/<int:script_id>')
 @login_required
 def info(script_id):
-    sc = Script.query.filter(Script.id == script_id).first()
-    if sc is None:
-        return abort(404)
-    return render_template('scripts/script.html', script=sc, form=Form())
+    sc = Script.query.filter(Script.id == script_id).first_or_404()
+    form = ScriptForm()
+    form.get_softwares()
+    return render_template('scripts/script.html', script=sc, form=Form(), form_software=form)
 
 
 @scripts.route('/<int:script_id>/upvote')
@@ -89,7 +87,20 @@ def upvote(script_id):
 @scripts.route('/<int:script_id>/update_content', methods=['POST'])
 @login_required
 def update_content(script_id):
-    sc = Script.query.filter(Script.id == script_id).first()
+    sc = Script.query.filter(Script.id == script_id).first_or_404()
     sc.content = request.form['content']
     sc.save()
     return redirect(url_for('scripts.index'))
+
+@scripts.route('/<int:script_id>/update_software', methods=['POST'])
+@login_required
+def update_software(script_id):
+    sc = Script.query.filter(Script.id == script_id).first_or_404()
+    software_name = request.form['software']
+    if software_name == 'None':
+        sc.software_id = None
+    else:
+        sc.software_id = software_name
+    sc.save()
+    flash('successfully updated script software', 'success')
+    return redirect(url_for('scripts.info', script_id=script_id))

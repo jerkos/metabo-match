@@ -30,12 +30,18 @@
                     {% if software.omictools_id %}
                         <a href='/'>{{ software.omictools_id }}</a>,
                     {% endif %}
-                    <a href="{{ software.get_category_url() }}">Forum link</a>
+                    <a href="{{ software.get_category_url() }}">Forum</a>,
+                     {% if software.owner.avatar %}
+                            <img src="{{ software.owner.avatar}}" width="50" height="50">
+                    {% else %}
+                        <small>owner: <a href="{{ url_for('user.new_message', to_user=software.owner.username) }}"><img class="img img-rounded" src="{{ software.owner.email | gravatar }}" width="30" height="30"></a></small>
+                    {% endif %}
+
                 </small>
             </h1>
             <div class="container" style="width:100%">
                 <div class="row">
-                        <img src="{{ url_for('static', filename=["img/", software.name|lower, ".png"] |join("")) }}" class="img-responsive" width="200" height="84"/>
+                    <img src="http://metabomatch.s3.amazonaws.com/{{ [software.name|lower] |join("") }}" class="img-responsive" width="400" height="200"/>
                 </div>
 
                 <div class="row" style="padding-top: 20px;">
@@ -217,7 +223,12 @@
     <div class="row" style="padding-top: 50px;">
         <div role="tabpanel">
             <ul class="nav nav-tabs" role="tablist">
-                <li role="presentation" class="active">
+                 <li role="presentation" class="active">
+                    <a style="outline:none;-webkit-appearance:none;" href="#community" aria-controls="community" role="tab" data-toggle="tab">
+                        <h4><i class="fa fa-globe text-muted"></i> Community view</h4>
+                    </a>
+                </li>
+                <li role="presentation">
                     <a style="outline:none;-webkit-appearance:none;" href="#various-stats" aria-controls="various-stats" role="tab" data-toggle="tab">
                         <h4><i class="fa fa-exchange text-muted"></i> Various statistics</h4>
                     </a>
@@ -227,16 +238,58 @@
                         <h4><i class="fa fa-github text-muted"></i> Github related statistics</h4>
                     </a>
                 </li>
-                <li role="presentation">
-                    <a style="outline:none;-webkit-appearance:none;" href="#community" aria-controls="community" role="tab" data-toggle="tab">
-                        <h4><i class="fa fa-globe text-muted"></i> Community view</h4>
-                    </a>
-                </li>
+
             </ul>
 
 
             <div class="tab-content">
-                <div role="tabpanel" class="tab-pane fade in active" id="various-stats">
+
+                <div role="tabpanel" class="tab-pane fade in active" id="community">
+                    <div class="row"> {# style="min-height: 300px;" #}
+                        <div class="col-md-4">
+                            <h5 class="text-center"><i class="fa fa-star text-muted"></i> Last ratings <small><a href="#">see all</a></small></h5>
+
+                            <hr/>
+                            {% for c in software.ratings[-5:] %}
+                                <p class="text-center">
+                                    <b><a href="{{ url_for('user.profile', username=c.user.username) }}">{{ c.user.username }}</a></b> :
+                                    {% set nb_stars = (c.rate / 10.0)|int %}
+                                    {% for i in range(10) %}
+                                        {% if i <= nb_stars %}
+                                            <i class="fa fa-star"></i>
+                                        {% else %}
+                                            <i class="fa fa-star-o"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                </p>
+                            {% else %}
+                                <p class="well well-lg text-center text-muted">Nothing to show</p>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-4">
+                            <h5 class="text-center"><i class="fa fa-comment text-muted"></i> Last comments <small><a href="#">see all</a></small></h5>
+                            <hr/>
+                            {% for c in software.comments[-5:] %}
+                                <p class="well">
+                                    <b><a href="{{ url_for('user.profile', username=c.user.username) }}">{{ c.user.username }}</a></b>: <br>
+                                    <i class="fa fa-quote-left"></i> {{ c.content }} <i class="fa fa-quote-right"></i>
+                                </p>
+                            {% else %}
+                                <p class="well well-lg text-center text-muted">Nothing to show</p>
+                            {% endfor %}
+
+                        </div>
+                        <div class="col-md-4">
+                            <h5 class="text-center"><i class="fa fa-flash text-muted"></i> Last matches</h5>
+                            <hr/>
+                            <p class="text-center"><label class="label label-danger">Available soon !</label></p>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div role="tabpanel" class="tab-pane fade" id="various-stats">
                             <div class="col-md-11 col-md-offset-1">
 
                     <table class="table">
@@ -305,78 +358,36 @@
                     </table>
                                 </div>
                 </div>
-
-                <div role="tabpanel" class="tab-pane fade" id="community">
-                    <div class="row"> {# style="min-height: 300px;" #}
-                        <div class="col-md-4">
-                            <h5 class="text-center"><i class="fa fa-star text-muted"></i> Last ratings</h5>
-                            <hr/>
-                            {% for c in software.ratings[-5:] %}
-                                <p class="text-center">
-                                    <b>{{ c.user.username }}</b> :
-                                    {% set nb_stars = (c.rate / 10.0)|int %}
-                                    {% for i in range(10) %}
-                                        {% if i <= nb_stars %}
-                                            <i class="fa fa-star"></i>
-                                        {% else %}
-                                            <i class="fa fa-star-o"></i>
-                                        {% endif %}
-                                    {% endfor %}
-                                </p>
-                            {% else %}
-                                <p class="well well-lg text-center text-muted">Nothing to show</p>
-                            {% endfor %}
-                        </div>
-                        <div class="col-md-4">
-                            <h5 class="text-center"><i class="fa fa-comment text-muted"></i> Last comments</h5>
-                            <hr/>
-                            {% for c in software.comments[-5:] %}
-                                <p class="well">
-                                    <b>{{ c.user.username }}</b>: <br>
-                                    <i class="fa fa-quote-left"></i> {{ c.content }} <i class="fa fa-quote-right"></i>
-                                </p>
-                            {% else %}
-                                <p class="well well-lg text-center text-muted">Nothing to show</p>
-                            {% endfor %}
-
-                        </div>
-                        <div class="col-md-4">
-                            <h5 class="text-center"><i class="fa fa-flash text-muted"></i> Last matches</h5>
-                            <hr/>
-                            <p class="text-center"><label class="label label-danger">Available soon !</label></p>
-                        </div>
-                    </div>
-                </div>
-
             </div>
         </div>
     </div> {# end row  #}
-
+    <hr/>
     {% if current_user.is_authenticated() %}
         <div class="row">
             {% if not current_user.has_commented(software.name) or not current_user.has_commented or show_comment_form %}
-            <h4 style="padding: 20px 0 20px 0">Post a review about this software...</h4>
-            <form class="form-horizontal" method="post" action="{{ url_for('softwares.comment', name=software.name) }}">
 
-                {% if not current_user.has_commented(software.name) or show_comment_form %}
-                <div class="form-group">
-                    <label class="col-md-3 control-label">Leave a comment or a rating</label>
-                    <div class="col-md-9">
-                        <textarea class="form-control" rows="10" name="content" placeholder="Fill this!"></textarea>
+                <h4 style="padding: 20px 0 20px 0">Post a review about this software...</h4>
+                <form class="form-horizontal" method="post" action="{{ url_for('softwares.comment', name=software.name) }}">
+                    {{ form.hidden_tag() }}
+                    {% if not current_user.has_commented(software.name) or show_comment_form %}
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">Leave a comment or a rating</label>
+                        <div class="col-md-9">
+                            <textarea class="form-control" rows="10" name="content" placeholder="Fill this!"></textarea>
+                        </div>
                     </div>
-                </div>
-                {% endif %}
+                    {% endif %}
 
-                {% if not current_user.has_rated(software.name) or show_comment_form %}
-                <div class="form-group">
-                    <label class="col-md-3 control-label">rating</label>
-                     <div class="col-sm-9">
-                        <input name="rating" type="number" class="form-control" name="rating" min="0" max="100">
+                    {% if not current_user.has_rated(software.name) or show_comment_form %}
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">rating</label>
+                         <div class="col-sm-9">
+                            <input name="rating" type="number" class="form-control" name="rating" min="0" max="100">
+                        </div>
                     </div>
-                </div>
-                {% endif %}
-                {{ render_submit() }}
-            </form>
+                    {% endif %}
+                    {{ render_submit() }}
+                </form>
             {% else %}
 
                 <p class="alert-info">It seems you have already commented or rated this software.
@@ -388,6 +399,23 @@
         </div>
     {% else %}
         <h4 class="alert-info"> Login in and post a comment on this software</h4>
+    {% endif %}
+
+
+    {% if current_user.id == software.owner_id %}
+        <hr/>
+        <h4>Administration</h4>
+        <div class="row text-center" style="padding-bottom: 50px;">
+            <div class="col-md-6">
+                <p class="help-block">Warning this a permanent change</p>
+                <a id="delete" href="{{ url_for('softwares.delete', name=software.name) }}" class="btn btn-danger" disabled="disabled">Delete software</a>
+                <small><button id="unlock-delete" class="btn btn-sm btn-default">Unlock</button></small>
+            </div>
+
+{#            <div class="col-md-6">#}
+{#                <a href="{{ url_for('softwares.delete', name=software.name) }}" class="btn btn-info">Transfer ownership</a>#}
+{#            </div>#}
+        </div>
     {% endif %}
 {% endblock %}
 
@@ -409,6 +437,11 @@
           textClass:      'circles-text',
           styleWrapper: true,
           styleText:    true
+        });
+
+        $("#unlock-delete").click(function (e) {
+            e.preventDefault();
+            $("#delete").removeAttr("disabled"); //prop('disabled', false);
         });
     </script>
 

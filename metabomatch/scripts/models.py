@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from metabomatch.extensions import db, cache, github
+from metabomatch.extensions import db
 
 
 script_tags_script_mapping = db.Table(
@@ -50,7 +50,7 @@ class Script(db.Model):
     #ser that has created this script
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     #defined in software as software
-    software_id = db.Column(db.String(), db.ForeignKey("softwares.name"), nullable=False)
+    software_id = db.Column(db.String(), db.ForeignKey("softwares.name"))
 
     script_tags = db.relationship('ScriptTags', secondary=script_tags_script_mapping, backref='scripts', lazy='joined')
 
@@ -73,5 +73,16 @@ class Script(db.Model):
         db.session.commit()
         return self
 
+    def delete(self):
+        for t in self.script_tags:
+            db.session.delete(t)
+        db.session.commit()
+
+        db.session.delete(self)
+        db.session.commit()
+
     def preview_content(self):
         return [x.rstrip() for x in self.content.split('\n')[0:10]]
+
+    def view_content(self):
+        return [x.rstrip() for x in self.content.split('\n')[:]]

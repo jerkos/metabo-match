@@ -5,7 +5,22 @@
 {% endblock %}
 {% block content %}
 
-    <h3><span class="text-muted">Software:</span> {{ script.software.name }}</h3>
+    <h3><span class="text-muted">Software:</span> {{ script.software.name | default('None') }}    </h3>
+
+    <form class="form-inline" method="post" action="{{ url_for('scripts.update_software', script_id=script.id) }}">
+        {{ form_software.hidden_tag() }}
+
+        <div class="form-group">
+            <label>Change software:</label>
+            <select name='software' class="form-control ">
+                {% for c in form_software.software.choices %}
+                    <option value="{{ c[0] }}"> {{ c[0] }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button class="btn btn-sm btn-default" type="submit">Change</button>
+    </form>
+
     <h3><span class="text-muted">Script title:</span> {{ script.title }} by <a href="{{ url_for('user.profile', username=script.user.username) }}">{{ script.user.username }}</a>
         <a href="{{ url_for('scripts.upvote', script_id=script.id) }}"><i class="fa fa-thumbs-o-up"></i><span class="badge">{{ script.up_votes }}</span></a></h3>
     <hr/>

@@ -19,21 +19,22 @@ class ScriptForm(Form):
     """
     pg = ['R', 'Python', 'C', 'C++', 'Javascript', 'Java', 'Markdown']
 
-    software = SelectField("software")
+    software = SelectField("software", description="Choose a software if your script is related to a software")
     title = StringField("title*", validators=[DataRequired(message="title is required")])
     programming_language = SelectField("programming language", choices=[(p, p) for p in pg])
     tags = StringField("tags", default="")
 
     github_gist_url = StringField('github gist url', validators=[Optional(), URL(message="Not a valid url")])
 
-    description = TextAreaField("description", default='NA')
-    content = TextAreaField("content*")
+    description = TextAreaField("description", default='NA', validators=[Optional()])
+    content = TextAreaField("content*", validators=[Optional()])
 
     def save(self, software_name):
-        script = Script(self.title.data, self.programming_language.data)  # , self.dependancies.data)
+        script = Script(self.title.data, self.programming_language.data)
         script.description = self.description.data
         script.user_id = current_user.id
-        script.software_id = software_name
+        if software_name != 'None':
+            script.software_id = software_name
         script.up_votes = 0
 
         if self.github_gist_url.data:
@@ -57,7 +58,7 @@ class ScriptForm(Form):
         return script.save()
 
     def get_softwares(self):
-        self.software.choices = [(s[0], s[0]) for s in db.session.query(Software.name).all()]
+        self.software.choices = [('---', 'None')] + [(s[0], s[0]) for s in db.session.query(Software.name).all()]
 
     def validate(self):
         """

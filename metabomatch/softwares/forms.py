@@ -3,7 +3,7 @@ Softwares forms
 """
 from flask.ext.login import current_user
 from flask.ext.wtf import Form, RecaptchaField
-from wtforms import StringField, IntegerField, BooleanField, SelectField
+from wtforms import StringField, IntegerField, BooleanField, SelectField, FileField
 from wtforms.validators import DataRequired, Email, EqualTo, regexp, ValidationError, Optional, URL
 
 from metabomatch.flaskbb.forum.models import Category, Forum
@@ -19,6 +19,8 @@ class SoftwareForm(Form):
     name = StringField("name*", validators=[DataRequired(message="You must provide a software name")])
     organization = StringField("organization")
     pg_language = StringField("programming language")
+
+    image = FileField('image', validators=[Optional()])
 
     github_url = StringField('github_url', validators=[Optional(), URL(message="Not a valid url")])
 

@@ -86,16 +86,16 @@ class ChangeUserDetailsForm(Form):
         Optional()])
 
     website = StringField("Website", validators=[
-        Optional(), URL()])
+        Optional(), URL()], description="Your personal website")
 
     avatar = StringField("Avatar", validators=[
-        Optional(), URL()])
+        Optional(), URL()], description="Image url, if blank a gravatar image will be used")
 
     signature = TextAreaField("Forum Signature", validators=[
         Optional()])
 
     notes = TextAreaField("Notes", validators=[
-        Optional(), Length(min=0, max=5000)])
+        Optional(), Length(min=0, max=5000)], description="A small description of who you are and what you are doing")
 
 
 class NewMessageForm(Form):

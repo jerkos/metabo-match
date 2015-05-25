@@ -12,7 +12,9 @@
     <li class="active">{{ user.username }}</li>
 </ul>
 
-{% if software_achievements['name'] %}, <blockquote>{{ software_achievements['name'] }} </blockquote>{% endif %}
+{% if software_achievements['name'] %}
+    <blockquote>{{ software_achievements['name'] }} </blockquote>
+{% endif %}
 
 <table class="table table-bordered">
     {% set soft_name, software_achievements = user.software_achievements() %}

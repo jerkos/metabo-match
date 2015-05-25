@@ -3,12 +3,12 @@
 Software views
 """
 from flask.ext.wtf import Form
+from metabomatch.utils import s3_upload, s3_upload_from_server, s3_delete
 
 from sqlalchemy import desc
 from flask import Blueprint, request, redirect, url_for, session, flash, abort
 
 from flask.ext.login import login_required, current_user
-from metabomatch.flaskbb.utils.decorators import admin_required
 
 from metabomatch.achievements import SoftwareAchievement, SCORE_SOFT
 from metabomatch.extensions import db
@@ -50,17 +50,44 @@ def index():
 @login_required
 def register():
     """register a new software"""
-    form = SoftwareForm(request.form)
+    form = SoftwareForm()
     if form.validate_on_submit():
         form.save(request.form.getlist('selected_tags'))
+
+        #update achivements
         c = db.session.query(Software.name).filter(Software.owner_id == current_user.id).count()
         goal = SoftwareAchievement.unlocked_level(c)
         if goal:
             flash('Achievement unlocked\n {} \n {}'.format(goal['name'], goal['description']), 'success')
+
+        #update global score
         current_user.global_score += SCORE_SOFT
+        current_user.save()
+
+        #upload to s3
+        if form.image.data:
+            s3_upload(form.image, form.name.data.lower())
+        else:
+            s3_upload_from_server('static/img/placeholder.jpg', form.name.data.lower())
+
         return redirect(url_for('softwares.index'))
     return render_template('softwares/register_software.html', form=form)
 
+
+@softwares.route('/<name>/delete')
+@login_required
+def delete(name):
+    soft = Software.query.filter(Software.name == name).first_or_404()
+    error = soft.delete()
+    try:
+        s3_delete(name)
+    except:
+        print("Error deleting file '{}'from s3".format(name))
+    if error:
+        flash("Error deleting sofware '{}'".format(soft.name), 'error')
+    else:
+        flash("Sofware {} successfully deleted".format(soft.name), 'success')
+    return redirect(url_for('softwares.index'))
 
 
 @softwares.route('/<name>')
@@ -73,9 +100,8 @@ def info(name):
     :param name: software name PK
     :return:
     """
-    soft = Software.query.filter(Software.name == name).first()
-    if soft is None:
-        abort(404)
+    soft = Software.query.filter(Software.name == name).first_or_404()
+
     # view restriction
     if not current_user.is_authenticated():
         v = session.get('nb_views', 0)
@@ -121,7 +147,7 @@ def comment(name):
 @softwares.route('/<name>/upvote/<int:mapping_id>')
 @login_required
 def upvote(name, mapping_id):
-    soft = Software.query.filter(Software.name == name).first()
+    soft = Software.query.filter(Software.name == name).first_or_404()
     s_mapp = None
     for s in soft.sentences_mapping:
         if s.id == mapping_id:
@@ -134,11 +160,10 @@ def upvote(name, mapping_id):
     return redirect(url_for('softwares.info', name=name))
 
 
-
 @softwares.route('/<name>/register_user')
 @login_required
 def register_user(name):
-    soft = Software.query.filter(Software.name == name).first()
+    soft = Software.query.filter(Software.name == name).first_or_404()
     current_user.softwares_used.append(soft)
     current_user.save()
     return redirect(url_for('softwares.index'))
@@ -147,7 +172,7 @@ def register_user(name):
 @softwares.route('/<name>/remove_user')
 @login_required
 def remove_user(name):
-    soft = Software.query.filter(Software.name == name).first()
+    soft = Software.query.filter(Software.name == name).first_or_404()
     try:
         current_user.softwares_used.remove(soft)
     except ValueError:
@@ -164,9 +189,8 @@ def update(name):
     :param name: software PK
     :return:
     """
-    soft = Software.query.get(name)
-    if soft is None:
-        return abort(404)
+    soft = Software.query.filter(Software.name == name).first_or_404()
+
     if soft.owner_id != current_user.id and not is_admin(current_user):
         return abort(401)
     form = SoftwareUpdateForm()
@@ -179,9 +203,8 @@ def update(name):
 @softwares.route('/<name>/update_description', methods=['POST'])
 @login_required
 def update_description(name):
-    soft = Software.query.get(name)
-    if soft is None:
-        return abort(404)
+    soft = Software.query.filter(Software.name == name).first_or_404()
+
     if soft.owner_id != current_user.id and not is_admin(current_user):
         return abort(401)
     print request.form

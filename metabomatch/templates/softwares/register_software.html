@@ -17,7 +17,7 @@
 
 {% block content %}
 
- <form class="form-horizontal" role="form" method="POST">
+ <form class="form-horizontal" role="form" method="POST" enctype="multipart/form-data">
 
      <h3>Register software</h3>
 
@@ -28,14 +28,21 @@
         {{ horizontal_field(form.name, icon_class='fa fa-laptop fa-2x') }}
         {{ horizontal_field(form.organization, icon_class='fa fa-briefcase fa-2x') }}
         {{ horizontal_field(form.pg_language, icon_class='fa fa-terminal fa-2x') }}
-        {{ horizontal_field(form.github_url, label_text='github repository url', icon_class='fa fa-github fa-2x') }}
 
-{#         <div class="form-group">#}
-{#            <label class="col-md-3 control-label">rating</label>#}
-{#             <div class="col-sm-9">#}
-{#                <input type="number" class="form-control" name="rating" min="0" max="100">#}
-{#            </div>#}
-{#         </div>#}
+        <div class="form-group">
+            <label class="col-md-3 control-label">image</label>
+            <div class="col-md-4">
+                <input id="input-file" class="file" type="file" name="image" />
+            </div>
+            <div class="col-md-5">
+                <img id="preview" src='http://metabomatch.s3.amazonaws.com/placeholder.jpg'  height="200" width="200"/>
+            </div>
+        </div>
+        <div>
+        </div>
+
+        {{ horizontal_field(form.github_url, label_text='github repository url', icon_class='fa fa-github fa-2x') }}
+     
 
          <div class="form-group">
              <label class="col-md-3 control-label"><span class="fa fa-tags fa-2x"></span> </label>
@@ -78,6 +85,14 @@
 
     <script>
          $('#select-tags').selectize({create: true});
+         $('#input-file').change(function(event) {
+             event.preventDefault();
+             //var file = document.getElementById('input-file').files[0];
+             //alert(file);
+             var tmppath = URL.createObjectURL(event.target.files[0]);
+             $('#preview').fadeIn('fast').attr('src', tmppath);
+         });
+
      </script>
 
 {% endblock %}
