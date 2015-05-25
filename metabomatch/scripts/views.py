@@ -31,7 +31,9 @@ def index():
 
     if software is not None and not_tags:
         if software == '---':
-            filtered_scripts = Script.query.filter(Script.software_id is None).order_by(desc(Script.creation_date)).paginate(page, SCRIPTS_PER_PAGE, True)
+            print 'HEY'
+            filtered_scripts = Script.query.filter(Script.software_id == None).order_by(desc(Script.creation_date))\
+                .paginate(page, SCRIPTS_PER_PAGE, True)
         else:
             filtered_scripts = Script.query.join(Software).filter(Software.name == software)\
                 .paginate(page, SCRIPTS_PER_PAGE, True)
