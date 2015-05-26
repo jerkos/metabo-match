@@ -77,6 +77,11 @@ def register():
 @softwares.route('/<name>/delete')
 @login_required
 def delete(name):
+    """
+    Delete software with specified name, delete also image on s3 if exists
+    :param name: software name primary key
+    :return: possible error string to display to end user
+    """
     soft = Software.query.filter(Software.name == name).first_or_404()
     error = soft.delete()
     try:
@@ -148,6 +153,7 @@ def comment(name):
 def comments(name):
     soft = Software.query.filter(Software.name == name).first_or_404()
     return render_template('softwares/all_comments.html', software=soft)
+
 
 @softwares.route('/<name>/ratings')
 def ratings(name):
