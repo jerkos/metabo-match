@@ -1,0 +1,20 @@
+{% extends theme("layout.html") %}
+
+{% block content %}
+    <h1><span class="muted">software:</span> {{ software.name }}</h1>
+    <hr/>
+    <ul class="list-group">
+        {% for c in software.comments %}
+            <li class="list-group-item">
+                <h4 class="list-group-item-heading">
+                    <a href="{{ url_for('user.profile', username=c.user.username) }}">{{ c.user.username }}</a>
+                    <small class="text-muted">{{ c.date_created | format_date(format='%Y-%m-%d at %H:%M') }}:</small>
+                </h4>
+                <p class="list-group-item-text">{{ c.content }}</p>
+            </li>
+        {% else %}
+            <p class="well text-center"><span class="fa fa-coffee fa-2x"></span><br/><strong>No comment found</strong></p>
+        {% endfor %}
+    </ul>
+
+{% endblock %}

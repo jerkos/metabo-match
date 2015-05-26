@@ -41,7 +41,7 @@
             </h1>
             <div class="container" style="width:100%">
                 <div class="row">
-                    <img src="http://metabomatch.s3.amazonaws.com/{{ [software.name|lower] |join("") }}" class="img-responsive" width="400" height="200"/>
+                    <img src="http://metabomatch.s3.amazonaws.com/{{ [software.name|lower] |join("") }}" class="img-responsive thumbnail" width="300" height="150"/>
                 </div>
 
                 <div class="row" style="padding-top: 20px;">
@@ -247,7 +247,7 @@
                 <div role="tabpanel" class="tab-pane fade in active" id="community">
                     <div class="row"> {# style="min-height: 300px;" #}
                         <div class="col-md-4">
-                            <h5 class="text-center"><i class="fa fa-star text-muted"></i> Last ratings <small><a href="#">see all</a></small></h5>
+                            <h5 class="text-center"><i class="fa fa-star text-muted"></i> Last ratings <small><a href="{{ url_for('softwares.ratings', name=software.name) }}">see all</a></small></h5>
 
                             <hr/>
                             {% for c in software.ratings[-5:] %}
@@ -267,7 +267,7 @@
                             {% endfor %}
                         </div>
                         <div class="col-md-4">
-                            <h5 class="text-center"><i class="fa fa-comment text-muted"></i> Last comments <small><a href="#">see all</a></small></h5>
+                            <h5 class="text-center"><i class="fa fa-comment text-muted"></i> Last comments <small><a href="{{ url_for('softwares.comments', name=software.name) }}">see all</a></small></h5>
                             <hr/>
                             {% for c in software.comments[-5:] %}
                                 <p class="well">

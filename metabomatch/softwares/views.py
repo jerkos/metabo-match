@@ -5,7 +5,7 @@ Software views
 from flask.ext.wtf import Form
 from metabomatch.utils import s3_upload, s3_upload_from_server, s3_delete
 
-from sqlalchemy import desc
+from sqlalchemy import desc, func
 from flask import Blueprint, request, redirect, url_for, session, flash, abort
 
 from flask.ext.login import login_required, current_user
@@ -142,6 +142,18 @@ def comment(name):
         r = Rating(rating, current_user.id, name)
         r.save()
     return redirect(url_for('softwares.info', name=name))
+
+
+@softwares.route('/<name>/comments')
+def comments(name):
+    soft = Software.query.filter(Software.name == name).first_or_404()
+    return render_template('softwares/all_comments.html', software=soft)
+
+@softwares.route('/<name>/ratings')
+def ratings(name):
+    soft = Software.query.filter(Software.name == name).first_or_404()
+    mean = db.session.query(func.avg(Rating.rate).label('mean_rate')).filter(Rating.software_id == name).first()[0]
+    return render_template('softwares/all_ratings.html', software=soft, mean=mean)
 
 
 @softwares.route('/<name>/upvote/<int:mapping_id>')

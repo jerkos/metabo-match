@@ -1,0 +1,62 @@
+{% extends theme("layout.html") %}
+{% block css %}
+    {{ super() }}
+    <style>
+        th {
+            text-align: center;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <h1><span class="text-muted">software:</span> {{ software.name }}, <span class="text-muted">average:</span> <label class="label label-default">{{ mean | default('NA', true)}}</label></h1>
+    <hr/>
+    {% if software.ratings %}
+        <table class="table table-condensed">
+            <thead>
+                <tr>
+                    <th>username</th>
+                    <th>date</th>
+                    <th>rate</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for c in software.ratings %}
+                <tr class="text-center">
+                    <th><a href="{{ url_for('user.profile', username=c.user.username) }}">{{ c.user.username }}</a></th>
+                    <th><small class="text-muted">{{ c.date_created | format_date(format='%Y-%m-%d at %H:%M:%S') }}</small></th>
+                    <th><div id="circles-{{ loop.index }}" class="text-center">{{ c.content }}</div></th>
+                </tr>
+            {% else %}
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="well text-center"><span class="fa fa-certificate fa-2x"></span><br/><strong>No rating found</strong></p>
+
+    {% endif %}
+
+{% endblock %}
+
+{% block javascript %}
+    {{ super() }}
+        <script src="{{url_for('static', filename='js/circles.js')}}"></script>
+
+    <script>
+        {% for c in software.ratings %}
+            Circles.create({
+          id:           'circles-{{ loop.index }}',
+          radius:       25,
+          value:        '{{ c.rate }}',
+          maxValue:     100,
+          width:        5,
+          text:         function(value){return value + '%';},
+          colors:       ['#D3B6C6', '#4B253A'],
+          duration:       400,
+          wrpClass:     'circles-wrp',
+          textClass:      'circles-text',
+          styleWrapper: true,
+          styleText:    true
+        });
+        {% endfor %}
+    </script>
+{% endblock %}
