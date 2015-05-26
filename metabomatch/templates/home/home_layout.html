@@ -3,6 +3,10 @@
 {% block css %}
     {{ super() }}
     <style>
+        {#        body {#}
+        {#            background: url("static/img/bright_squares.png") repeat;#}
+        {#        }#}
+
         .navbar {
             padding: 0 23% 0 22%;
             margin-bottom: 0
@@ -20,9 +24,6 @@
               background: -o-linear-gradient(#1565c0, #2196f3);
               background: -moz-linear-gradient(#1565c0, #2196f3);
               background: linear-gradient(#1565c0, #2196f3);
-        }
-        h3 {
-            color: #2196f3; /*#1565c0;*/
         }
 
         .custom-button {
@@ -55,6 +56,13 @@
         p {
             text-indent: 20px;
         }
+
+        #motivation {
+            padding: 0px 20% 0px 20%;
+            font-size: 1.2em;
+        }
+
+
     </style>
 {% endblock %}
 {% block content %}
@@ -70,28 +78,47 @@
         </div>
     </div>
 
-    <div class="container" style="padding: 0px 20% 0px 20%">
-        <div class="row text-left">
-            <h3 class="text-info">Many softwares...</h3>
-            <p class="text-justify text-left">More and more softwares are released everyday to tackle biological data processing
-                (<em>Big Data problem</em>). Especially <strong>metabolomics data</strong> coming from <em>mass spectrometry</em>. Machines are
-                constantly evolving and community adapt their workflow to get more insight in the biological problem they study.
-            </p>
+    <div id="motivation" class="container">
+        <div class="row">
+            <div class="col-md-6 text-left">
+                <h3 class="text-info">Many softwares...</h3>
+
+                <p class="text-justify text-left">More and more softwares are released everyday to tackle biological
+                    data processing
+                    (<em>Big Data problem</em>). Especially <strong>metabolomics data</strong> coming from <em>mass
+                        spectrometry</em>. Machines are
+                    constantly evolving and community adapt their workflow to get more insight in the biological problem
+                    they study.
+                </p>
+
+                <h3 class="text-info">Which one may fit best your needs in terms of quality and performance ?</h3>
+
+                <p class="text-justify text-left">
+                    <em>Many softwares have common functionalities, they can do it well or not, they can do it fast or
+                        not.
+                    </em> We aim to guide <strong>bioinformaticians, researchers, clinicians to find the best
+                    tool</strong>
+                    to fit their needs quickly with confidence. We tried to class softwares in different part of the
+                    cassical
+                    metabolomics analysis pipeline and attribute mark based on rigourous criteria so that user can
+                    identify
+                    the best tools established by the community.
+                </p>
+            </div>
+            <div class="col-md-5 col-md-offset-1">
+                <img src="{{ url_for('static', filename='img/company.jpg') }}" class="img-responsive"
+                     style="padding-top: 70px;">
+            </div>
 
         </div>
 
-        <div class="row text-left" style="padding: 30px 0 30px 0">
-            <h3 class="text-info">Which one may fit best your needs in terms of quality and performance ?</h3>
-            <p class="text-justify text-left">
-                <em>Many softwares have common functionalities, they can do it well or not, they can do it fast or not.
-                </em> We aim to guide <strong>bioinformaticians, researchers, clinicians to find the best tool</strong>
-                to fit their needs quickly with confidence. We tried to class softwares in different part of the cassical
-                metabolomics analysis pipeline and attribute mark based on rigourous criteria so that user can identify
-                the best tools established by the community.
-            </p>
-        </div>
+        <hr/>
 
-        <div class="row text-left">
+        <div class="row" style="padding-bottom:50px;">
+            <div class="col-md-5">
+                <img src="{{ url_for('static', filename='img/data-analytics.jpg') }}" class="img-responsive">
+            </div>
+            <div class="col-md-5 col-md-offset-2 text-left">
                 <h3 class="text-info">Helping you in that task !</h3>
                 <p> On this website, you will be able to:
                     <ul>
@@ -103,16 +130,17 @@
                         <li>Discuss about software algorithm, installation problems... Why not new idea and <strong>crowdsourcing</strong> ?</li>
                     </ul>
                 </p>
+            </div>
 
         </div>
 
         <hr/>
 
-        <div class="row" style="padding-top: 20px">
+        <div class="row" style="padding-top: 50px;">
             <div class="col-md-4 text-center">
                 <i class="fa fa-thumbs-o-up fa-5x"></i>
 
-                <h3>Find the right tool for your needs</h3>
+                <h3 class="text-info">Find the right tool for your needs</h3>
 
                 <p class="text-left"><b>metabomatch</b> evaluate each tools thanks to community feedback, guide you to pick-up the best for your needs. Register your <em>own software</em>,
                     and compare it to others.</p>
@@ -122,10 +150,11 @@
             <div class="col-md-4 text-center">
                 <i class="fa fa-share fa-5x"></i>
 
-                <h3>Share your script</h3>
+                <h3 class="text-info">Share your script and parameters</h3>
 
                 <p class="text-left">With all mass sepctrometers available, it is sometimes hard to find good tuning
-                    for various algorihtm. We proposed a space to share your scripts to help the community.</p>
+                    for various algorihtm. We proposed a space to share your <strong>scripts and parameters</strong> to
+                    help the community.</p>
 
                 <p class="text-left"><a href="{{ url_for('scripts.index') }}" class="btn btn-info">View details &raquo;</a></p>
 
@@ -133,7 +162,7 @@
             <div class="col-md-4 text-center">
                 <i class="fa fa-coffee fa-5x"></i>
 
-                <h3>Discuss about your favorite software</h3>
+                <h3 class="text-info">Discuss about your favorite software</h3>
 
                 <p class="text-left">We offer the possibilty to discuss about available tools. You can post a question
                     about algorithm parameters and be sure that a community member will be able to answer.</p>
@@ -149,8 +178,6 @@
             <h3 class="text-info">Contact</h3>
             <p>For any questions do not hesitate to send an email to <a href="mailto:contact@metabomatch.com">contact@metabomatch.com</a></p>
         </div>
-
-        <hr/>
 
         <div class="row">
             <h4>Tools used to build this website</h4>
