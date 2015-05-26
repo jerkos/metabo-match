@@ -203,9 +203,9 @@
                         <ul class="list-group">
                             {% for sentence_mapping in (l | sort(attribute='sentence.id')) %}
                                 <li class="list-group-item"> <strong>{{ sentence_mapping.sentence.sentence }}</strong>
-                                    <span class="badge">{{ sentence_mapping.upvote }}</span>
+                                    <span class="badge big-font">{{ sentence_mapping.upvote }}</span>
                                     <a href="{{ url_for('softwares.upvote', name=software.name, mapping_id=sentence_mapping.id)}}">
-                                        <i class="fa fa-chevron-circle-up"></i>
+                                        <i class="fa fa-chevron-circle-up fa-2x"></i>
                                     </a>
                                 </li>
                             {% endfor %}
@@ -217,7 +217,7 @@
 
         </div>
     </div>
-    <p> <em>Click on <i class="fa fa-chevron-circle-up"></i> of the sentence which fit best to this software</em></p>
+    <p><em>Click on <i class="fa fa-chevron-circle-up"></i> of the sentence which fits best to this software</em></p>
 
     {# starts a new row  #}
     <div class="row" style="padding-top: 50px;">

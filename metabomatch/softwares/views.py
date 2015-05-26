@@ -175,6 +175,7 @@ def upvote(name, mapping_id):
         abort(404)
     s_mapp.upvote += 1
     s_mapp.save()
+    flash("Vote taken into account ! ", "success")
     return redirect(url_for('softwares.info', name=name))
 
 
