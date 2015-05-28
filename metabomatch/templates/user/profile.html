@@ -1,5 +1,14 @@
 {% extends theme("layout.html") %}
 
+{% block css %}
+    {{ super() }}
+    <style>
+        h1 {
+            font-size: 2em;
+        }
+    </style>
+{% endblock %}
+
 {% block content %}
 
 {% set soft_name, software_achievements = user.software_achievements() %}
@@ -7,10 +16,10 @@
 {% set script_name, script_achievements = user.script_achievements() %}
 {% set forum_name, forum_achievements = user.forum_achievements() %}
 
-<ul class="breadcrumb">
-    <li><a href="{{ url_for('forum.index') }}">Forum</a></li>
-    <li class="active">{{ user.username }}</li>
-</ul>
+{#<ul class="breadcrumb">#}
+{#    <li><a href="{{ url_for('forum.index') }}">Forum</a></li>#}
+{#    <li class="active">{{ user.username }}</li>#}
+{#</ul>#}
 
 {% if software_achievements['name'] %}
     <blockquote>{{ software_achievements['name'] }} </blockquote>
@@ -22,29 +31,51 @@
     {% set script_name, script_achievements = user.script_achievements() %}
     {% set forum_name, forum_achievements = user.forum_achievements() %}
 
-    <thead>
-      <th><a href="{{ user.url }}">{{ user.username }}</a></th>
-      <th>Info</th>
-      <th>User Stats</th>
-    </thead>
+    {#    <thead>#}
+    {#      <th><a href="{{ user.url }}">{{ user.username }}</a></th>#}
+    {#      <th>Info</th>#}
+    {#      <th>User Stats</th>#}
+    {#    </thead>#}
     <tbody>
         <tr>
-
           <td width="200px">
             <table class="table table-borderless">
               <tbody>
                 {% if user.avatar %}
-                    <tr><td><img src="{{ user.avatar }}" alt="Avatar" height="100" width="100"> </td></tr>
+                    <tr>
+                        <td><img src="{{ user.avatar }}" alt="Avatar" height="150" width="150"></td>
+                    </tr>
                 {% else %}
-                    <tr><td><img class='img-rounded' src="{{ user.email | gravatar }}" alt="gravatar" height="100" width="100"></td></tr>
+                    <tr>
+                        <td><img class='img-rounded' src="{{ user.email | gravatar }}" alt="gravatar" height="150"
+                                 width="150"></td>
+                    </tr>
                 {% endif %}
-                {% if user|is_online %}
-                <tr><td><span class="label label-success">Online</span></td></tr>
-                {% else %}
-                <tr><td><span class="label label-default">Offline</span></td></tr>
-                {% endif %}
-                <tr><td><a href="{{ url_for('user.view_all_topics', username=user.username) }}">All Topics</a></td></tr>
-                <tr><td><a href="{{ url_for('user.view_all_posts', username=user.username) }}">All Posts</a></td></tr>
+                <tr>
+                    <td>
+                        <h1>{{ user.username }}
+                            {% if user|is_online %}
+                                <small style="font-size: 0.4em;" class="label label-success">Online</small>
+                            {% else %}
+                                <small class="label label-default">Offline</small>
+                            {% endif %}
+                            <br/>
+                            <small>{{ user.signature | default(user.email, true) }}</small>
+                        </h1>
+                    </td>
+                </tr>
+                {#                {% if user|is_online %}#}
+                {#                <tr><td><span class="label label-success">Online</span></td></tr>#}
+                {#                {% else %}#}
+                {#                <tr><td><span class="label label-default">Offline</span></td></tr>#}
+                {#                {% endif %}#}
+                <tr>
+                    <td>
+                        <a href="{{ url_for('user.view_all_topics', username=user.username) }}">All Topics</a>,
+                        <a href="{{ url_for('user.view_all_posts', username=user.username) }}">All Posts</a>
+                    </td>
+                </tr>
+                {#                <tr><td><a href="{{ url_for('user.view_all_posts', username=user.username) }}">All Posts</a></td></tr>#}
               </tbody>
             </table>
           </td>
@@ -55,7 +86,7 @@
                 {{ user.notes|markup }}
                 {% endautoescape %}
             {% else %}
-                User has not added any notes about him.
+              <p class="help-block">User has not added any notes about him.</p>
             {% endif %}
           </td>
 
@@ -103,10 +134,12 @@
     </tbody>
 </table>
 
+
 <p class="help-block"><strong>The following informations are visible by all users.</strong></p>
 
 <p class="help-block">Post new softwares, new scripts and talk in our forums to get more achievements !</p>
-<h3>Achievements</h3>
+
+<h2>Achievements</h2>
 <hr/>
 <ul class="list-group">
     {% if software_achievements %}
@@ -123,7 +156,7 @@
     {% endif %}
 </ul>
 
-<h3 style="padding-top: 50px;">Softwares you are using to drive your metabolomic analyses</h3>
+<h2 style="padding-top: 50px;">Softwares you are using to drive your metabolomic analysis</h2>
 <hr/>
 
 
@@ -137,11 +170,15 @@
 </ul>
 
 
-<h3 style="padding-top: 50px;">Proposed scripts</h3>
+<h2 style="padding-top: 50px;">Proposed scripts/parameters</h2>
 <hr/>
     <ul class="list-group">
     {%  for script in user.scripts %}
-        <li class="list-group-item"><a href="{{ url_for('scripts.info', script_id=script.id) }}"> {{ script.title }}, <strong>{{ script.software.name }}</strong></a><span class="pull-right badge">{{ script.up_votes }}</span></li>
+        <li class="list-group-item">
+            <a href="{{ url_for('scripts.info', script_id=script.id, slug=script.slug) }}"> {{ script.title }}, <em>software:</em>
+                <strong>{{ script.software.name | default('not defined') }}</strong></a>
+            <span class="pull-right badge">{{ script.up_votes }}</span>
+        </li>
     {% else %}
         <p>You did not proposed any scripts yet.</p>
         <p class="alert-info">You can upload a script from the register <a href="{{ url_for('scripts.index') }}">script page</a>.</p>
@@ -149,7 +186,7 @@
     </ul>
 </ul>
 
-<h3 style="padding-top: 50px;">Job offers</h3>
+<h2 style="padding-top: 50px;">Job offers</h2>
 <hr/>
 {% if user.jobs %}
 

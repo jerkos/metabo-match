@@ -13,9 +13,11 @@
             font-size: 1.2em;
         }
 
+
         /*add line github style */
-        li.active{
+        .github-li.active {
             border-top: 3px solid #D26911;
+            border-bottom: none;
         }
     </style>
 {% endblock %}
@@ -162,7 +164,7 @@
 
                     {% if loop.first %}
 
-                        <li role="presentation" class="active">
+                        <li role="presentation" class="github-li active">
                             <a style="outline:none;-webkit-appearance:none;" href="#{{ category | lower}}" aria-controls="{{ category | lower }}" role="tab" data-toggle="tab">
                                 {% if category == 'PERFORMANCE' %}
                                     <i class="fa fa-rocket"></i>
@@ -175,7 +177,7 @@
                             </a>
                         </li>
                     {% else %}
-                        <li role="presentation">
+                        <li role="presentation" class="github-li">
                             <a style="outline:none;-webkit-appearance:none;" href="#{{ category | lower}}" aria-controls="{{ category | lower }}" role="tab" data-toggle="tab">
                                  {% if category == 'PERFORMANCE' %}
                                     <i class="fa fa-rocket"></i>
@@ -223,17 +225,17 @@
     <div class="row" style="padding-top: 50px;">
         <div role="tabpanel">
             <ul class="nav nav-tabs" role="tablist">
-                 <li role="presentation" class="active">
+                <li role="presentation" class="github-li active">
                     <a style="outline:none;-webkit-appearance:none;" href="#community" aria-controls="community" role="tab" data-toggle="tab">
                         <h4><i class="fa fa-globe text-muted"></i> Community view</h4>
                     </a>
                 </li>
-                <li role="presentation">
+                <li class="github-li" role="presentation">
                     <a style="outline:none;-webkit-appearance:none;" href="#various-stats" aria-controls="various-stats" role="tab" data-toggle="tab">
                         <h4><i class="fa fa-exchange text-muted"></i> Various statistics</h4>
                     </a>
                 </li>
-                <li role="presentation">
+                <li class="github-li" role="presentation">
                     <a style="outline:none;-webkit-appearance:none;" href="#github-stats" aria-controls="github-stats" role="tab" data-toggle="tab">
                         <h4><i class="fa fa-github text-muted"></i> Github related statistics</h4>
                     </a>
@@ -443,6 +445,8 @@
             e.preventDefault();
             $("#delete").removeAttr("disabled"); //prop('disabled', false);
         });
+
+        $('#software').addClass('active');
     </script>
 
     <script src="{{ url_for('static', filename='js/jquery.sparklines.min.js') }}"></script>

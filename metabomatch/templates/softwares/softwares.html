@@ -6,10 +6,28 @@
     <meta name="description" content="Shows all registered softwares on Metabomatch classified by LC-MS workflow categories">
 {% endblock %}
 
+{% block css %}
+    {{ super() }}
+    <style>
+        h1 {
+            font-size: 2em;
+        }
+
+        h2 {
+            font-size: 1.6em;
+        }
+
+        h3 {
+            font-size: 1.5em;
+        }
+
+    </style>
+{% endblock %}
+
 {% block content %}
 
     <div class="row" style="padding: 0 0 20px 0">
-        <h3>Help the community</h3>
+        <h1>Help the community</h1>
         <hr/>
         <p> <strong>You found a new software and you to share it with the community ?</strong> Do not hesitate to register it.<br/><br/>
 
@@ -23,7 +41,9 @@
     </div>
 
     <div class="row">
-        <h3 class="text-left">Select the best software for your needs <small>by category</small></h3>
+        <h2 class="text-left">Select the best software for your needs
+            <small>by category</small>
+        </h2>
         <hr/>
     </div>
 
@@ -59,7 +79,7 @@
             <h3>Selected softwares</h3>
             <p class="help-block"><strong>Note:</strong><br/>Each rates and ranking are updated each day, during the night. You must be logged to see all rates.</p>
 
-            <hr/>
+        {#            <hr/>#}
             <table class="table table-condensed">
                 <thead>
                     <tr>
@@ -116,9 +136,12 @@
                                 <th><label class="label label-default">hidden</label></th>
                             {% endif %}
                             {% if current_user.is_authenticated() and not soft.name in (current_user.softwares_used | map(attribute='name')) %}
-                                <th><a class="btn btn-sm btn-default" href="{{ url_for('softwares.register_user', name=soft.name) }}">Using this software ?</a></th>
+                                <th class="text-right"><a class="btn btn-sm btn-default"
+                                                          href="{{ url_for('softwares.register_user', name=soft.name) }}">Using
+                                    this software ?</a></th>
                             {% elif current_user.is_authenticated() and soft.name in (current_user.softwares_used | map(attribute='name')) %}
-                                <th><a class="btn btn-sm btn-primary" href="/"><i class="fa fa-certificate"></i> software user !</a></th>
+                                <th class="text-right"><a class="btn btn-sm btn-primary" href="/"><i
+                                        class="fa fa-certificate"></i> software user !</a></th>
                             {% endif %}
                         </tr>
                     {% endfor %}
@@ -127,4 +150,9 @@
 
             {{ render_pagination(softwares, url_for('softwares.index')) }}
     </div>
+{% endblock %}
+
+{% block javascript %}
+    {{ super() }}
+    <script>$('#software').addClass('active');</script>
 {% endblock %}

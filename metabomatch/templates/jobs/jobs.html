@@ -16,13 +16,27 @@
             color:white;
         }
 
+        h1 {
+            font-size: 1.8em;
+        }
+
+        h2 {
+            font-size: 1.2em;
+            margin: 0;
+        }
     </style>
 {% endblock %}
 
 {% block content %}
-    <p  class="help-block"><strong>Help ?</strong><br/>Posting a job here may help you to find the best candidate in metabolomics bioinformatics !</p>
+    <p class="help-block">
+        <strong>Help ?</strong><br/>Posting a job here may help you to find the best candidate in metabolomics <em>bioinformatics</em>
+        !
+    </p>
 
-    <h3><span class="fa fa-briefcase text-muted"></span> Find the job of your dream in <em>metabolomics</em> area <small class="text-muted">or post a new <a href="{{ url_for('jobs.register') }}">job offer</a></small></h3>
+    <h1>
+        <span class="fa fa-briefcase text-muted"></span> Find the job of your dream in <em>metabolomics</em> area
+        <small class="text-muted">or post a new <a href="{{ url_for('jobs.register') }}">job offer</a></small>
+    </h1>
     <hr/>
 
     {% if jobs.total %}
@@ -42,7 +56,9 @@
                     {% if not job.is_closed %}
                         <tr>
                             <th>
-                                <p><strong><a href="{{ url_for('jobs.info', job_id=job.id) }}">{{ job.name }}</a></strong></p>
+                                <h2><strong><a
+                                        href="{{ url_for('jobs.info', job_id=job.id, slug=job.slug) }}">{{ job.name }}</a></strong>
+                                </h2>
                             </th>
                             <th>
                                 <p>

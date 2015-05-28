@@ -1,5 +1,7 @@
+# -*- coding: utf-8 -*-
 """
 scripts views
+-------------
 """
 from flask.ext.wtf import Form
 from metabomatch.achievements import ScriptAchievement, SCORE_SCRIPT
@@ -31,7 +33,6 @@ def index():
 
     if software is not None and not_tags:
         if software == '---':
-            print 'HEY'
             filtered_scripts = Script.query.filter(Script.software_id == None).order_by(desc(Script.creation_date))\
                 .paginate(page, SCRIPTS_PER_PAGE, True)
         else:
@@ -52,6 +53,7 @@ def index():
                            scripts=filtered_scripts,
                            softwares=softwares)
 
+
 @scripts.route('/register', methods=['GET', 'POST'])
 @login_required
 def register():
@@ -61,16 +63,21 @@ def register():
         form.save(request.form['software'])
         goal = ScriptAchievement.unlocked_level(len(current_user.scripts))
         if goal:
-            flash("Achievement unlock: {}, {}, level {}".format(ScriptAchievement.name, goal['name'], goal['level']), 'success')
+            flash("Achievement unlock: {}, {}, level {}".format(ScriptAchievement.name, goal['name'],
+                                                                goal['level']), 'success')
+        # update score
         current_user.global_score += SCORE_SCRIPT
         current_user.save()
         return redirect(url_for('scripts.index'))
+
+    # return template for get request
     return render_template('scripts/register_script.html', form=form)
 
 
 @scripts.route('/<int:script_id>')
+@scripts.route('/<int:script_id>-<slug>')
 @login_required
-def info(script_id):
+def info(script_id, slug=None):
     sc = Script.query.filter(Script.id == script_id).first_or_404()
     form = ScriptForm()
     form.get_softwares()
@@ -80,10 +87,10 @@ def info(script_id):
 @scripts.route('/<int:script_id>/upvote')
 @login_required
 def upvote(script_id):
-    sc = Script.query.filter(Script.id == script_id).first()
+    sc = Script.query.filter(Script.id == script_id).first_or_404()
     sc.up_voted()
     sc.save()
-    return redirect(url_for('scripts.info', script_id=script_id))
+    return redirect(url_for('scripts.info', script_id=script_id, slug=sc.slug))
 
 
 @scripts.route('/<int:script_id>/update_content', methods=['POST'])
@@ -94,16 +101,16 @@ def update_content(script_id):
     sc.save()
     return redirect(url_for('scripts.index'))
 
+
 @scripts.route('/<int:script_id>/update_software', methods=['POST'])
 @login_required
 def update_software(script_id):
     sc = Script.query.filter(Script.id == script_id).first_or_404()
     software_name = request.form['software']
-    print "SOFTWARE_NAME:", software_name
     if software_name == '---':
         sc.software_id = None
     else:
         sc.software_id = software_name
     sc.save()
     flash('successfully updated script software', 'success')
-    return redirect(url_for('scripts.info', script_id=script_id))
+    return redirect(url_for('scripts.info', script_id=script_id, slug=sc.slug))

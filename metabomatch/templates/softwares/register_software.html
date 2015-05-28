@@ -13,15 +13,27 @@
 {% block css %}
     {{super()}}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/selectize.bootstrap3.css') }}">
+    <style>
+        h1 {
+            font-size: 1.8em;
+        }
+
+        h2 {
+            font-size: 1.6em;
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
 
  <form class="form-horizontal" role="form" method="POST" enctype="multipart/form-data">
 
-     <h3>Register software</h3>
+     <h1>Register new software</h1>
 
-     <h4>Basic</h4>
+     <p class="help-block">Be sure the software you want to register does not already exist on
+         <strong>metabomatch</strong></p>
+
+     <h2 style="padding-top: 20px;">Basic informations</h2>
      <hr/>
         {{ form.hidden_tag() }}
 
@@ -56,7 +68,7 @@
              </div>
          </div>
 
-     <h4>Version</h4>
+     <h2>Version</h2>
      <hr/>
         <div class="form-group">
             <div class="col-md-9 col-md-offset-3">
@@ -65,7 +77,7 @@
         </div>
         {{ horizontal_field(form.current_version) }}
 
-     <h4>Publications</h4>
+     <h2>Publications</h2>
      <hr/>
         {{ horizontal_field(form.publication_link) }}
         {{ horizontal_field(form.download_link) }}

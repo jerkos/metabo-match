@@ -35,6 +35,10 @@
                     transform: rotate(-15deg);
                      padding: -10px 0 0 25px;
                  }
+
+                 {#                li.active {#}
+                 {#                    border-bottom: 5px solid #42a5f5;#}
+                 {#                }#}
             </style>
         {% endblock %}
 
@@ -44,101 +48,131 @@
           (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
           m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
           })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
           ga('create', 'UA-46475206-5', 'auto');
           ga('send', 'pageview');
-
         </script>
     </head>
 
     <body>
         <div id="wrap">
-        {% block navigation %}
-        {%- from theme("macros.html") import topnav with context -%}
-        <!-- Navigation -->
-            <nav class="navbar navbar-default navbar-static-top">
-                <div class="container">
-                    <div class="navbar-header">
-                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-                            <span class="sr-only">Toggle navigation</span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                        </button>
-                        <a class="navbar-brand" href="/">
-                            <img src="{{ url_for('static', filename='img/elephant.png') }}"/>
-                            <small><label id="beta" class="label label-info">beta release</label></small>
-                        </a>
+            {% block navigation %}
+                {%- from theme("macros.html") import topnav with context -%}
+                <!-- Navigation -->
+                <nav class="navbar navbar-default navbar-static-top">
+                    <div class="container">
+                        <div class="navbar-header">
+                            <button type="button" class="navbar-toggle" data-toggle="collapse"
+                                    data-target=".navbar-ex1-collapse">
+                                <span class="sr-only">Toggle navigation</span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
+                            <a class="navbar-brand" href="/">
+                                <img src="{{ url_for('static', filename='img/elephant.png') }}"/>
+                                <small><label id="beta" class="label label-info">beta release</label></small>
+                            </a>
+                        </div>
+                        <div class="collapse navbar-collapse navbar-ex1-collapse">
+                            <ul style="padding-top: 20px" class="nav navbar-nav">
+                                {{ emit_event("before-first-navigation-element") }}
+
+                                {{ topnav(endpoint='home.workflow' , name='Workflow', icon='fa fa-road') }}
+
+                                <li id="software">
+                                    <a class="dropdown-toggle" data-toggle="dropdown">
+                                        <span class="fa fa-desktop"></span> Softwares <span class="caret"></span>
+                                    </a>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li><a href="{{ url_for('softwares.index') }}"><span class="fa fa-book"></span>
+                                            Find/register software</a></li>
+                                        <li class="divider"></li>
+                                        <li><a href="{{ url_for('forum.topictracker') }}"><span
+                                                class="fa fa-bar-chart"></span> Top by categories</a></li>
+                                        <li><a href="#">Top of the last day</a></li>
+                                    </ul>
+                                </li>
+
+                                {{ topnav(endpoint='scripts.index' , name='Scripts', icon='fa fa-file-text-o') }}
+                                {{ topnav(endpoint='forum.index', name='Forum', icon='fa fa-comment', active=active_forum_nav) }}
+
+                                {{ topnav(endpoint='jobs.index', name='Jobs', icon='fa fa-rocket') }}
+                                <li><a>Crowdsourcing
+                                    <small><label class="label label-info">soon</label></small>
+                                </a></li>
+                                {#                            {{ topnav(endpoint='home.index', name='Crowdsourcing') }}#}
+                                {#                            {{ topnav(endpoint='forum.memberlist', name='Memberlist', icon='fa fa-user') }}#}
+                                {#                            {{ topnav(endpoint='forum.search', name='forumSearch', icon='fa fa-search') }}#}
+
+                                {{ emit_event("after-last-navigation-element") }}
+                            </ul>
+
+                            {% if current_user and current_user.is_authenticated() %}
+                                <div style="padding-top:20px" class="btn-group navbar-btn navbar-right"
+                                     style="padding-left: 15px; margin-right: -10px">
+                                    <a class="btn btn-primary"
+                                       href="{{ url_for('user.profile', username=current_user.username) }}">
+                                        <span class="fa fa-user"></span> {{ current_user.username }}
+                                    </a>
+                                    <button type="button" class="btn btn-primary dropdown-toggle"
+                                            data-toggle="dropdown">
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li><a href="{{ url_for('forum.topictracker') }}"><span
+                                                class="fa fa-book"></span> Topic Tracker</a></li>
+                                        <li class="divider"></li>
+
+                                        <li><a href="{{ url_for('user.settings') }}"><span class="fa fa-cogs"></span>
+                                            Settings</a></li>
+                                        {% if current_user|is_admin_or_moderator %}
+                                            <li><a href="{{ url_for('management.overview') }}"><span
+                                                    class="fa fa-cog"></span> Management</a></li>
+                                            <li class="divider"></li>
+                                        {% endif %}
+                                        <li><a href="{{ url_for('home.leaderboard') }}"><span
+                                                class="fa fa-gamepad"></span> Leaderboard</a></li>
+                                        <li class="divider"></li>
+                                        <li><a href="{{ url_for('auth.logout') }}"><span class="fa fa-power-off"></span>
+                                            Logout</a></li>
+                                    </ul>
+                                </div>
+
+                                <div style="padding-top:20px" class="btn-group navbar-btn navbar-right">
+                                    <button type="button" class="btn btn-success dropdown-toggle"
+                                            data-toggle="dropdown">
+                                        <span class="fa fa-envelope"></span> <span
+                                            class="badge">{{ current_user.pm_unread }}</span>
+                                    </button>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li><a href="{{ url_for('user.inbox') }}"><span class="fa fa-envelope"></span>
+                                            Inbox</a></li>
+                                        <li><a href="{{ url_for('user.new_message') }}"><span
+                                                class="fa fa-pencil"></span> New Message</a></li>
+                                    </ul>
+                                </div>
+                            {% else %}
+                                <div style="padding-top:20px" class="btn-group navbar-btn navbar-right">
+                                    <a class="btn btn-primary" href="{{ url_for('auth.login') }}">
+                                        <span class="fa fa-user"></span> Login
+                                    </a>
+                                    <button type="button" class="btn btn-primary dropdown-toggle"
+                                            data-toggle="dropdown">
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li><a href="{{ url_for('auth.register') }}">Register</a></li>
+                                        <li><a href="{{ url_for('auth.forgot_password') }}">Reset Password</a></li>
+                                        <li><a href="{{ url_for('home.leaderboard') }}"><span
+                                                class="fa fa-gamepad"></span> Leaderboard</a></li>
+                                    </ul>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <!-- nav-collapse -->
                     </div>
-                    <div class="collapse navbar-collapse navbar-ex1-collapse">
-                        <ul style="padding-top: 20px" class="nav navbar-nav">
-                            {{ emit_event("before-first-navigation-element") }}
-
-                            {# active_forum_nav is set in {forum, category, topic}.html and new_{topic, post}.html #}
-                            {{ topnav(endpoint='home.workflow' , name='Workflow', icon='fa fa-road') }}
-                            {{ topnav(endpoint='softwares.index' , name='Softwares', icon='fa fa-bar-chart') }}
-                            {{ topnav(endpoint='scripts.index' , name='Scripts', icon='fa fa-file-text-o') }}
-                            {{ topnav(endpoint='forum.index', name='Forum', icon='fa fa-comment', active=active_forum_nav) }}
-
-                            {{ topnav(endpoint='jobs.index', name='Jobs', icon='fa fa-rocket') }}
-                            <li><a>Crowdsourcing<small><label class="label label-info">soon</label></small></a></li>
-{#                            {{ topnav(endpoint='home.index', name='Crowdsourcing') }}#}
-{#                            {{ topnav(endpoint='forum.memberlist', name='Memberlist', icon='fa fa-user') }}#}
-{#                            {{ topnav(endpoint='forum.search', name='forumSearch', icon='fa fa-search') }}#}
-
-                            {{ emit_event("after-last-navigation-element") }}
-                        </ul>
-
-                    {% if current_user and current_user.is_authenticated() %}
-                        <div style="padding-top:20px" class="btn-group navbar-btn navbar-right" style="padding-left: 15px; margin-right: -10px">
-                            <a class="btn btn-primary" href="{{ url_for('user.profile', username=current_user.username) }}">
-                                <span class="fa fa-user"></span> {{ current_user.username }}
-                            </a>
-                            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                                <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu" role="menu">
-                                <li><a href="{{ url_for('forum.topictracker') }}"><span class="fa fa-book"></span> Topic Tracker</a></li>
-                                <li class="divider"></li>
-
-                                <li><a href="{{ url_for('user.settings') }}"><span class="fa fa-cogs"></span> Settings</a></li>
-                                {% if current_user|is_admin_or_moderator %}
-                                <li><a href="{{ url_for('management.overview') }}"><span class="fa fa-cog"></span> Management</a></li>
-                                <li class="divider"></li>
-                                {% endif %}
-                                <li><a href="{{ url_for('home.leaderboard') }}"><span class="fa fa-gamepad"></span> Leaderboard</a></li>
-                                <li class="divider"></li>
-                                <li><a href="{{ url_for('auth.logout') }}"><span class="fa fa-power-off"></span> Logout</a></li>
-                            </ul>
-                        </div>
-
-                        <div style="padding-top:20px" class="btn-group navbar-btn navbar-right">
-                            <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
-                                <span class="fa fa-envelope"></span> <span class="badge">{{ current_user.pm_unread }}</span>
-                            </button>
-                            <ul class="dropdown-menu" role="menu">
-                                <li><a href="{{ url_for('user.inbox') }}"><span class="fa fa-envelope"></span> Inbox</a></li>
-                                <li><a href="{{ url_for('user.new_message') }}"><span class="fa fa-pencil"></span> New Message</a></li>
-                            </ul>
-                        </div>
-                    {% else %}
-                        <div style="padding-top:20px" class="btn-group navbar-btn navbar-right">
-                            <a class="btn btn-primary" href="{{ url_for('auth.login') }}">
-                                <span class="fa fa-user"></span> Login
-                            </a>
-                            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                                <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu" role="menu">
-                                <li><a href="{{ url_for('auth.register') }}">Register</a></li>
-                                <li><a href="{{ url_for('auth.forgot_password') }}">Reset Password</a></li>
-                                <li><a href="{{ url_for('home.leaderboard') }}"><span class="fa fa-gamepad"></span> Leaderboard</a></li>
-                            </ul>
-                        </div>
-                    {% endif %}
-                    </div><!-- nav-collapse -->
-                </div><!-- container -->
-            </nav> <!-- navbar navbar-inverse -->
+                    <!-- container -->
+                </nav> <!-- navbar navbar-inverse -->
             {% endblock %}
 
 
@@ -152,21 +186,20 @@
             </div> <!-- /container -->
         </div> <!-- End wrap -->
 
-            {% block footer %}
-                <div id="footer">
-                    <div class="container">
-                        <p class="text-muted credit pull-left"><strong>Copyright Metabomatch 2015. All rights reserved.</strong>
-                        <p class="text-muted credit pull-right">powered by <a href="http://flask.pocoo.org">Flask</a></p>
-{#                        <p class="text-muted credit pull-left">Service proposed by <a href="http://omics-services.com">Omics#}
-{#                            Services</a></p>#}
-                    </div>
+        {% block footer %}
+            <div id="footer">
+                <div class="container">
+                    <p class="text-muted credit pull-left"><strong>Copyright Metabomatch 2015. All rights
+                        reserved.</strong>
+
+                    <p class="text-muted credit pull-right">powered by <a href="http://flask.pocoo.org">Flask</a></p>
                 </div>
-            {% endblock %}
+            </div>
+        {% endblock %}
 
         {% block javascript %}
             <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
             <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-{#            <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>#}
         {% endblock %}
 
         {% block scripts %}
