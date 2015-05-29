@@ -10,10 +10,14 @@
             font-size: 1.8em;
         }
 
-        .github-li.active {
-            border-top: 3px solid #D26911;
-            border-bottom: none;
+        h3 {
+            font-size: 1.6em;
         }
+
+        {#        .github-li.active {#}
+        {#            border-top: 3px solid #D26911;#}
+        {#            border-bottom: none;#}
+        {#        }#}
     </style>
 {% endblock %}
 {% block content %}
@@ -32,29 +36,84 @@
         </div>
     </div>
 
-    <h2><span class="fa fa-ticket text-muted"></span> Others</h2>
+    <h2 style="padding-top: 50px;"><span class="fa fa-bar-chart text-muted"></span> Top ranked softwares</h2>
+    <div class="row">
+        <div class="col-md-4 text-center">
+            <h3><span class="fa fa-bookmark text-muted"></span> Most citations</h3>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th><strong># rank</strong></th>
+                    <th>software</th>
+                    <th>value</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for s in softwares | sort(attribute='nb_citations', reverse=True) %}
+                    {% if loop.index <= 5 %}
+                        <tr>
+                            <th>{{ loop.index }}</th>
+                            <th><a href="{{ url_for('softwares.info', name=s.name) }}">{{ s.name }}</a></th>
+                            <th><span class="badge">{{ s.nb_citations }}</span></th>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
 
-    <p class="help-block">The most upvoted softwares. Softwares can be really good in one category.
-        You can see which software fit to your needs according to the community.</p>
+        <div class="col-md-4 text-center">
+            <h3><span class="fa fa-download text-muted"></span> Most downloads</h3>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th><strong># rank</strong></th>
+                    <th>software</th>
+                    <th>value</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for s in softwares | sort(attribute='nb_downloads', reverse=True) %}
+                    {% if loop.index <= 5 %}
+                        <tr>
+                            <th>{{ loop.index }}</th>
+                            <th><a href="{{ url_for('softwares.info', name=s.name) }}">{{ s.name }}</a></th>
+                            <th><span class="badge">{{ s.nb_downloads }}</span></th>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
 
-    {#    <div class="row">#}
-    {##}
-    {#        <div class="col-md-6">#}
-    {#            <div id="tot-upvotes">#}
-    {#            style="min-width: 310px;">#}
-    {##}
-    {#            </div>#}
-    {#        </div>#}
-    {#        <div class="col-md-6">#}
-    {#            <div id="upvotes-by-cat">#}
-    {##}
-    {#            </div>#}
-    {#        </div>#}
-    {#    </div>#}
 
-    <p class="help-block" style="padding-top: 20px;">It is always interesting to see how softwares evolve to the
-        community point of view. Here is the evolution
-        of the rate of each software during last 12 months.</p>
+        <div class="col-md-4 text-center">
+            <h3><span class="fa fa-users text-muted"></span> # Users</h3>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th><strong># rank</strong></th>
+                    <th>software</th>
+                    <th>value</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for s in softwares %}
+                    {% if loop.index <= 5 %}
+                        <tr>
+                            <th>{{ loop.index }}</th>
+                            <th><a href="{{ url_for('softwares.info', name=s.name) }}">{{ s.name }}</a></th>
+                            <th><span class="badge">{{ s.users | length }}</span></th>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <h2 style="padding-top: 50px;"><span class="fa fa-ticket text-muted"></span> Others</h2>
+
     <div class="row">
 
         <div role="tabpanel">
@@ -87,14 +146,14 @@
             <!-- Tab panes -->
             <div class="tab-content">
                 <div role="tabpanel" class="tab-pane fade in active" id="total-upvotes">
-                    {#                    <p class="help-block">The most upvoted softwares. Softwares can be really good in one category.#}
-                    {#                    You can see which software fit to your needs according to the community.</p>#}
+                    <p class="help-block"><strong>The most upvoted softwares.</strong> Often, softwares are good in only
+                        one category.
+                        You can see which software fit to your needs according to the community.</p>
                     <div class="container" style="width:100%">
                         <div class="row">
 
                             <div class="col-md-6">
                                 <div id="tot-upvotes">
-                                    {#            style="min-width: 310px;">#}
 
                                 </div>
                             </div>
@@ -108,9 +167,37 @@
                 </div>
 
                 <div role="tabpanel" class="tab-pane fade" id="rates-evolution">
+
+                    <div class="container">
+                        <p class="help-block" style="padding-top: 20px;">
+                            It is always interesting to see how softwares evolve to the
+                            community point of view. Here is the evolution of the rate of each software during last 12
+                            months.
+                        </p>
+
+                        <div class="row text-center">
+                            <div id="rate-evo">
+
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div role="tabpanel" class="tab-pane fade" id="pipeline-cat">
+
+                    <div class="container">
+                        <p class="help-block" style="padding-top: 20px;">
+                            You can quickly see which step of the <strong>metabolomics</strong> pipeline requires more
+                            effort
+                            from the community.
+                        </p>
+
+                        <div class="row text-center">
+                            <div id="pipeline-categories">
+                            </div>
+
+                        </div>
+                    </div>
                 </div>
 
 
@@ -125,6 +212,7 @@
     {{ super() }}
     <script src="http://code.highcharts.com/highcharts.js"></script>
     <script src="http://code.highcharts.com/modules/exporting.js"></script>
+    <script src="{{ url_for('static', filename='js/dark_unica.js') }}"></script>
     <script>
         $('#tot-upvotes').highcharts({
             chart: {
@@ -243,5 +331,82 @@
             ]
         });
 
+        /*************************************************************+
+         *
+         */
+        $('#pipeline-categories').highcharts({
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false
+            },
+            title: {
+                text: 'Pipeline categories percentage'
+            },
+            tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                        style: {
+                            color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                        }
+                    }
+                }
+            },
+            series: [{
+                type: 'pie',
+                name: 'Pipeline categories share',
+                data: [
+
+                    {% for name, percentage in nb_softs_by_categories.items() %}
+                        [{{ name | quote |safe }}, {{ percentage }}] {% if loop.index < loop.length %}, {% endif %}
+                    {% endfor %}
+                ]
+            }]
+        });
+
+        /****************************************************
+         *
+         */
+        $('#rate-evo').highcharts({
+            title: {
+                text: 'Community rate average for all softwares',
+                x: -20 //center
+            },
+
+            xAxis: {
+                categories: [{{ sorted_dates | map('format_date', format='%Y-%m') | map('quote') | join(',') | safe }}]
+            },
+            yAxis: {
+                title: {
+                    text: 'rate average'
+                },
+                plotLines: [{
+                    value: 0,
+                    width: 1,
+                    color: '#808080'
+                }]
+            },
+            series: [
+                {%  for name, data in rate_evolution.items() %}
+                    {
+                        name: {{ name | quote | safe }},
+                        data: [
+                            {% for date in sorted_dates %}
+                                {{ data.get(date, 0) }}
+                                {% if loop.index < loop.length %}, {% endif %}
+                            {% endfor %}
+                        ]
+                    }
+                    {% if loop.index < loop.length %}, {% endif %}
+                {% endfor %}
+            ]
+        });
     </script>
 {% endblock %}

@@ -161,8 +161,8 @@ def comments(name):
 @softwares.route('/<name>/ratings')
 def ratings(name):
     soft = Software.query.filter(Software.name == name).first_or_404()
-    mean = db.session.query(func.avg(Rating.rate).label('mean_rate')).filter(Rating.software_id == name).first()[0]
-    return render_template('softwares/all_ratings.html', software=soft, mean=mean)
+    m = db.session.query(func.avg(Rating.rate).label('mean_rate')).filter(Rating.software_id == name).first()[0]
+    return render_template('softwares/all_ratings.html', software=soft, mean=m)
 
 
 @softwares.route('/<name>/upvote/<int:mapping_id>')
@@ -251,7 +251,10 @@ def rankings():
         Rating.date_created.between(str(yesterday), str(today))).all()
     last_day_user_rating_mean_by_software = {s: mean([rate[1] for rate in list(rates)]) for s, rates in
                                              groupby(soft_rate_list, key=lambda x: x[0])}
-    winning_software = max(last_day_user_rating_mean_by_software.items(), key=lambda _: _[1])[0]
+    if last_day_user_rating_mean_by_software:
+        winning_software = max(last_day_user_rating_mean_by_software.items(), key=lambda _: _[1])[0]
+    else:
+        winning_software = "No winner today..."
 
     # add missing software
     for name in softwares_name:
@@ -265,6 +268,9 @@ def rankings():
             t = {t.tag for t in s.tags}
             if soft_category in t:
                 nb_softs_by_categories[soft_category] += 1
+
+    for k, v in nb_softs_by_categories.items():
+        nb_softs_by_categories[k] = float(v) / len(softwares_name)
 
     upvotes_by_software_name = {}
     for name in softwares_name:
@@ -281,9 +287,26 @@ def rankings():
     total_upvotes_by_software_name = {name: d['UI'] + d['PERFORMANCE'] + d['SUPPORT'] for name, d in
                                       upvotes_by_software_name.items()}
 
-    print upvotes_by_software_name.keys()
-    print total_upvotes_by_software_name.values()
-    # print upvotes_by_software_name
+    # rate evolution
+    rate_evolution = {}
+    for name in softwares_name:
+        test = db.session.query(Rating).join(Software).filter(Software.name == name).order_by(Rating.date_created).all()
+
+        def grouper(rating):
+            return rating.date_created.year, rating.date_created.month
+
+        for ((year, month), items) in groupby(test, grouper):
+            items_list = list(items)
+            # print (year, month), ", ", sum(i.rate for i in items_list) / float(len(items_list))
+            rate_evolution[name] = {
+            datetime(year=int(year), month=int(month), day=1): sum([i.rate for i in items_list]) / float(
+                len(items_list))}
+
+    sorted_dates = []
+    for __, data in rate_evolution.items():
+        sorted_dates += data.keys()
+    sorted_dates = sorted(list(set(sorted_dates)))
+
     return render_template('softwares/rankings.html',
                            today=today,
                            last_day_stats=OrderedDict(last_day_user_rating_mean_by_software),
@@ -291,4 +314,6 @@ def rankings():
                            nb_softs_by_categories=OrderedDict(nb_softs_by_categories),
                            upvotes_by_software_name=OrderedDict(upvotes_by_software_name),
                            total_upvotes_by_software_name=OrderedDict(total_upvotes_by_software_name),
-                           softwares=softwares_inst)
+                           softwares=sorted(softwares_inst, key=lambda _: len(_.users), reverse=True),
+                           sorted_dates=sorted_dates,
+                           rate_evolution=rate_evolution)
