@@ -111,14 +111,14 @@ def info(name):
     soft = Software.query.filter(Software.name == name).first_or_404()
 
     # view restriction
-    if not current_user.is_authenticated():
-        v = session.get('nb_views', 0)
-        session['nb_views'] = v + 1
-
-        if session['nb_views'] > 3:
-            flash("Please register or log in to see more about softwares", "info")
-            #redirect to softwares by default
-            return redirect(url_for('auth.login', next=url_for('softwares.info', name=name)))
+    # if not current_user.is_authenticated():
+    #     v = session.get('nb_views', 0)
+    #     session['nb_views'] = v + 1
+    #
+    #     if session['nb_views'] > 3:
+    #         flash("Please register or log in to see more about softwares", "info")
+    #         #redirect to softwares by default
+    #         return redirect(url_for('auth.login', next=url_for('softwares.info', name=name)))
 
     show_comment_form = True if 'show_comment_form' in request.args else False
 
@@ -166,7 +166,6 @@ def ratings(name):
 
 
 @softwares.route('/<name>/upvote/<int:mapping_id>')
-@login_required
 def upvote(name, mapping_id):
     soft = Software.query.filter(Software.name == name).first_or_404()
     s_mapp = None

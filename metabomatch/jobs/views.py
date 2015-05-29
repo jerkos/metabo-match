@@ -65,6 +65,7 @@ def info(job_id, slug=None):
 
 
 @jobs.route('/close/<int:job_id>')
+@login_required
 def close(job_id):
     job = Job.query.get(job_id)
     job.is_closed = True

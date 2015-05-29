@@ -22,7 +22,6 @@ SCRIPTS_PER_PAGE = 5
 
 
 @scripts.route('/')
-@login_required
 def index():
     page = request.args.get("page", 1, type=int)
     software, tags = request.args.get('software'), request.args.get('tags')
@@ -85,7 +84,6 @@ def info(script_id, slug=None):
 
 
 @scripts.route('/<int:script_id>/upvote')
-@login_required
 def upvote(script_id):
     sc = Script.query.filter(Script.id == script_id).first_or_404()
     sc.up_voted()
