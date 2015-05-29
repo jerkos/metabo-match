@@ -13,15 +13,24 @@
 {% block css %}
     {{super()}}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/selectize.bootstrap3.css') }}">
+    <style>
+        h1 {
+            font-size: 1.8em;
+        }
+
+        h2 {
+            font-size: 1.6em;
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
 
  <form class="form-horizontal" role="form" method="POST">
 
-     <h3>Update software</h3>
+     <h1>Update software</h1>
 
-     <h4>Basic</h4>
+     <h2>Basic</h2>
      <hr/>
         {{ form.hidden_tag() }}
         {{ horizontal_field(form.name, icon_class='fa fa-laptop fa-2x', value=software.name, readonly='readonly') }}
@@ -48,7 +57,7 @@
              </div>
          </div>
 
-     <h4>Version</h4>
+     <h2>Version</h2>
      <hr/>
         <div class="form-group">
             <div class="col-md-9 col-md-offset-3">
@@ -61,7 +70,7 @@
         </div>
         {{ horizontal_field(form.current_version, value=software.current_version | default('', true)) }}
 
-     <h4>Publications</h4>
+     <h2>Publications</h2>
      <hr/>
         {{ horizontal_field(form.publication_link, value=software.publication_link | default('', true)) }}
         {{ horizontal_field(form.download_link, value=software.download_link | default('', true)) }}

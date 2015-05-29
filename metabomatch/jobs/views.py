@@ -53,15 +53,19 @@ def register():
 
 
 @jobs.route('/<int:job_id>')
-def info(job_id):
-    job = Job.query.get(job_id)
+@jobs.route('/<int:job_id>-<slug>')
+def info(job_id, slug=None):
+    job = Job.query.filter(Job.id == job_id).first_or_404()
     job.nb_viewed += 1
     job.save()
+
+    # convert markdown to html
     job_description, job_motivation = markdown2.markdown(job.description), markdown2.markdown(job.motivation)
     return render_template('jobs/job.html', job=job, html_description=job_description, html_motivation=job_motivation)
 
 
 @jobs.route('/close/<int:job_id>')
+@login_required
 def close(job_id):
     job = Job.query.get(job_id)
     job.is_closed = True

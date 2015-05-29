@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
 from metabomatch.extensions import db
-
+from metabomatch.flaskbb.utils.helpers import slugify
 
 job_tags_job_mapping = db.Table(
     'job_tags_job_mapping',
@@ -61,7 +61,16 @@ class Job(db.Model):
         self.company = company
         self.company_url = company_url
 
+    @property
+    def slug(self):
+        return slugify(self.name) if self.company.lower() in self.name.lower() \
+            else slugify(" ".join([self.name, self.company]))
+
     def save(self):
         db.session.add(self)
         db.session.commit()
         return self
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()

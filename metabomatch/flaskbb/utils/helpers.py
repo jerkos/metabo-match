@@ -357,7 +357,7 @@ def time_delta_format(dt, default=None):
 
 
 def older_than_one_month(dt):
-    """used to new content from old content"""
+    """used to which content is new from old content"""
     now = datetime.utcnow()
     diff = now - dt
 
@@ -398,6 +398,10 @@ def time_left_to(date, default_message=None):
             return u'%d %s left' % (period, plural)
 
     return default_message
+
+
+def quote(string):
+    return "'{}'".format(string)
 
 
 def format_quote(post):

@@ -1,11 +1,22 @@
 {% extends theme("layout.html") %}
 {% block css %}
     {{ super() }}
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/default.min.css">
+    {#    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/default.min.css">#}
+    <style>
+        h1 {
+            font-size: 1.8em;
+        }
+
+        h2 {
+            font-size: 1.2em;
+        }
+    </style>
+
 {% endblock %}
 {% block content %}
 
-    <h3><span class="text-muted">Software:</span> {{ script.software.name | default('None') }}    </h3>
+    <h1><span class="text-muted">Software:</span> {{ script.software.name | default('No software defined') }}</h1>
+
 
     <form class="form-inline" method="post" action="{{ url_for('scripts.update_software', script_id=script.id) }}">
         {{ form_software.hidden_tag() }}
@@ -21,21 +32,29 @@
         <button class="btn btn-sm btn-default" type="submit">Change</button>
     </form>
 
-    <h3><span class="text-muted">Script title:</span> {{ script.title }} by <a href="{{ url_for('user.profile', username=script.user.username) }}">{{ script.user.username }}</a>
-        <a href="{{ url_for('scripts.upvote', script_id=script.id) }}"><i class="fa fa-thumbs-o-up"></i><span class="badge">{{ script.up_votes }}</span></a></h3>
+    <h2>
+        <span class="text-muted">Script title:</span> {{ script.title }} by <a
+            href="{{ url_for('user.profile', username=script.user.username) }}">{{ script.user.username }}</a>
+        <a class="pull-right" href="{{ url_for('scripts.upvote', script_id=script.id) }}"><i
+                class="fa fa-thumbs-o-up"></i><span class="badge">{{ script.up_votes }}</span></a>
+    </h2>
+    <p class="help-block"> Click on <span class="fa fa-thumbs-o-up"></span> to upvote this script ! </p>
     <hr/>
 
-    {%  if script.description %}
-        <p class="help-block">{{ script.description }}</p>
-    {% else %}
-        <p class="help-block">No description available</p>
-    {% endif %}
+    <p class="help-block">{{ script.description | default('No description available', true) }}</p>
 
-    {% if current_user.username != script.user.username %}
-        <h3 style="padding-top: 20px"><span class="text-muted">Code</span> <small class="text-muted">You can not edit this code</small></h3>
+
+    {% if current_user.id != script.user.id %}
+        <h3 style="padding-top: 20px">
+            <span class="text-muted">Code</span>
+            <small class="text-muted">You can not edit this code</small>
+        </h3>
     {% else %}
         <h3 style="padding-top: 20px"><span class="text-muted">Code</span> <small><button id="edit" class="btn btn-default btn-sm">Edit</button></small>
-            <p id="edition_mode"><small class="text-danger">Warning, edition mode:ON</small></p></h3>
+            <p id="edition_mode">
+                <small class="text-danger">Warning, edition mode:ON</small>
+            </p>
+        </h3>
     {% endif %}
 
 

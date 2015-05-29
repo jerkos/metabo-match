@@ -1,15 +1,31 @@
 {% extends theme("layout.html") %}
 
+{% block css %}
+    {{ super() }}
+    <style>
+        h2 {
+            font-size: 1.4em;
+        }
+    </style>
+{% endblock %}
+
 {% block content %}
-    <h1><span class="muted">software:</span> {{ software.name }}</h1>
+    <h1><span class="fa fa-laptop text-muted"></span><a
+            href={{ url_for('softwares.info', name=software.name) }}> {{ software.name }}</a></h1>
     <hr/>
     <ul class="list-group">
         {% for c in software.comments %}
             <li class="list-group-item">
-                <h4 class="list-group-item-heading">
+                <h2 class="list-group-item-heading">
+                    {% if c.user.avatar %}
+                        <img class='img-rounded' src="{{ c.user.avatar }}" alt="gravatar" height="50" width="50">
+                    {% else %}
+                        <img class='img-rounded' src="{{ c.user.email | gravatar }}" alt="gravatar" height="50"
+                             width="50">
+                    {% endif %}
                     <a href="{{ url_for('user.profile', username=c.user.username) }}">{{ c.user.username }}</a>
                     <small class="text-muted">{{ c.date_created | format_date(format='%Y-%m-%d at %H:%M') }}:</small>
-                </h4>
+                </h2>
                 <p class="list-group-item-text">{{ c.content }}</p>
             </li>
         {% else %}

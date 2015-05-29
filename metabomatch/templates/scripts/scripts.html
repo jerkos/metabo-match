@@ -1,24 +1,50 @@
 {% extends theme("layout.html") %}
 {% from theme('macros.html') import render_pagination %}
 
+{% block keywords %}
+    <meta name="keywords" content="metabomatch, software, parameters, scripts, programming languages, crowdsourcing">
+    <meta name="description" content="List all scripts and parameters posted by metabomatch users.">
+{% endblock %}
+
 {% block css %}
     {{ super() }}
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/monokai.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/selectize.bootstrap3.css') }}">
 
+    <style>
+        h1 {
+            font-size: 1.8em;
+        }
+
+        h2 {
+            font-size: 1.6em;
+        }
+
+        h3 {
+            font-size: 1.1em;
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
-    <p class="help-block"><strong>Help ?</strong><br/>You can provide here some piece of code you find useful and or refer a <strong>gist</strong> file from <a href="github.com">github</a>.
-    For more complex scripts or example, we strongly encourage to use Gist and its versioning system.</p>
-    <p class="help-block">You can also provide a set of <strong>parameters</strong> for a software algorithm for a
-        specific mass spectrometer.
+    <p class="help-block">
+        <strong>Help ?</strong><br/>You can provide here some piece of code you find useful and or refer a
+        <strong>gist</strong>
+        file from <a href="github.com">github</a>. For more complex scripts or example, we strongly encourage to use
+        Gist
+        and its versioning system.
+    </p>
+    <p class="help-block">
+        You can also provide a set of <strong>parameters</strong> for a software algorithm for a specific mass
+        spectrometer.
         You can <strong>tag</strong> your parameters with mass spectrometer vendor names (e.g. <em>thermo, orbitrap,
-            fusion</em>).</p>
-    <h3><i class="fa fa-code-fork text-muted"></i> # available scripts/parameters: {{ scripts.total }}</h3>
+        fusion</em>).
+    </p>
+
+    <h1><i class="fa fa-code-fork text-muted"></i> # available scripts/parameters: {{ scripts.total }}</h1>
     <hr/>
 
-    <h4>Search</h4>
+    <h2>Search</h2>
     <form class="form-inline" method="get" action="{{ url_for('scripts.index') }}">
         <div class="form-group">
             <select class="form-control" id="exampleInputEmail2" name="software">
@@ -33,16 +59,20 @@
         </div>
         <button type="submit" class="btn btn-default">Filter</button>
     </form>
-    <p class="help-block">You can search for scripts using <em>tags</em> separated by a simple <code>,</code></p>
 
-    <div class="row" style="padding: 20px 0 50px 0">
+    <p class="help-block">
+        You can search for scripts using <em>tags</em> separated by a simple <code>,</code>
+    </p>
+
+    <div class="row" style="padding: 20px 0 20px 0">
 
         <ul class="list-group">
 
             {% for script in scripts.items %}
                 <li class="list-group-item">
                     <span class="badge fa fa-thumbs-o-up"> {{ script.up_votes }}</span>
-                    <h5>
+
+                    <h3>
                         {% if script.user.avatar %}
                             <img class='img-rounded' src="{{ script.user.avatar }}" alt="gravatar" height="50" width="50">
                         {% else %}
@@ -50,15 +80,18 @@
                         {% endif %}
                         <a href="{{ url_for('user.profile', username=script.user.username)}}">{{ script.user.username }}</a>
                         /
-                        <a href="{{ url_for('scripts.info', script_id=script.id) }}">{{ script.title }} </a>
+                        <a href="{{ url_for('scripts.info', script_id=script.id, slug=script.slug) }}">{{ script.title }} </a>
                         <small><label class="label label-success">{{ script.creation_date | time_since }}</label></small>
                         {% for tag in  script.script_tags %}
                             <label class="label label-default"> {{ tag.name }}</label>
                         {% endfor %}
                         <br/>
-                        <small><strong>{{ script.programming_language }}</strong>, <strong>{{ script.software.name }}</strong></small><br/><br/>
+                        <small><strong>{{ script.programming_language }}</strong>,
+                            <strong>{{ script.software.name | default('no software') }}</strong></small>
+                        {#                        <br/>#}
+                        <br/>
                         <small>{{ script.description }}</small>
-                    </h5>
+                    </h3>
 
                     <pre class="{{ script.programming_language | lower }}">
                         <code>{{ ('\n' + script.preview_content() | join('\n') + '\n') | safe }}</code>
@@ -74,8 +107,12 @@
 
     </div>
     <hr/>
-    <h3>You want to submit a piece of code ? <a class="btn btn-default" href="{{ url_for('scripts.register') }}">Register new script</a></h3>
-    <p class="help-block">All users will be able to see your script: share something useful !</p>
+
+    <h2>You want to submit a piece of code ? <a class="btn btn-default" href="{{ url_for('scripts.register') }}">Register
+        new script</a></h2>
+    <p class="help-block">
+        All users will be able to see your script or parameters set: share something useful !
+    </p>
 {% endblock %}
 
 

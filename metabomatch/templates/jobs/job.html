@@ -8,24 +8,55 @@
 
 {% block css %}
     {{ super() }}
+    <style>
+        h1 {
+            font-size: 1.8em;
+        }
+
+        h2 {
+            font-size: 1.2em;
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
-    <p><strong><span class="fa fa-briefcase"></span> Job name</strong>: {{ job.name }} <label class="label label-info">{{ job.apply_date_limit | time_left_to }}</label></p>
-    <p><strong><span class="fa fa-bank"></span> Company</strong>: {{ job.company }}</p>
-    <p><strong><span class="fa fa-street-view"></span> Location</strong>: {{ job.workplace }}</p>
+    <h1><strong><span class="fa fa-briefcase text-muted"></span> Job name</strong>: {{ job.name }}
+        <small><label class="label label-info">{{ job.apply_date_limit | time_left_to }}</label></small>
+    </h1>
+    <p class="help-block">created at {{ job.creation_date | format_date }}</p>
+    <h2><strong><span class="fa fa-bank text-muted"></span> Company</strong>:
+        {% if job.company_url %} <a href="{{ job.company_url }}">{{ job.company }}</a>
+            {% else %}{{ job.company }} {% endif %}</h2>
+    <h2><strong><span class="fa fa-street-view text-muted"></span> Location</strong>: {{ job.workplace }}</h2>
 
     <div class="well">
         {{ html_description | safe }}
         {{ html_motivation | safe }}
     </div>
-    <p><strong><span class="fa fa-tags"></span> Tags</strong> {% for t in job.job_tags %}<label class="label label-success">{{ t.name }}</label>{% endfor %}</p>
-    <p><strong><span class="fa fa-info"></span> Contact mail</strong>: <a href="mailto:{{ job.contact_email }}">{{ job.contact_email }}</a></p>
+    <h2><strong><span class="fa fa-tags text-muted"></span> Tags</strong> {% for t in job.job_tags %}
+        <label class="label label-success">{{ t.name }}</label>{% endfor %}</h2>
+    <h2><strong><span class="fa fa-info text-muted"></span> Contact mail</strong>: <a
+            href="mailto:{{ job.contact_email }}">{{ job.contact_email }}</a></h2>
 
 
     {% if current_user.id == job.user_id and (not job.is_closed) %}
-{#        {% if not job.is_closed %}#}
-            <a href="{{ url_for('jobs.close', job_id=job.id) }}" class="btn btn-danger">Close job offer</a>
-{#            {% endif %}#}
+        <h2 style="padding-top: 50px;">Administration</h2>
+        <hr/>
+        <p><a id="delete" href="{{ url_for('jobs.close', job_id=job.id) }}" disabled="disabled" class="btn btn-danger">Close
+            job offer</a>
+            <small>
+                <button id="unlock-delete" class="btn btn-default btn-sm">Unlock</button>
+            </small>
+        </p>
     {% endif %}
+{% endblock %}
+
+{% block javascript %}
+    {{ super() }}
+    <script>
+        $("#unlock-delete").click(function (e) {
+            e.preventDefault();
+            $("#delete").removeAttr("disabled"); //prop('disabled', false);
+        });
+    </script>
 {% endblock %}

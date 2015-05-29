@@ -15,7 +15,7 @@ from flask import url_for, abort
 from metabomatch.extensions import db
 from metabomatch.flaskbb.utils.helpers import slugify, get_categories_and_forums, get_forums
 from metabomatch.flaskbb.utils.settings import flaskbb_config
-
+from sqlalchemy import func
 
 moderators = db.Table(
     'moderators',
@@ -889,16 +889,16 @@ class Category(db.Model):
                           db.and_(ForumsRead.forum_id == Forum.id,
                                   ForumsRead.user_id == user.id)).\
                 add_entity(Forum).\
-                add_entity(ForumsRead).\
-                order_by(Category.id, Category.position, Forum.position).\
-                all()
+                add_entity(ForumsRead). \
+                order_by(func.lower(Category.title)).all()  # Category.id, Category.position, Forum.position).\
+            # all()
         else:
             # Get all the forums
             forums = cls.query.\
                 join(Forum, cls.id == Forum.category_id).\
-                add_entity(Forum).\
-                order_by(Category.id, Category.position, Forum.position).\
-                all()
+                add_entity(Forum). \
+                order_by(func.lower(Category.title)).all()  # Category.id, Category.position, Forum.position).\
+            # all()
 
         return get_categories_and_forums(forums, user)
 

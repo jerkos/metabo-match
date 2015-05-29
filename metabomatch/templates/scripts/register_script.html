@@ -9,12 +9,17 @@
     {{ super() }}
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/monokai.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/selectize.bootstrap3.css') }}">
+    <style>
+        h1 {
+            font-size: 1.8em;
+        }
+    </style>
 {% endblock %}
 
 
 {% block content %}
 
-    <h3>Register Script</h3>
+    <h1>Register Script</h1>
     <p class="help-block">Choose the right programming language to get the right coloration syntax. There is also a simple text mode.</p>
     <hr/>
 

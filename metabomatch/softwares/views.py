@@ -2,21 +2,24 @@
 """
 Software views
 """
-from flask.ext.wtf import Form
-from metabomatch.utils import s3_upload, s3_upload_from_server, s3_delete
 
-from sqlalchemy import desc, func
+from datetime import datetime, timedelta
+from itertools import groupby
+from collections import OrderedDict
+
+from sqlalchemy import desc, func, and_
 from flask import Blueprint, request, redirect, url_for, session, flash, abort
 
 from flask.ext.login import login_required, current_user
+from flask.ext.wtf import Form
 
 from metabomatch.achievements import SoftwareAchievement, SCORE_SOFT
 from metabomatch.extensions import db
 from metabomatch.flaskbb.utils.helpers import render_template
 from metabomatch.flaskbb.utils.permissions import is_admin
-from metabomatch.softwares.models import Software, Tag, Comment, Rating
+from metabomatch.softwares.models import Software, Tag, Comment, Rating, Sentence, SentenceSoftwareMapping
 from metabomatch.softwares.forms import SoftwareForm, SoftwareUpdateForm
-
+from metabomatch.utils import s3_upload, s3_upload_from_server, s3_delete, mean
 
 softwares = Blueprint("softwares", __name__, template_folder="../../templates")
 
@@ -108,14 +111,14 @@ def info(name):
     soft = Software.query.filter(Software.name == name).first_or_404()
 
     # view restriction
-    if not current_user.is_authenticated():
-        v = session.get('nb_views', 0)
-        session['nb_views'] = v + 1
-
-        if session['nb_views'] > 3:
-            flash("Please register or log in to see more about softwares", "info")
-            #redirect to softwares by default
-            return redirect(url_for('auth.login', next=url_for('softwares.info', name=name)))
+    # if not current_user.is_authenticated():
+    #     v = session.get('nb_views', 0)
+    #     session['nb_views'] = v + 1
+    #
+    #     if session['nb_views'] > 3:
+    #         flash("Please register or log in to see more about softwares", "info")
+    #         #redirect to softwares by default
+    #         return redirect(url_for('auth.login', next=url_for('softwares.info', name=name)))
 
     show_comment_form = True if 'show_comment_form' in request.args else False
 
@@ -158,12 +161,11 @@ def comments(name):
 @softwares.route('/<name>/ratings')
 def ratings(name):
     soft = Software.query.filter(Software.name == name).first_or_404()
-    mean = db.session.query(func.avg(Rating.rate).label('mean_rate')).filter(Rating.software_id == name).first()[0]
-    return render_template('softwares/all_ratings.html', software=soft, mean=mean)
+    m = db.session.query(func.avg(Rating.rate).label('mean_rate')).filter(Rating.software_id == name).first()[0]
+    return render_template('softwares/all_ratings.html', software=soft, mean=m)
 
 
 @softwares.route('/<name>/upvote/<int:mapping_id>')
-@login_required
 def upvote(name, mapping_id):
     soft = Software.query.filter(Software.name == name).first_or_404()
     s_mapp = None
@@ -195,7 +197,7 @@ def remove_user(name):
     try:
         current_user.softwares_used.remove(soft)
     except ValueError:
-        print "ERROR"
+        pass
     current_user.save()
     return redirect(url_for('user.profile', username=current_user.username))
 
@@ -231,3 +233,86 @@ def update_description(name):
     soft.save()
     flash('description updated', 'success')
     return redirect(url_for('softwares.info', name=name, form=Form()))
+
+
+@softwares.route('/rankings', methods=['GET'])
+def rankings():
+    softwares_inst = Software.query.all()
+    # should be easier with group_by
+    softwares_name = [s.name for s in softwares_inst]
+
+    today = datetime.now()
+    delta = request.args.get('last-days', 1)
+    yesterday = today - timedelta(days=delta)
+
+    # should be easier with groupby and average
+    soft_rate_list = db.session.query(Software.name, Rating.rate).join(Rating).filter(
+        Rating.date_created.between(str(yesterday), str(today))).all()
+    last_day_user_rating_mean_by_software = {s: mean([rate[1] for rate in list(rates)]) for s, rates in
+                                             groupby(soft_rate_list, key=lambda x: x[0])}
+    if last_day_user_rating_mean_by_software:
+        winning_software = max(last_day_user_rating_mean_by_software.items(), key=lambda _: _[1])[0]
+    else:
+        winning_software = "No winner today..."
+
+    # add missing software
+    for name in softwares_name:
+        if name not in last_day_user_rating_mean_by_software:
+            last_day_user_rating_mean_by_software[name] = 0
+
+    # should be easier with Counter
+    nb_softs_by_categories = {SOFT_MAP[i]: 0 for i in SOFT_MAP.keys()}
+    for soft_category in nb_softs_by_categories.iterkeys():
+        for s in softwares_inst:
+            t = {t.tag for t in s.tags}
+            if soft_category in t:
+                nb_softs_by_categories[soft_category] += 1
+
+    for k, v in nb_softs_by_categories.items():
+        nb_softs_by_categories[k] = float(v) / len(softwares_name)
+
+    upvotes_by_software_name = {}
+    for name in softwares_name:
+        r = {'UI': db.session.query(func.sum(SentenceSoftwareMapping.upvote)).join(Sentence).join(Software).filter(
+            Sentence.category == 'UI', Software.name == name).all()[0][0],
+             'PERFORMANCE':
+                 db.session.query(func.sum(SentenceSoftwareMapping.upvote)).join(Sentence).join(Software).filter(
+                     Sentence.category == 'PERFORMANCE', Software.name == name).all()[0][0],
+             'SUPPORT': db.session.query(func.sum(SentenceSoftwareMapping.upvote)).join(Sentence).join(Software).filter(
+                 Sentence.category == 'SUPPORT', Software.name == name).all()[0][0]
+             }
+        upvotes_by_software_name[name] = r
+
+    total_upvotes_by_software_name = {name: d['UI'] + d['PERFORMANCE'] + d['SUPPORT'] for name, d in
+                                      upvotes_by_software_name.items()}
+
+    # rate evolution
+    rate_evolution = {}
+    for name in softwares_name:
+        test = db.session.query(Rating).join(Software).filter(Software.name == name).order_by(Rating.date_created).all()
+
+        def grouper(rating):
+            return rating.date_created.year, rating.date_created.month
+
+        for ((year, month), items) in groupby(test, grouper):
+            items_list = list(items)
+            # print (year, month), ", ", sum(i.rate for i in items_list) / float(len(items_list))
+            rate_evolution[name] = {
+            datetime(year=int(year), month=int(month), day=1): sum([i.rate for i in items_list]) / float(
+                len(items_list))}
+
+    sorted_dates = []
+    for __, data in rate_evolution.items():
+        sorted_dates += data.keys()
+    sorted_dates = sorted(list(set(sorted_dates)))
+
+    return render_template('softwares/rankings.html',
+                           today=today,
+                           last_day_stats=OrderedDict(last_day_user_rating_mean_by_software),
+                           winning_software=winning_software,
+                           nb_softs_by_categories=OrderedDict(nb_softs_by_categories),
+                           upvotes_by_software_name=OrderedDict(upvotes_by_software_name),
+                           total_upvotes_by_software_name=OrderedDict(total_upvotes_by_software_name),
+                           softwares=sorted(softwares_inst, key=lambda _: len(_.users), reverse=True),
+                           sorted_dates=sorted_dates,
+                           rate_evolution=rate_evolution)
