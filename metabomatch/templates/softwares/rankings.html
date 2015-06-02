@@ -18,6 +18,11 @@
         {#            border-top: 3px solid #D26911;#}
         {#            border-bottom: none;#}
         {#        }#}
+
+        .highcharts-container {
+            width: 100% !important;
+            height: 100% !important;
+        }
     </style>
 {% endblock %}
 {% block content %}
@@ -114,7 +119,7 @@
 
     <h2 style="padding-top: 50px;"><span class="fa fa-ticket text-muted"></span> Others</h2>
 
-    <div class="row">
+    <div class="row" style="padding-bottom: 50px;">
 
         <div role="tabpanel">
 
@@ -128,6 +133,14 @@
                         total upvotes
                     </a>
                 </li>
+
+                <li role="presentation" class="github-li">
+                    <a style="outline:none;-webkit-appearance:none;" href="#upvotes-by-categories"
+                       aria-controls="upvotes-by-categories" role="tab" data-toggle="tab">
+                        upvotes by category
+                    </a>
+                </li>
+
                 <li role="presentation" class="github-li">
                     <a style="outline:none;-webkit-appearance:none;" href="#rates-evolution"
                        aria-controls="rates-evolution" role="tab" data-toggle="tab">
@@ -149,55 +162,61 @@
                     <p class="help-block"><strong>The most upvoted softwares.</strong> Often, softwares are good in only
                         one category.
                         You can see which software fit to your needs according to the community.</p>
-                    <div class="container" style="width:100%">
-                        <div class="row">
+                    {#                    <div class="container" style="width:100%">#}
 
-                            <div class="col-md-6">
-                                <div id="tot-upvotes">
+                    {#                        <div class="row">#}
+                    <div id="tot-upvotes">
 
-                                </div>
                             </div>
-                            <div class="col-md-6">
-                                <div id="upvotes-by-cat">
+                    {#                        </div>#}
 
-                                </div>
-                            </div>
-                        </div>
+                    {#                    </div>#}
+                </div>
+                {#                ENd total-upvotes#}
+
+                <div role="tabpanel" class="tab-pane fade" id="upvotes-by-categories">
+                    {#                    <div class="container" style="width:100%">#}
+
+                    {#                        <div class="row">#}
+                    <div id="upvotes-by-cat">
+
                     </div>
+                    {#                        </div>#}
+                    {#                    </div>#}
                 </div>
 
                 <div role="tabpanel" class="tab-pane fade" id="rates-evolution">
 
-                    <div class="container">
+                    {#                    <div class="container" style="width:100%">#}
                         <p class="help-block" style="padding-top: 20px;">
                             It is always interesting to see how softwares evolve to the
                             community point of view. Here is the evolution of the rate of each software during last 12
                             months.
+
                         </p>
 
-                        <div class="row text-center">
+                    {#                        <div class="row text-center">#}
                             <div id="rate-evo">
 
                             </div>
-                        </div>
-                    </div>
+                    {#                        </div>#}
+                    {#                    </div>#}
                 </div>
 
                 <div role="tabpanel" class="tab-pane fade" id="pipeline-cat">
 
-                    <div class="container">
+                    {#                    <div class="container" style="width:100%">#}
                         <p class="help-block" style="padding-top: 20px;">
                             You can quickly see which step of the <strong>metabolomics</strong> pipeline requires more
                             effort
                             from the community.
                         </p>
 
-                        <div class="row text-center">
+                    {#                        <div class="row text-center">#}
                             <div id="pipeline-categories">
                             </div>
-
-                        </div>
-                    </div>
+                    {#                        </div>#}
+                    {#                    </div>#}
                 </div>
 
 
@@ -253,7 +272,8 @@
          */
         $('#upvotes-by-cat').highcharts({
             chart: {
-                type: 'column'
+                type: 'column',
+                width: $('#tot-upvotes').width()
             },
             title: {
                 text: 'Upvotes by categories'
@@ -338,7 +358,8 @@
             chart: {
                 plotBackgroundColor: null,
                 plotBorderWidth: null,
-                plotShadow: false
+                plotShadow: false,
+                width: $('#tot-upvotes').width()
             },
             title: {
                 text: 'Pipeline categories percentage'
@@ -371,10 +392,14 @@
             }]
         });
 
+
         /****************************************************
          *
          */
         $('#rate-evo').highcharts({
+            chart: {
+                width: $('#tot-upvotes').width()
+            },
             title: {
                 text: 'Community rate average for all softwares',
                 x: -20 //center
@@ -408,5 +433,6 @@
                 {% endfor %}
             ]
         });
+
     </script>
 {% endblock %}

@@ -121,7 +121,7 @@
                                 </small>
 
                             </th>
-                            {% if current_user.is_authenticated() %}
+                            {#                            {% if current_user.is_authenticated() %}#}
                                 {% set rate = soft.compute_rate() %}
                                 {% if rate >=70 %}
                                     <th class="text-center"><label class="label label-primary">{{ rate }}</label></th>
@@ -132,9 +132,9 @@
                                 {% elif  rate < 30 %}
                                     <th class="text-center"><label class="label label-danger">{{ rate }}</label></th>
                                 {% endif %}
-                            {% else %}
-                                <th><label class="label label-default">hidden</label></th>
-                            {% endif %}
+                            {#                            {% else %}#}
+                            {#                                <th><label class="label label-default">hidden</label></th>#}
+                            {#                            {% endif %}#}
                             {% if current_user.is_authenticated() and not soft.name in (current_user.softwares_used | map(attribute='name')) %}
                                 <th class="text-right"><a class="btn btn-sm btn-default"
                                                           href="{{ url_for('softwares.register_user', name=soft.name) }}">Using

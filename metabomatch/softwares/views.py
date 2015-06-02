@@ -17,9 +17,10 @@ from metabomatch.achievements import SoftwareAchievement, SCORE_SOFT
 from metabomatch.extensions import db
 from metabomatch.flaskbb.utils.helpers import render_template
 from metabomatch.flaskbb.utils.permissions import is_admin
-from metabomatch.softwares.models import Software, Tag, Comment, Rating, Sentence, SentenceSoftwareMapping
+from metabomatch.softwares.models import Software, Tag, Comment, Rating, Sentence, SentenceSoftwareMapping, Upvote
 from metabomatch.softwares.forms import SoftwareForm, SoftwareUpdateForm
 from metabomatch.utils import s3_upload, s3_upload_from_server, s3_delete, mean
+from wtforms.ext.csrf import SecureForm
 
 softwares = Blueprint("softwares", __name__, template_folder="../../templates")
 
@@ -155,8 +156,18 @@ def comment(name):
 @softwares.route('/<name>/comments')
 def comments(name):
     soft = Software.query.filter(Software.name == name).first_or_404()
-    return render_template('softwares/all_comments.html', software=soft)
+    return render_template('softwares/all_comments.html', software=soft, form=Form())
 
+
+@softwares.route('/<name>/update_comment/<int:comment_id>', methods=['POST'])
+def update_comment(name, comment_id):
+    soft = Software.query.filter(Software.name == name).first_or_404()
+    c = Comment.query.filter(Comment.id == comment_id).first_or_404()
+
+    c.content = request.form.get("comment-content-{}".format(comment_id))
+    c.save()
+    flash("Comment content successfully updated", "success")
+    return redirect(url_for('softwares.comments', name=soft.name))
 
 @softwares.route('/<name>/ratings')
 def ratings(name):
@@ -167,6 +178,12 @@ def ratings(name):
 
 @softwares.route('/<name>/upvote/<int:mapping_id>')
 def upvote(name, mapping_id):
+    """
+    upvite a particular software mapping id
+    :param name:
+    :param mapping_id:
+    :return:
+    """
     soft = Software.query.filter(Software.name == name).first_or_404()
     s_mapp = None
     for s in soft.sentences_mapping:
@@ -177,13 +194,46 @@ def upvote(name, mapping_id):
         abort(404)
     s_mapp.upvote += 1
     s_mapp.save()
+
+    # create an upvote record
+    upvote_inst = Upvote()
+    upvote_inst.sentence_software_mapping_id = mapping_id if s_mapp is not None else abort(404)
+    if current_user.is_authenticated():
+        upvote_inst.user_id = current_user.id
+    upvote_inst.save()
+
     flash("Vote taken into account ! ", "success")
     return redirect(url_for('softwares.info', name=name))
+
+
+@softwares.route('/<name>/<int:mapping_id>/upvote-details')
+def upvote_details(name, mapping_id):
+    soft = Software.query.filter(Software.name == name).first_or_404()
+    s_mapp = None
+    for s in soft.sentences_mapping:
+        if s.id == mapping_id:
+            s_mapp = s
+            break
+    if s_mapp is None:
+        abort(404)
+    upvotes = Upvote.query.filter(Upvote.sentence_software_mapping_id == mapping_id).all()
+    guest_count = 0
+    for u in upvotes:
+        if u.user is None:
+            guest_count += 1
+    upvotes = [u for u in upvotes if u.user is not None]
+    return render_template("softwares/all_upvotes.html", software=soft, upvotes=upvotes, soft_mapping=s_mapp,
+                           guest_count=guest_count)
 
 
 @softwares.route('/<name>/register_user')
 @login_required
 def register_user(name):
+    """
+    add a user to software users slot
+    :param name:
+    :return:
+    """
     soft = Software.query.filter(Software.name == name).first_or_404()
     current_user.softwares_used.append(soft)
     current_user.save()
@@ -193,12 +243,17 @@ def register_user(name):
 @softwares.route('/<name>/remove_user')
 @login_required
 def remove_user(name):
+    """
+    remove a software user
+    :param name:
+    :return:
+    """
     soft = Software.query.filter(Software.name == name).first_or_404()
     try:
         current_user.softwares_used.remove(soft)
+        current_user.save()
     except ValueError:
         pass
-    current_user.save()
     return redirect(url_for('user.profile', username=current_user.username))
 
 
@@ -212,6 +267,7 @@ def update(name):
     """
     soft = Software.query.filter(Software.name == name).first_or_404()
 
+    # simple security check
     if soft.owner_id != current_user.id and not is_admin(current_user):
         return abort(401)
     form = SoftwareUpdateForm()
