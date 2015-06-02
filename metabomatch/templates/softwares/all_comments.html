@@ -11,7 +11,7 @@
 
 {% block content %}
     <h1><span class="fa fa-laptop text-muted"></span><a
-            href={{ url_for('softwares.info', name=software.name) }}> {{ software.name }}</a></h1>
+            href={{ url_for('softwares.info', name=software.name) }}> {{ software.name }}</a> All comments</h1>
     <hr/>
     <ul class="list-group">
         {% for c in software.comments %}
@@ -26,11 +26,38 @@
                     <a href="{{ url_for('user.profile', username=c.user.username) }}">{{ c.user.username }}</a>
                     <small class="text-muted">{{ c.date_created | format_date(format='%Y-%m-%d at %H:%M') }}:</small>
                 </h2>
+                {% if current_user.id == c.user.id %}
+                    <form method="post"
+                          action="{{ url_for('softwares.update_comment', name=software.name, comment_id=c.id) }}">
+                        {{ form.hidden_tag() }}
+                        <div class="form-group">
+                            <textarea class="form-control" id="comment-content-{{ c.id }}"
+                                      name="comment-content-{{ c.id }}" style="width:100%;" rows="10"
+                                      disabled>{{ c.content }}</textarea>
+                        </div>
+                        <button id="edit-{{ c.id }}" class="btn btn-success">Edit</button>
+                        <button disabled type="submit" id="submit-{{ c.id }}" class="btn btn-success">Update</button>
+                    </form>
+                {% else %}
                 <p class="list-group-item-text">{{ c.content }}</p>
+                {% endif %}
             </li>
         {% else %}
             <p class="well text-center"><span class="fa fa-coffee fa-2x"></span><br/><strong>No comment found</strong></p>
         {% endfor %}
     </ul>
 
+{% endblock %}
+
+{% block javascript %}
+    {{ super() }}
+    <script>
+        {% for c in software.comments %}
+            $("#edit-{{ c.id }}").click(function (e) {
+                e.preventDefault();
+                $("#comment-content-{{ c.id }}").removeAttr("disabled");
+                $("#submit-{{ c.id }}").removeAttr("disabled");
+            });
+        {% endfor %}
+    </script>
 {% endblock %}

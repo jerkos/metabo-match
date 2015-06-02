@@ -67,7 +67,7 @@ class SentenceSoftwareMapping(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     software_id = db.Column(db.String, db.ForeignKey('softwares.name'), nullable=False)
     sentence_id = db.Column(db.Integer, db.ForeignKey('sentences.id'), nullable=False)
-    upvote = db.Column(db.Integer, default=0)
+    upvote = db.Column(db.Integer, default=0)  # more precisely upvote counts
 
     # fixed deleted manually, find how to do that automatically
     software = db.relationship('Software', backref='sentences_mapping')
@@ -81,6 +81,24 @@ class SentenceSoftwareMapping(db.Model):
         db.session.add(self)
         db.session.commit()
 
+
+class Upvote(db.Model):
+    __tablename__ = 'upvotes'
+
+    id = db.Column(db.Integer, primary_key=True)
+    sentence_software_mapping_id = db.Column(db.Integer, db.ForeignKey("sentences_software_mapping.id"), nullable=False)
+    date_created = db.Column(db.Date, default=datetime.now())
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)  # case user was not identified
+
+    sentence_software_mapping = db.relationship('SentenceSoftwareMapping',
+                                                foreign_keys=[sentence_software_mapping_id],
+                                                backref='upvotes')
+    user = db.relationship('User', foreign_keys=[user_id], backref='upvotes', lazy='joined')
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+        return self
 
 class Tag(db.Model):
     """Tag model representing step in the classical metabolomic pipeline"""

@@ -92,14 +92,14 @@
     </div>
 
 {#    Coloured row describing softwares#}
-    <div class="row" style="padding-bottom: 50px;">
+    <div class="row">
         <div class="col-md-3">
             {% if software.is_maintained %}
                 <span class="btn" style="background-color: #673ab7; color:white;">
                     <i class="fa fa-plug fa-2x"></i><span> MAINTAINED ..... </span><i class="fa fa-check-square-o"></i>
                 </span>
             {% else %}
-                <a href="/" class="btn" style="background-color: #673ab7; color:white;">
+                <a href="#" class="btn" style="background-color: #673ab7; color:white;">
                     <i class="fa fa-plug fa-2x"></i><span> MAINTAINED ..... </span><i class="fa fa-square-o"></i>
                 </a>
             {% endif %}
@@ -140,8 +140,8 @@
                 </a>
             {% endif %}
         </div>
-
     </div>
+    <p class="help-block" style="padding-bottom: 50px;"><em>Click on buttons to navigate</em></p>
 
     <div class="row" style="padding-bottom: 50px;">
         <h3>
@@ -204,11 +204,19 @@
                     {% endif %}
                         <ul class="list-group">
                             {% for sentence_mapping in (l | sort(attribute='sentence.id')) %}
-                                <li class="list-group-item"> <strong>{{ sentence_mapping.sentence.sentence }}</strong>
-                                    <span class="badge big-font">{{ sentence_mapping.upvote }}</span>
+                                <li class="list-group-item">
+                                    <strong>{{ sentence_mapping.sentence.sentence }}</strong>
+
                                     <a href="{{ url_for('softwares.upvote', name=software.name, mapping_id=sentence_mapping.id)}}">
-                                        <i class="fa fa-chevron-circle-up fa-2x"></i>
+                                        <span class="fa fa-chevron-circle-up fa-2x"></span>
                                     </a>
+                                    <small>
+                                        <a class="pull-right"
+                                           href="{{ url_for('softwares.upvote_details', name=software.name, mapping_id=sentence_mapping.id) }}">
+                                            <span class="badge big-font">{{ sentence_mapping.upvote }}</span>
+                                            {% if sentence_mapping.upvote %}details {% endif %}
+                                        </a>
+                                    </small>
                                 </li>
                             {% endfor %}
                         </ul>
@@ -248,7 +256,7 @@
 
                 <div role="tabpanel" class="tab-pane fade in active" id="community">
                     <div class="row"> {# style="min-height: 300px;" #}
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <h5 class="text-center"><i class="fa fa-star text-muted"></i> Last ratings <small><a href="{{ url_for('softwares.ratings', name=software.name) }}">see all</a></small></h5>
 
                             <hr/>
@@ -268,7 +276,7 @@
                                 <p class="well well-lg text-center text-muted">Nothing to show</p>
                             {% endfor %}
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <h5 class="text-center"><i class="fa fa-comment text-muted"></i> Last comments <small><a href="{{ url_for('softwares.comments', name=software.name) }}">see all</a></small></h5>
                             <hr/>
                             {% for c in software.comments[-5:] %}
@@ -281,11 +289,11 @@
                             {% endfor %}
 
                         </div>
-                        <div class="col-md-4">
-                            <h5 class="text-center"><i class="fa fa-flash text-muted"></i> Last matches</h5>
-                            <hr/>
-                            <p class="text-center"><label class="label label-danger">Available soon !</label></p>
-                        </div>
+                        {#                        <div class="col-md-4">#}
+                        {#                            <h5 class="text-center"><i class="fa fa-flash text-muted"></i> Last matches</h5>#}
+                        {#                            <hr/>#}
+                        {#                            <p class="text-center"><label class="label label-danger">Available soon !</label></p>#}
+                        {#                        </div>#}
                     </div>
                 </div>
 
