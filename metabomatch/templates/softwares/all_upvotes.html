@@ -1,0 +1,40 @@
+{% extends theme("layout.html") %}
+
+{% block css %}
+    {{ super() }}
+    <style>
+        h3 {
+            font-size: 1.2em;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <h1>Upvotes summary</h1>
+    <h2><span class="fa fa-laptop text-muted"></span>
+        <a href={{ url_for('softwares.info', name=software.name) }}> {{ software.name }}
+            <small>{{ soft_mapping.sentence.sentence }}</small>
+        </a>
+    </h2>
+    <hr/>
+    <ul class="list-group" style="max-width: 300px;">
+        {% for username, upvotes_ in upvotes | groupby(attribute='user.username') %}
+            <li class="list-group-item">
+                <h3><a href="{{ url_for('user.profile', username=username) }}">{{ username }}
+                    <small class="text-muted">
+                        last: {{ (upvotes_ | sort(attribute="date_created") | last).date_created }}</small>
+                </a>
+                    <span class="badge pull-right">x{{ upvotes_ | length }}</span>
+                </h3>
+            </li>
+            {#        {% else %}#}
+            {#            <p class="well text-center"><span class="fa fa-coffee fa-2x"></span><br/><strong>No upvote yet</strong></p>#}
+        {% endfor %}
+        {% if guest_count %}
+            <li class="list-group-item">
+                <h3>Guest <span class="badge pull-right">x{{ guest_count }}</span></h3>
+            </li>
+        {% endif %}
+    </ul>
+
+{% endblock %}

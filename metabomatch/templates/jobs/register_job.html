@@ -17,13 +17,19 @@
             background-color: #f7f5fa;
             border-radius: 5px;
         }
+
+        h1 {
+            font-size: 1.8em;
+        }
     </style>
 {% endblock %}
 
 
 {% block content %}
 
-    <h3>Post a new job <small class="text-muted">Fields marked with <code>*</code> are mandatory.</small></h3>
+    <h1>Post a new job
+        <small class="text-muted">Fields marked with <code>*</code> are mandatory.</small>
+    </h1>
     <p style="padding-bottom: 50px;" class="help-block">Use <a href="http://daringfireball.net/projects/markdown/syntax">markdown</a> to describe the job.
     We don't insert ourselves the job name so you can present it as you want.</p>
     <div class="row">

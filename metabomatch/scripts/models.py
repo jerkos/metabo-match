@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from metabomatch.extensions import db
-
+from metabomatch.flaskbb.utils.helpers import slugify
 
 script_tags_script_mapping = db.Table(
     'script_tags_script_mapping',
@@ -61,6 +61,10 @@ class Script(db.Model):
 
     def __repr__(self):
         return "<{} {}>".format(self.__class__.__name__, self.name)
+
+    @property
+    def slug(self):
+        return slugify(self.title)
 
     def up_voted(self):
         #bakward compatibility

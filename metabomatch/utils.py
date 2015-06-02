@@ -64,4 +64,5 @@ def s3_delete(key):
     return b.delete_key(key)
 
 
-
+def mean(l):
+    return float(sum(l)) / len(l)

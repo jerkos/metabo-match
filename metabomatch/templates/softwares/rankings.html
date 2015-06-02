@@ -1,0 +1,438 @@
+{% extends theme("layout.html") %}
+{% block css %}
+    {{ super() }}
+    <style>
+        h1 {
+            font-size: 2em;
+        }
+
+        h2 {
+            font-size: 1.8em;
+        }
+
+        h3 {
+            font-size: 1.6em;
+        }
+
+        {#        .github-li.active {#}
+        {#            border-top: 3px solid #D26911;#}
+        {#            border-bottom: none;#}
+        {#        }#}
+
+        .highcharts-container {
+            width: 100% !important;
+            height: 100% !important;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <h1><span class="fa fa-line-chart text-muted"></span> Some statistics and top ranked </h1>
+    <hr/>
+
+    <h2 style="padding-top: 20px;">
+        <span class="fa fa-glass text-muted"></span> Winner of the day
+        <small class="text-muted">{{ today | format_date }}</small>
+        : <a href={{ url_for('softwares.info', name=winning_software) }}>{{ winning_software }}</a>
+    </h2>
+
+    <div class="row">
+        <div id="winner-of-the-day">
+
+        </div>
+    </div>
+
+    <h2 style="padding-top: 50px;"><span class="fa fa-bar-chart text-muted"></span> Top ranked softwares</h2>
+    <div class="row">
+        <div class="col-md-4 text-center">
+            <h3><span class="fa fa-bookmark text-muted"></span> Most citations</h3>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th><strong># rank</strong></th>
+                    <th>software</th>
+                    <th>value</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for s in softwares | sort(attribute='nb_citations', reverse=True) %}
+                    {% if loop.index <= 5 %}
+                        <tr>
+                            <th>{{ loop.index }}</th>
+                            <th><a href="{{ url_for('softwares.info', name=s.name) }}">{{ s.name }}</a></th>
+                            <th><span class="badge">{{ s.nb_citations }}</span></th>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="col-md-4 text-center">
+            <h3><span class="fa fa-download text-muted"></span> Most downloads</h3>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th><strong># rank</strong></th>
+                    <th>software</th>
+                    <th>value</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for s in softwares | sort(attribute='nb_downloads', reverse=True) %}
+                    {% if loop.index <= 5 %}
+                        <tr>
+                            <th>{{ loop.index }}</th>
+                            <th><a href="{{ url_for('softwares.info', name=s.name) }}">{{ s.name }}</a></th>
+                            <th><span class="badge">{{ s.nb_downloads }}</span></th>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+
+        <div class="col-md-4 text-center">
+            <h3><span class="fa fa-users text-muted"></span> # Users</h3>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th><strong># rank</strong></th>
+                    <th>software</th>
+                    <th>value</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for s in softwares %}
+                    {% if loop.index <= 5 %}
+                        <tr>
+                            <th>{{ loop.index }}</th>
+                            <th><a href="{{ url_for('softwares.info', name=s.name) }}">{{ s.name }}</a></th>
+                            <th><span class="badge">{{ s.users | length }}</span></th>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <h2 style="padding-top: 50px;"><span class="fa fa-ticket text-muted"></span> Others</h2>
+
+    <div class="row" style="padding-bottom: 50px;">
+
+        <div role="tabpanel">
+
+            <!-- Nav tabs -->
+
+            <ul class="nav nav-tabs" role="tablist">
+
+                <li role="presentation" class="github-li active">
+                    <a style="outline:none;-webkit-appearance:none;" href="#total-upvotes" aria-controls="total-upvotes"
+                       role="tab" data-toggle="tab">
+                        total upvotes
+                    </a>
+                </li>
+
+                <li role="presentation" class="github-li">
+                    <a style="outline:none;-webkit-appearance:none;" href="#upvotes-by-categories"
+                       aria-controls="upvotes-by-categories" role="tab" data-toggle="tab">
+                        upvotes by category
+                    </a>
+                </li>
+
+                <li role="presentation" class="github-li">
+                    <a style="outline:none;-webkit-appearance:none;" href="#rates-evolution"
+                       aria-controls="rates-evolution" role="tab" data-toggle="tab">
+                        Rates evolution
+                    </a>
+                </li>
+                <li role="presentation" class="github-li">
+                    <a style="outline:none;-webkit-appearance:none;" href="#pipeline-cat" aria-controls="pipeline-cat"
+                       role="tab" data-toggle="tab">
+                        Most represented pipeline category
+                    </a>
+                </li>
+
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane fade in active" id="total-upvotes">
+                    <p class="help-block"><strong>The most upvoted softwares.</strong> Often, softwares are good in only
+                        one category.
+                        You can see which software fit to your needs according to the community.</p>
+                    {#                    <div class="container" style="width:100%">#}
+
+                    {#                        <div class="row">#}
+                    <div id="tot-upvotes">
+
+                            </div>
+                    {#                        </div>#}
+
+                    {#                    </div>#}
+                </div>
+                {#                ENd total-upvotes#}
+
+                <div role="tabpanel" class="tab-pane fade" id="upvotes-by-categories">
+                    {#                    <div class="container" style="width:100%">#}
+
+                    {#                        <div class="row">#}
+                    <div id="upvotes-by-cat">
+
+                    </div>
+                    {#                        </div>#}
+                    {#                    </div>#}
+                </div>
+
+                <div role="tabpanel" class="tab-pane fade" id="rates-evolution">
+
+                    {#                    <div class="container" style="width:100%">#}
+                        <p class="help-block" style="padding-top: 20px;">
+                            It is always interesting to see how softwares evolve to the
+                            community point of view. Here is the evolution of the rate of each software during last 12
+                            months.
+
+                        </p>
+
+                    {#                        <div class="row text-center">#}
+                            <div id="rate-evo">
+
+                            </div>
+                    {#                        </div>#}
+                    {#                    </div>#}
+                </div>
+
+                <div role="tabpanel" class="tab-pane fade" id="pipeline-cat">
+
+                    {#                    <div class="container" style="width:100%">#}
+                        <p class="help-block" style="padding-top: 20px;">
+                            You can quickly see which step of the <strong>metabolomics</strong> pipeline requires more
+                            effort
+                            from the community.
+                        </p>
+
+                    {#                        <div class="row text-center">#}
+                            <div id="pipeline-categories">
+                            </div>
+                    {#                        </div>#}
+                    {#                    </div>#}
+                </div>
+
+
+            </div>
+
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascript %}
+    {{ super() }}
+    <script src="http://code.highcharts.com/highcharts.js"></script>
+    <script src="http://code.highcharts.com/modules/exporting.js"></script>
+    <script src="{{ url_for('static', filename='js/dark_unica.js') }}"></script>
+    <script>
+        $('#tot-upvotes').highcharts({
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: 'Total sentences upvotes for all softwares'
+            },
+
+            xAxis: {
+                categories: [
+                    {{ total_upvotes_by_software_name.keys() | map('quote') | join(',') | safe }}
+                ],
+                crosshair: true
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: '# upvotes'
+                }
+            },
+
+            plotOptions: {
+                column: {
+                    pointPadding: 0.2,
+                    borderWidth: 0
+                }
+            },
+            series: [{
+                name: 'Total upvotes',
+                data: [{{ total_upvotes_by_software_name.values() | join(',') }}]
+
+            }]
+        });
+
+        /***************************************************************
+         *
+         */
+        $('#upvotes-by-cat').highcharts({
+            chart: {
+                type: 'column',
+                width: $('#tot-upvotes').width()
+            },
+            title: {
+                text: 'Upvotes by categories'
+            },
+
+            xAxis: {
+                categories: [
+                    {{ upvotes_by_software_name.keys() | map('quote') | join(',') | safe }}
+                ],
+                crosshair: true
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: '# upvotes'
+                }
+            },
+
+            plotOptions: {
+                column: {
+                    pointPadding: 0.2,
+                    borderWidth: 0
+                }
+            },
+            series: [
+                {
+                    name: 'Performance upvotes',
+                    data: [{{ upvotes_by_software_name.values() | map(attribute='PERFORMANCE') | join(',') }}]
+                },
+                {
+                    name: 'UI upvotes',
+                    data: [{{ upvotes_by_software_name.values() | map(attribute='UI') |  join(',') }}]
+                },
+                {
+                    name: 'Support upvotes',
+                    data: [{{ upvotes_by_software_name.values() | map(attribute='SUPPORT') | join(',') }}]
+                }
+            ]
+        });
+
+        /***************************************************************+
+         *
+         */
+        $('#winner-of-the-day').highcharts({
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: 'Mean rate posted {{ today | format_date }}'
+            },
+
+            xAxis: {
+                categories: [
+                    {{ last_day_stats.keys() | map('quote') | join(',') | safe }}
+                ],
+                crosshair: true
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'ratings mean'
+                }
+            },
+            plotOptions: {
+                column: {
+                    pointPadding: 0.2,
+                    borderWidth: 0
+                }
+            },
+            series: [
+                {
+                    name: 'Ratings mean',
+                    data: [{{ last_day_stats.values() | join(',') }}]
+                }
+            ]
+        });
+
+        /*************************************************************+
+         *
+         */
+        $('#pipeline-categories').highcharts({
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false,
+                width: $('#tot-upvotes').width()
+            },
+            title: {
+                text: 'Pipeline categories percentage'
+            },
+            tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                        style: {
+                            color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                        }
+                    }
+                }
+            },
+            series: [{
+                type: 'pie',
+                name: 'Pipeline categories share',
+                data: [
+
+                    {% for name, percentage in nb_softs_by_categories.items() %}
+                        [{{ name | quote |safe }}, {{ percentage }}] {% if loop.index < loop.length %}, {% endif %}
+                    {% endfor %}
+                ]
+            }]
+        });
+
+
+        /****************************************************
+         *
+         */
+        $('#rate-evo').highcharts({
+            chart: {
+                width: $('#tot-upvotes').width()
+            },
+            title: {
+                text: 'Community rate average for all softwares',
+                x: -20 //center
+            },
+
+            xAxis: {
+                categories: [{{ sorted_dates | map('format_date', format='%Y-%m') | map('quote') | join(',') | safe }}]
+            },
+            yAxis: {
+                title: {
+                    text: 'rate average'
+                },
+                plotLines: [{
+                    value: 0,
+                    width: 1,
+                    color: '#808080'
+                }]
+            },
+            series: [
+                {%  for name, data in rate_evolution.items() %}
+                    {
+                        name: {{ name | quote | safe }},
+                        data: [
+                            {% for date in sorted_dates %}
+                                {{ data.get(date, 0) }}
+                                {% if loop.index < loop.length %}, {% endif %}
+                            {% endfor %}
+                        ]
+                    }
+                    {% if loop.index < loop.length %}, {% endif %}
+                {% endfor %}
+            ]
+        });
+
+    </script>
+{% endblock %}
