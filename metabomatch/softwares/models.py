@@ -175,6 +175,7 @@ class Software(db.Model):
     insertion_date = db.Column(db.DateTime, default=datetime.utcnow())
     organization = db.Column(db.String(200))  # institute or company which created the software
     programming_language = db.Column(db.String(200))
+    website = db.Column(db.String(500))
 
     #todo what to do with these ?
     algorithm_description = db.Column(db.Text())

@@ -22,6 +22,7 @@ class SoftwareForm(Form):
 
     image = FileField('image', validators=[Optional()])
 
+    website = StringField("website", validators=[Optional(), URL()])
     github_url = StringField('github_url', validators=[Optional(), URL(message="Not a valid url")])
 
     is_maintained = BooleanField("is maintained ?")
@@ -44,6 +45,7 @@ class SoftwareForm(Form):
         soft = Software(self.name.data, self.organization.data, self.pg_language.data)
         soft.owner_id = current_user.id
 
+        soft.website = self.website.data
         soft.github_link = self.github_url.data
         soft.is_maintained = self.is_maintained.data
 

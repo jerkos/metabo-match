@@ -36,6 +36,8 @@
         {{ horizontal_field(form.name, icon_class='fa fa-laptop fa-2x', value=software.name, readonly='readonly') }}
         {{ horizontal_field(form.organization, icon_class='fa fa-briefcase fa-2x', value= software.organization) }}
         {{ horizontal_field(form.pg_language, icon_class='fa fa-terminal fa-2x', value=software.programming_language) }}
+
+     {{ horizontal_field(form.website, label_text='website', icon_class='fa fa-github fa-2x', value=software.website | default('', true)) }}
         {{ horizontal_field(form.github_url, label_text='github repository url', icon_class='fa fa-github fa-2x', value=software.github_link | default('', true)) }}
 
 {#         <div class="form-group">#}
