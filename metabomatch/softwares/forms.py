@@ -97,6 +97,7 @@ class SoftwareUpdateForm(SoftwareForm):
         :return:
         """
         soft.organization = self.organization.data
+        soft.website = self.website.data
         soft.github_link = self.github_url.data
         soft.is_maintained = self.is_maintained.data
 
