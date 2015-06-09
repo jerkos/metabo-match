@@ -63,6 +63,19 @@
 </div>
 {%- endmacro -%}
 
+
+{%- macro render_submit_field(field, div_class='', input_class='') -%}
+    {% if div_class %}
+        <div class="{{ div_class }}">
+    {% endif %}
+
+{{ field(class=input_class or 'btn btn-success') }}
+
+{% if div_class %}
+    </div>
+{% endif %}
+{%- endmacro -%}
+
 {%- macro render_field(field, div_class='', rows='') -%}
 <div class="form-group{%- if field.errors %} has-error{%- endif %}">
     {% if div_class %}
@@ -91,6 +104,38 @@
 </div>
 {%- endmacro -%}
 
+
+{%- macro render_field_2(field, with_label=True, div_class='', rows='') -%}
+    <div class="form-group{%- if field.errors %} has-error{%- endif %}">
+    {% if div_class %}
+        <div class="{{ div_class }}">
+    {% else %}
+        <div class="col-sm-5">
+    {% endif %}
+
+{% if with_label %}
+    <label>{{ field.label.text }}</label>
+{% endif %}
+
+{%- if kwargs['required'] or field.flags.required -%}
+    {% if rows %}
+        {{ field(class="form-control", required="required", rows=rows, placeholder=field.label.text, **kwargs) }}
+    {% else %}
+        {{ field(class="form-control", required="required", placeholder=field.label.text, **kwargs) }}
+    {% endif %}
+{%- else -%}
+    {% if rows %}
+        {{ field(class="form-control", rows=rows, placeholder=field.label.text, **kwargs) }}
+    {% else %}
+        {{ field(class="form-control", placeholder=field.label.text, **kwargs) }}
+    {% endif %}
+{%- endif -%}
+
+{{ field_description(field) }}
+{{ field_errors(field) }}
+</div>
+</div>
+{%- endmacro -%}
 
 {%- macro inline_field(field, label_text='', label_class='') -%}
 <div class="form-group {%- if field.errors %} has-error{%- endif %}">

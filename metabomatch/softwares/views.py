@@ -294,6 +294,7 @@ def update_description(name):
 @softwares.route('/rankings', methods=['GET'])
 def rankings():
     softwares_inst = Software.query.all()
+    overall_winner = max(softwares_inst, key=lambda _: _.compute_rate())
     # should be easier with group_by
     softwares_name = [s.name for s in softwares_inst]
 
@@ -311,10 +312,21 @@ def rankings():
     else:
         winning_software = "No winner today..."
 
+    # winning upvote software
+    upvotes = db.session.query(Upvote).filter(Upvote.date_created.between(str(yesterday), str(today))).all()
+    last_day_upvotes_by_software = {n: len(list(up)) for n, up in
+                                    groupby(upvotes, key=lambda _: _.sentence_software_mapping.software.name)}
+    if last_day_upvotes_by_software:
+        winning_software_upvotes = max(last_day_upvotes_by_software.items(), key=lambda _: _[1])[0]
+    else:
+        winning_software_upvotes = "No winner today..."
+
     # add missing software
     for name in softwares_name:
         if name not in last_day_user_rating_mean_by_software:
             last_day_user_rating_mean_by_software[name] = 0
+        if name not in last_day_upvotes_by_software:
+            last_day_upvotes_by_software[name] = 0
 
     # should be easier with Counter
     nb_softs_by_categories = {SOFT_MAP[i]: 0 for i in SOFT_MAP.keys()}
@@ -342,6 +354,14 @@ def rankings():
     total_upvotes_by_software_name = {name: d['UI'] + d['PERFORMANCE'] + d['SUPPORT'] for name, d in
                                       upvotes_by_software_name.items()}
 
+    upvotes_by_software_name_items = upvotes_by_software_name.items()
+    best_ui_softwares = [(name, ups['UI']) for name, ups in
+                         sorted(upvotes_by_software_name_items, key=lambda _: -_[1]['UI'])][:5]
+    best_performance_softwares = [(name, ups['PERFORMANCE']) for name, ups in
+                                  sorted(upvotes_by_software_name_items, key=lambda _: -_[1]['PERFORMANCE'])][:5]
+    best_support_softwares = [(name, ups['SUPPORT']) for name, ups in
+                              sorted(upvotes_by_software_name_items, key=lambda _: -_[1]['SUPPORT'])][:5]
+
     # rate evolution
     rate_evolution = {}
     for name in softwares_name:
@@ -365,10 +385,16 @@ def rankings():
     return render_template('softwares/rankings.html',
                            today=today,
                            last_day_stats=OrderedDict(last_day_user_rating_mean_by_software),
+                           last_day_upvotes=OrderedDict(last_day_upvotes_by_software),
                            winning_software=winning_software,
+                           winning_software_upvotes=winning_software_upvotes,
                            nb_softs_by_categories=OrderedDict(nb_softs_by_categories),
                            upvotes_by_software_name=OrderedDict(upvotes_by_software_name),
                            total_upvotes_by_software_name=OrderedDict(total_upvotes_by_software_name),
                            softwares=sorted(softwares_inst, key=lambda _: len(_.users), reverse=True),
                            sorted_dates=sorted_dates,
-                           rate_evolution=rate_evolution)
+                           rate_evolution=rate_evolution,
+                           best_ui_softwares=best_ui_softwares,
+                           best_performance_softwares=best_performance_softwares,
+                           best_support_softwares=best_support_softwares,
+                           overall_winner=overall_winner)

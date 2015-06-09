@@ -20,7 +20,7 @@ from flask.ext.plugins import PluginManager
 from flask.ext.github import GitHub
 from flask_wtf.csrf import CsrfProtect
 from flask_gravatar import Gravatar
-
+from flask_babel import Babel
 
 # Database
 db = SQLAlchemy()
@@ -56,3 +56,5 @@ gravatar = Gravatar(default='identicon')
 
 # csrf protection
 csrf = CsrfProtect()
+
+babel = Babel()

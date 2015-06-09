@@ -31,6 +31,24 @@ def send_reset_token(user, token):
     )
 
 
+def send_reply_notification(users, topic_title, link):
+    print 'IN send_reply_notification'
+    send_email(
+        subject="[metabomatch: new reply]",
+        recipients=[u.email for u in users],
+        text_body=render_template(
+            "email/reply_notification.txt",
+            topic_title=topic_title,
+            link=link
+        ),
+        html_body=render_template(
+            "email/reply_notification.html",
+            topic_title=topic_title,
+            link=link
+        )
+    )
+
+
 def send_email(subject, recipients, text_body, html_body, sender=None):
     msg = Message(subject, recipients=recipients, sender=sender)
     msg.body = text_body

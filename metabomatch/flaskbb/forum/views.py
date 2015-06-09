@@ -14,6 +14,7 @@ import datetime
 from flask import (Blueprint, redirect, url_for, current_app,
                    request, flash)
 from flask.ext.login import login_required, current_user
+from metabomatch.email import send_reply_notification
 
 from metabomatch.extensions import db
 from metabomatch.flaskbb.utils.settings import flaskbb_config
@@ -77,15 +78,15 @@ def view_category(category_id, slug=None):
 def view_forum(forum_id, slug=None):
     page = request.args.get('page', 1, type=int)
 
-    forum, forumsread = Forum.get_forum(forum_id=forum_id, user=current_user)
+    forum_instance, forumsread = Forum.get_forum(forum_id=forum_id, user=current_user)
 
-    if forum.external:
-        return redirect(forum.external)
+    if forum_instance.external:
+        return redirect(forum_instance.external)
 
-    topics = Forum.get_topics(forum_id=forum.id, user=current_user, page=page,
+    topics = Forum.get_topics(forum_id=forum_instance.id, user=current_user, page=page,
                               per_page=flaskbb_config["TOPICS_PER_PAGE"])
 
-    return render_template("forum/forum.html", forum=forum, topics=topics,
+    return render_template("forum/forum.html", forum=forum_instance, topics=topics,
                            forumsread=forumsread,)
 
 
@@ -122,7 +123,13 @@ def view_topic(topic_id, slug=None):
             form = QuickreplyForm()
             if form.validate_on_submit():
                 post = form.save(current_user, topic)
-                return view_post(post.id)
+
+                involved_users = User.query.filter(Post.topic_id == topic.id, User.id == Post.user_id).all()
+                recipients = list(set(involved_users) - {current_user})
+                if recipients:
+                    send_reply_notification(recipients, topic_title=topic.title,
+                                            link="www.metabomatch.com/topic/{}".format(topic_id))
+                    return view_post(post.id)
 
     return render_template("forum/topic.html", topic=topic, posts=posts,
                            last_seen=time_diff(), form=form)
@@ -146,28 +153,31 @@ def view_post(post_id):
 @forum.route("/<int:forum_id>-<slug>/topic/new", methods=["POST", "GET"])
 @login_required
 def new_topic(forum_id, slug=None):
-    forum = Forum.query.filter_by(id=forum_id).first_or_404()
+    forum_instance = Forum.query.filter_by(id=forum_id).first_or_404()
 
-    if forum.locked:
+    if forum_instance.locked:
         flash("This forum is locked; you cannot submit new topics or posts.",
               "danger")
-        return redirect(forum.url)
+        return redirect(forum_instance.url)
 
-    if not can_post_topic(user=current_user, forum=forum):
+    if not can_post_topic(user=current_user, forum=forum_instance):
         flash("You do not have the permissions to create a new topic.",
               "danger")
-        return redirect(forum.url)
+        return redirect(forum_instance.url)
 
     form = NewTopicForm()
-    if form.validate_on_submit():
-        if request.form['button'] == 'preview':
-            return render_template("forum/new_topic.html", forum=forum,
-                                   form=form, preview=form.content.data)
-        else:
-            topic = form.save(current_user, forum)
+    if request.method == "POST":
+        if "preview" in request.form and form.validate():
+            return render_template(
+                "forum/new_topic.html", forum=forum_instance,
+                form=form, preview=form.content.data
+            )
+        if "submit" in request.form and form.validate():
+            topic = form.save(current_user, forum_instance)
 
             # redirect to the new topic
             return redirect(url_for('forum.view_topic', topic_id=topic.id))
+
     return render_template("forum/new_topic.html", forum=forum, form=form)
 
 
@@ -287,9 +297,11 @@ def new_post(topic_id, slug=None):
 
     form = ReplyForm()
     if form.validate_on_submit():
-        if request.form['button'] == 'preview':
-            return render_template("forum/new_post.html", topic=topic,
-                                   form=form, preview=form.content.data)
+        if "preview" in request.form:
+            return render_template(
+                "forum/new_post.html", topic=topic,
+                form=form, preview=form.content.data
+            )
         else:
             post = form.save(current_user, topic)
             return view_post(post.id)
@@ -318,11 +330,18 @@ def reply_post(topic_id, post_id):
 
     form = ReplyForm()
     if form.validate_on_submit():
-        if request.form['button'] == 'preview':
-            return render_template("forum/new_post.html", topic=topic,
-                                   form=form, preview=form.content.data)
+        if "preview" in request.form:
+            return render_template(
+                "forum/new_post.html", topic=topic,
+                form=form, preview=form.content.data
+            )
         else:
             form.save(current_user, topic)
+            involved_users = User.query.filter(Post.topic_id == topic.id, User.id == Post.user_id).all()
+
+            recipients = list(set(involved_users))  # - set([current_user]))
+            send_reply_notification(recipients, topic_title=topic.title,
+                                    link="http://www/metabomatch.com")
             return redirect(post.topic.url)
     else:
         form.content.data = format_quote(post)
@@ -351,9 +370,11 @@ def edit_post(post_id):
 
     form = ReplyForm()
     if form.validate_on_submit():
-        if request.form['button'] == 'preview':
-            return render_template("forum/new_post.html", topic=post.topic,
-                                   form=form, preview=form.content.data)
+        if "preview" in request.form:
+            return render_template(
+                "forum/new_post.html", topic=post.topic,
+                form=form, preview=form.content.data
+            )
         else:
             form.populate_obj(post)
             post.date_modified = datetime.datetime.utcnow()

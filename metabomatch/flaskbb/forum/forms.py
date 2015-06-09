@@ -10,7 +10,7 @@
 """
 from flask.ext.wtf import Form
 from wtforms import (TextAreaField, StringField, SelectMultipleField,
-                     BooleanField)
+                     BooleanField, SubmitField)
 from wtforms.validators import DataRequired, Optional, Length
 
 from metabomatch.flaskbb.forum.models import Topic, Post, Report, Forum
@@ -21,8 +21,10 @@ class QuickreplyForm(Form):
     content = TextAreaField("Quickreply", validators=[
         DataRequired(message="You cannot post a reply without content.")])
 
+    submit = SubmitField("Reply")
+
     def save(self, user, topic):
-        post = Post(**self.data)
+        post = Post(content=self.content.data)
         return post.save(user=user, topic=topic)
 
 
@@ -32,6 +34,9 @@ class ReplyForm(Form):
 
     track_topic = BooleanField("Track this topic", default=False, validators=[
         Optional()])
+
+    submit = SubmitField("Reply")
+    preview = SubmitField("Preview")
 
     def save(self, user, topic):
         post = Post(content=self.content.data)
@@ -50,6 +55,9 @@ class NewTopicForm(ReplyForm):
 
     track_topic = BooleanField("Track this topic", default=False, validators=[
         Optional()])
+
+    submit = SubmitField("Post Topic")
+    preview = SubmitField("Preview")
 
     def save(self, user, forum):
         topic = Topic(title=self.title.data)

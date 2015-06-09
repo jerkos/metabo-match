@@ -70,7 +70,7 @@
                             </button>
                             <a class="navbar-brand" href="/">
                                 <img src="{{ url_for('static', filename='img/elephant.png') }}"/>
-                                <small><label id="beta" class="label label-info">beta release</label></small>
+                                <small><label id="beta" class="label label-info">beta</label></small>
                             </a>
                         </div>
                         <div class="collapse navbar-collapse navbar-ex1-collapse">
@@ -208,6 +208,11 @@
         {% block javascript %}
             <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
             <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+            <script>
+                $(function () {
+                    $('[data-toggle="tooltip"]').tooltip();
+                })
+            </script>
         {% endblock %}
 
         {% block scripts %}

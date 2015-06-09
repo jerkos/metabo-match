@@ -3,11 +3,11 @@
     {{ super() }}
     <style>
         h1 {
-            font-size: 2em;
+            font-size: 2.2em;
         }
 
         h2 {
-            font-size: 1.8em;
+            font-size: 2em;
         }
 
         h3 {
@@ -30,18 +30,108 @@
     <hr/>
 
     <h2 style="padding-top: 20px;">
-        <span class="fa fa-glass text-muted"></span> Winner of the day
+        <span class="fa fa-glass text-muted"></span> Winner of the day: user rates
         <small class="text-muted">{{ today | format_date }}</small>
         : <a href={{ url_for('softwares.info', name=winning_software) }}>{{ winning_software }}</a>
     </h2>
 
+    {% if winning_software != "No winner today..." %}
+        <div class="row">
+            <div id="winner-of-the-day">
+
+            </div>
+        </div>
+    {% endif %}
+
+    <h2 style="padding-top: 20px;">
+        <span class="fa fa-glass text-muted"></span> Winner of the day: upvotes
+        <small class="text-muted">{{ today | format_date }}</small>
+        : <a href={{ url_for('softwares.info', name=winning_software_upvotes) }}>{{ winning_software_upvotes }}</a>
+    </h2>
+    {% if winning_software_upvotes != "No winner today..." %}
     <div class="row">
-        <div id="winner-of-the-day">
+        <div id="winner-of-the-day-upvotes">
 
         </div>
     </div>
+    {% endif %}
+
+
 
     <h2 style="padding-top: 50px;"><span class="fa fa-bar-chart text-muted"></span> Top ranked softwares</h2>
+
+    <div class="row">
+        <div class="col-md-4 text-center">
+            <h3><span class="fa fa-eye text-muted"></span> Best User interface</h3>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th><strong># rank</strong></th>
+                    <th>software</th>
+                    <th>value</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for s, upvotes in best_ui_softwares %}
+                    <tr {% if loop.index == 1 %} style="font-size: 2em;" class="info"{% endif %}>
+                        <th>{{ loop.index }} {% if loop.index == 1 %} <span class="fa fa-diamond"></span>{% endif %}
+                        </th>
+                        <th><a href="{{ url_for('softwares.info', name=s) }}">{{ s }}</a></th>
+                        <th><span class="badge">{{ upvotes }}</span></th>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="col-md-4 text-center">
+            <h3><span class="fa fa-tachometer text-muted"></span> Best Performance</h3>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th><strong># rank</strong></th>
+                    <th>software</th>
+                    <th>value</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for s, upvotes in best_performance_softwares %}
+                    <tr {% if loop.index == 1 %} style="font-size: 2em;" class="info"{% endif %}>
+                        <th>{{ loop.index }} {% if loop.index == 1 %} <span class="fa fa-diamond"></span>{% endif %}
+                        </th>
+                        <th><a href="{{ url_for('softwares.info', name=s) }}">{{ s }}</a></th>
+                        <th><span class="badge">{{ upvotes }}</span></th>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+
+        <div class="col-md-4 text-center">
+            <h3><span class="fa fa-wrench text-muted"></span> Best support/up to date</h3>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th><strong># rank</strong></th>
+                    <th>software</th>
+                    <th>value</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for s, upvotes in best_support_softwares %}
+                    <tr {% if loop.index == 1 %} style="font-size: 2em;" class="info"{% endif %}>
+                        <th>{{ loop.index }} {% if loop.index == 1 %} <span class="fa fa-diamond"></span>{% endif %}
+                        </th>
+                        <th><a href="{{ url_for('softwares.info', name=s) }}">{{ s }}</a></th>
+                        <th><span class="badge">{{ upvotes }}</span></th>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
     <div class="row">
         <div class="col-md-4 text-center">
             <h3><span class="fa fa-bookmark text-muted"></span> Most citations</h3>
@@ -116,6 +206,16 @@
             </table>
         </div>
     </div>
+
+
+    <h2 class="alert alert-info text-center">
+        And the awards goes to <br/>
+        <span class="fa fa-trophy text-muted"></span>
+        <strong>
+            <a href="{{ url_for('softwares.info', name=overall_winner.name) }}">{{ overall_winner.name }}</a>
+            overall rate: {{ overall_winner.compute_rate() }}
+        </strong>
+    </h2>
 
     <h2 style="padding-top: 50px;"><span class="fa fa-ticket text-muted"></span> Others</h2>
 
@@ -347,6 +447,44 @@
                 {
                     name: 'Ratings mean',
                     data: [{{ last_day_stats.values() | join(',') }}]
+                }
+            ]
+        });
+
+
+        /***************************************************************+
+         *
+         */
+        $('#winner-of-the-day-upvotes').highcharts({
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: 'Upvote(s) posted {{ today | format_date }}'
+            },
+
+            xAxis: {
+                categories: [
+                    {{ last_day_upvotes.keys() | map('quote') | join(',') | safe }}
+                ],
+                crosshair: true
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: '#upvotes'
+                }
+            },
+            plotOptions: {
+                column: {
+                    pointPadding: 0.2,
+                    borderWidth: 0
+                }
+            },
+            series: [
+                {
+                    name: 'Ratings mean',
+                    data: [{{ last_day_upvotes.values() | join(',') }}]
                 }
             ]
         });

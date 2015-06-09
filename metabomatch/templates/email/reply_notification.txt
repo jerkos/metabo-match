@@ -1,0 +1,2 @@
+Someone answered to the following topic: {{ topic_title }}
+Click here to see the post and reply: {{ link }}

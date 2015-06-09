@@ -147,11 +147,15 @@
     <div class="row" style="padding-bottom: 50px;">
         <h3>
             <span class="text-muted">Current Version: </span>
-            <span class="badge">{{ software.current_version }}</span>
+            {% if not software.is_maintained %}
+                <small class="text-danger"> This software is no longer maintained</small>
+            {% else %}
+                <span class="badge">{{ software.current_version }}</span>
+            {% endif %}
         </h3>
-        {%  if not software.is_maintained %}
-            <p class="alert alert-danger"> This software is no longer maintained !</p>
-        {% endif %}
+        {#        {%  if not software.is_maintained %}#}
+        {#            <p class="alert alert-danger"> This software is no longer maintained !</p>#}
+        {#        {% endif %}#}
     </div>
 
      <div class="row">
@@ -263,15 +267,28 @@
                             <hr/>
                             {% for c in software.ratings[-5:] %}
                                 <p class="text-center">
-                                    <b><a href="{{ url_for('user.profile', username=c.user.username) }}">{{ c.user.username }}</a></b> :
-                                    {% set nb_stars = (c.rate / 10.0)|int %}
-                                    {% for i in range(10) %}
-                                        {% if i <= nb_stars %}
-                                            <i class="fa fa-star"></i>
-                                        {% else %}
-                                            <i class="fa fa-star-o"></i>
-                                        {% endif %}
-                                    {% endfor %}
+                                    {#                                    <b><a href="{{ url_for('user.profile', username=c.user.username) }}">{{ c.user.username }}</a></b> :#}
+                                    <a href="{{ url_for('user.profile', username=c.user.username) }}">
+
+                                        <img
+                                                {% if c.user.avatar %}
+                                                    src="{{ c.user.avatar }}"
+                                                {% else %}
+                                                    src="{{ c.user.email | gravatar }}"
+                                                {% endif %}
+                                                    width="25" height="25">
+                                    </a>
+                                    gave
+                                    {% set nb_stars = (c.rate / 10.0) | int %}
+                                    <strong>{{ nb_stars }}</strong><span class="fa fa-star text-muted"></span>
+                                    <small class="text-muted"> the {{ c.date_created | format_date }}</small>
+                                    {#                                    {% for i in range(10) %}#}
+                                    {#                                        {% if i <= nb_stars %}#}
+                                    {#                                            <i class="fa fa-star"></i>#}
+                                    {#                                        {% else %}#}
+                                    {#                                            <i class="fa fa-star-o"></i>#}
+                                    {#                                        {% endif %}#}
+                                    {#                                    {% endfor %}#}
                                 </p>
                             {% else %}
                                 <p class="well well-lg text-center text-muted">Nothing to show</p>
@@ -282,7 +299,19 @@
                             <hr/>
                             {% for c in software.comments[-5:] %}
                                 <p class="well">
-                                    <b><a href="{{ url_for('user.profile', username=c.user.username) }}">{{ c.user.username }}</a></b>: <br>
+                                    <b>
+                                        <a href="{{ url_for('user.profile', username=c.user.username) }}">
+                                            <img
+                                                    {% if c.user.avatar %}
+                                                        src="{{ c.user.avatar }}"
+                                                    {% else %}
+                                                        src="{{ c.user.email | gravatar }}"
+                                                    {% endif %}
+                                                        width="25" height="25">
+                                        </a>
+                                    </b>
+                                    <small class="text-muted">{{ c.date_created | format_date }}</small>
+                                    <br/>
                                     <i class="fa fa-quote-left"></i> {{ c.content }} <i class="fa fa-quote-right"></i>
                                 </p>
                             {% else %}

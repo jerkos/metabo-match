@@ -1,25 +1,31 @@
-{% set page_title = "New Post" %}
+{% set page_title = _("New Post") %}
 {% set active_forum_nav=True %}
 
 {% extends theme("layout.html") %}
-{% block content %}
-{% from theme("macros.html") import render_field %}
 
-<ul class="breadcrumb">
-    <li><a href="{{ url_for('forum.index') }}">Forum</a></li>
-    <li><a href="{{ topic.forum.url }}">{{ topic.forum.title }}</a></li>
-    <li><a href="{{ topic.url }}">{{ topic.title }} </a></li>
-    <li class="active">New Post</li>
-</ul>
+{% block css %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-markdown.min.css') }}">
+{% endblock %}
+
+{% block content %}
+{% from theme("macros.html") import render_field_2, render_submit_field %}
+
+{#<ul class="breadcrumb">#}
+{#    <li><a href="{{ url_for('forum.index') }}">{% trans %}Forum{% endtrans %}</a></li>#}
+{#    <li><a href="{{ topic.forum.url }}">{{ topic.forum.title }}</a></li>#}
+{#    <li><a href="{{ topic.url }}">{{ topic.title }} </a></li>#}
+{#    <li class="active">{% trans %}New Post{% endtrans %}</li>#}
+{#</ul>#}
 
 <form class="form" role="form" method="post">
     {{ form.hidden_tag() }}
-    <h3>New Post</h3>
-
+    <h3>{% trans %}New Post{% endtrans %}</h3>
+    <hr/>
     {% if preview %}
     <div class="form-group">
         <div class="col-sm-12">
-            <label>Preview</label>
+            <label>{% trans %}Preview{% endtrans %}</label>
             <div class="form-control preview-body">
                 {% autoescape false %}
                 {{ preview|markup }}
@@ -29,10 +35,15 @@
     </div>
     {% endif %}
 
-    {{ render_field(form.content, div_class="col-sm-12", rows=12) }}
-
-    <button type="submit" class="btn btn-success" name="button" value="reply">Reply</button>
-    <button type="submit" class="btn btn-success" name="button" value="preview">Preview</button>
+    {{ render_field_2(form.content, div_class="col-sm-12", rows="12", placeholder="", **{'data-provide': 'markdown', 'data-autofocus': 'true', 'id': 'quickreply-editor'}) }}
+    <div class="col-sm-12" style="padding-top: 5px">
+        {{ render_submit_field(form.submit) }}
+    </div>
 </form>
 
+{% endblock %}
+
+{% block scripts %}
+    <script type="text/javascript" src="{{ url_for('static', filename='js/marked.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-markdown.js') }}"></script>
 {% endblock %}
