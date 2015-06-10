@@ -75,7 +75,7 @@ class DefaultConfig(object):
 
     # Google Mail Example
     MAIL_SERVER = "smtp.live.com"
-    MAIL_PORT = 465
+    MAIL_PORT = 587
     MAIL_USE_SSL = True
     MAIL_USERNAME = "cram@hotmail.fr"
     MAIL_PASSWORD = "marco##1986"

@@ -7,8 +7,8 @@ from datetime import datetime, timedelta
 from itertools import groupby
 from collections import OrderedDict
 
-from sqlalchemy import desc, func, and_
-from flask import Blueprint, request, redirect, url_for, session, flash, abort
+from sqlalchemy import desc, func, asc
+from flask import Blueprint, request, redirect, url_for, flash, abort
 
 from flask.ext.login import login_required, current_user
 from flask.ext.wtf import Form
@@ -20,7 +20,6 @@ from metabomatch.flaskbb.utils.permissions import is_admin
 from metabomatch.softwares.models import Software, Tag, Comment, Rating, Sentence, SentenceSoftwareMapping, Upvote
 from metabomatch.softwares.forms import SoftwareForm, SoftwareUpdateForm
 from metabomatch.utils import s3_upload, s3_upload_from_server, s3_delete, mean
-from wtforms.ext.csrf import SecureForm
 
 softwares = Blueprint("softwares", __name__, template_folder="../../templates")
 
@@ -32,22 +31,41 @@ SOFT_MAP = {'1': 'Signal Extraction',
 SOFT_PAR_PAGE = 10
 
 
-@softwares.route('/')
+@softwares.route('')
 def index():
     """dealing with GET args"""
     page = request.args.get("page", 1, type=int)
+    sort_by_name = request.args.get('sort_name')
+    sort_by_rate = request.args.get('sort_rate')
     if request.args.get('category') is not None:
         keyword = SOFT_MAP[request.args['category']]
-        softs = Software.query.join(Software.tags).filter(Tag.tag == keyword).paginate(page, SOFT_PAR_PAGE, True)
+        if sort_by_name is not None:
+            softs = Software.query.join(Software.tags).filter(Tag.tag == keyword).order_by(asc(Software.name)).paginate(
+                page, SOFT_PAR_PAGE, True)
+        elif sort_by_rate is not None:
+            # todo create a pagination object
+            softs = Software.query.join(Software.tags).filter(Tag.tag == keyword).paginate(page, SOFT_PAR_PAGE, True)
+        else:
+            softs = Software.query.join(Software.tags).filter(Tag.tag == keyword).paginate(page, SOFT_PAR_PAGE, True)
+
     elif request.args.get('text') is not None:
         text = request.args['text']
         softs = Software.query.filter(Software.name.ilike('%' + text + '%')).paginate(page, SOFT_PAR_PAGE, True)
     else:
-        softs = Software.query.order_by(desc(Software.insertion_date)).paginate(page, SOFT_PAR_PAGE, True)
+        if sort_by_name is not None:
+            softs = Software.query.order_by(asc(Software.name)).paginate(page, SOFT_PAR_PAGE, True)
+        elif sort_by_rate is not None:
+            # todo create a pagination object
+            softs = Software.query.order_by(desc(Software.insertion_date)).paginate(page, SOFT_PAR_PAGE, True)
+        else:
+            softs = Software.query.order_by(desc(Software.insertion_date)).paginate(page, SOFT_PAR_PAGE, True)
         # --- i used to sort by tags number
         # softs.sort(key=lambda _: -len(_.tags))
-
-    return render_template('softwares/softwares.html', softwares=softs)
+    comment_insts = Comment.query.order_by(desc(Comment.date_created)).limit(5).all()
+    rating_insts = Rating.query.order_by(desc(Rating.date_created)).limit(5).all()
+    r = [('comment' if isinstance(x, Comment) else 'rating', x)
+         for x in sorted(comment_insts + rating_insts, key=lambda _: _.date_created, reverse=True)]
+    return render_template('softwares/softwares.html', softwares=softs, activities=r)
 
 
 @softwares.route('/register', methods=['GET', 'POST'])

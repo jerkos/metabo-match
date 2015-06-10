@@ -264,12 +264,13 @@ def get_online_users(guest=False):
                                for x in minutes])
 
 
-def crop_title(title):
+def crop_title(title, length=None):
     """Crops the title to a specified length
 
     :param title: The title that should be cropped
     """
-    length = flaskbb_config['TITLE_LENGTH']
+    if length is None:
+        length = flaskbb_config['TITLE_LENGTH']
     if len(title) > length:
         return title[:length] + "..."
     return title

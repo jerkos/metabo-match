@@ -68,9 +68,7 @@
         <p> Or search a software name: </p>
         <form class="form-inline" role="form" action="{{url_for('softwares.index')}}" method="GET">
             <div class="form-group">
-{#                <div class="col-md-8">#}
                  <input type="text" class="form-control" name="text" placeholder="Software name">
-{#                </div>#}
             </div>
             <button type="submit" class="btn btn-default">Filter</button>
         </form>
@@ -80,7 +78,6 @@
             <h3>Selected softwares</h3>
             <p class="help-block"><strong>Note:</strong><br/>Each rates and ranking are updated each day, during the night. You must be logged to see all rates.</p>
 
-        {#            <hr/>#}
             <table class="table table-condensed">
                 <thead>
                     <tr>
@@ -88,10 +85,21 @@
                         <th>Programming Language</th>
                         <th>Institute</th>
                         <th>Tags</th>
-                        <th>Current Rate</th>
+                        <th class="text-center">Current Rate</th>
                         {% if current_user.is_authenticated() %}
                             <th></th>
                         {% endif %}
+                        <th>
+                            <small>
+                                <a href="" data-toggle="tooltip" title="sort softwares by rate">
+                                    <span class="fa fa-sort-amount-desc"></span>
+                                </a>
+                                <a href="{{ request.url +  '&sort_name=True' }}" data-toggle="tooltip"
+                                   title="sort softwares by name">
+                                    <span class="fa fa-sort-alpha-asc"></span>
+                                </a>
+                            </small>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -151,6 +159,47 @@
 
             {{ render_pagination(softwares, url_for('softwares.index')) }}
     </div>
+
+    <h2>Recent activity</h2>
+    <hr/>
+    {% for kind, inst in activities %}
+        <div class="alert alert-default">
+            <div class="container" style="width:100%">
+                <div class="col-md-1">
+
+                    <span class="fa  {% if kind == 'comment' %} fa-comments-o {% else %} fa-certificate {% endif %} fa-3x text-muted"></span>
+                </div>
+                <div class="col-md-11">
+                    <p></p>
+                    {% if kind =='comment' %}
+                        <p>
+                            <strong>
+                                <a href="{{ url_for('user.profile', username=inst.user.username) }}">{{ inst.user.username }}</a>
+                                posted a comment on <a
+                                    href="{{ url_for('softwares.info', name=inst.software.name) }}">{{ inst.software.name }}</a>
+                                <em>{{ inst.date_created | time_since }}</em>
+                            </strong>
+                        </p>
+                    {% else %}
+                        <p>
+                            <strong>
+                                <a href="{{ url_for('user.profile', username=inst.user.username) }}">{{ inst.user.username }}</a>
+                                gave <label class="label label-info" style="font-size: 1.2em;">{{ inst.rate }}</label>
+                                for <a
+                                    href="{{ url_for('softwares.info', name=inst.software.name) }}">{{ inst.software.name }}</a>
+                                <em>{{ inst.date_created | time_since }}</em>
+                            </strong>
+                        </p>
+                    {% endif %}
+                    <p>
+                        {% if kind=='comment' %}
+                            <small class=text-muted>{{ inst.content | crop_title(length=200) }}</small>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
 {% endblock %}
 
 {% block javascript %}

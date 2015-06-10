@@ -339,9 +339,10 @@ def reply_post(topic_id, post_id):
             form.save(current_user, topic)
             involved_users = User.query.filter(Post.topic_id == topic.id, User.id == Post.user_id).all()
 
-            recipients = list(set(involved_users))  # - set([current_user]))
-            send_reply_notification(recipients, topic_title=topic.title,
-                                    link="http://www/metabomatch.com")
+            recipients = list(set(involved_users) - {current_user})
+            if recipients:
+                send_reply_notification(recipients, topic_title=topic.title,
+                                        link="www.metabomatch.com/topic/{}".format(topic_id))
             return redirect(post.topic.url)
     else:
         form.content.data = format_quote(post)
