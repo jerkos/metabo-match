@@ -125,7 +125,7 @@ def view_topic(topic_id, slug=None):
                 post = form.save(current_user, topic)
 
                 involved_users = User.query.filter(Post.topic_id == topic.id, User.id == Post.user_id).all()
-                recipients = list(set(involved_users) - {current_user})
+                recipients = list(set(involved_users))  # - {current_user})
                 if recipients:
                     send_reply_notification(recipients, topic_title=topic.title,
                                             link="www.metabomatch.com/topic/{}".format(topic_id))
