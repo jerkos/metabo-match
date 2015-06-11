@@ -31,7 +31,7 @@ SOFT_MAP = {'1': 'Signal Extraction',
 SOFT_PAR_PAGE = 10
 
 
-@softwares.route('')
+@softwares.route('/')
 def index():
     """dealing with GET args"""
     page = request.args.get("page", 1, type=int)
@@ -65,6 +65,7 @@ def index():
     rating_insts = Rating.query.order_by(desc(Rating.date_created)).limit(5).all()
     r = [('comment' if isinstance(x, Comment) else 'rating', x)
          for x in sorted(comment_insts + rating_insts, key=lambda _: _.date_created, reverse=True)]
+
     return render_template('softwares/softwares.html', softwares=softs, activities=r)
 
 

@@ -94,7 +94,13 @@
                                 <a href="" data-toggle="tooltip" title="sort softwares by rate">
                                     <span class="fa fa-sort-amount-desc"></span>
                                 </a>
-                                <a href="{{ request.url +  '&sort_name=True' }}" data-toggle="tooltip"
+                                <a href=
+                                           {% if request.args %}
+                                               "{{ request.url +  '&sort_name=True' }}"
+                                           {% else %}
+                                               "{{ request.url +  '?sort_name=True' }}"
+                                           {% endif %}
+                                data-toggle="tooltip"
                                    title="sort softwares by name">
                                     <span class="fa fa-sort-alpha-asc"></span>
                                 </a>

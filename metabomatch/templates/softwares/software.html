@@ -153,9 +153,6 @@
                 <span class="badge">{{ software.current_version }}</span>
             {% endif %}
         </h3>
-        {#        {%  if not software.is_maintained %}#}
-        {#            <p class="alert alert-danger"> This software is no longer maintained !</p>#}
-        {#        {% endif %}#}
     </div>
 
      <div class="row">
@@ -282,13 +279,7 @@
                                     {% set nb_stars = (c.rate / 10.0) | int %}
                                     <strong>{{ nb_stars }}</strong><span class="fa fa-star text-muted"></span>
                                     <small class="text-muted"> the {{ c.date_created | format_date }}</small>
-                                    {#                                    {% for i in range(10) %}#}
-                                    {#                                        {% if i <= nb_stars %}#}
-                                    {#                                            <i class="fa fa-star"></i>#}
-                                    {#                                        {% else %}#}
-                                    {#                                            <i class="fa fa-star-o"></i>#}
-                                    {#                                        {% endif %}#}
-                                    {#                                    {% endfor %}#}
+
                                 </p>
                             {% else %}
                                 <p class="well well-lg text-center text-muted">Nothing to show</p>

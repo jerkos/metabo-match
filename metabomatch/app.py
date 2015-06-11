@@ -87,7 +87,7 @@ def create_app(config=None):
 
     app.logger.addHandler(logging.StreamHandler(sys.stdout))
     app.logger.setLevel(logging.ERROR)
-    #app.debug = True
+    # app.debug = True
     return app
 
 

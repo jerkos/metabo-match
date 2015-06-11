@@ -167,11 +167,11 @@ def new_topic(forum_id, slug=None):
 
     form = NewTopicForm()
     if request.method == "POST":
-        if "preview" in request.form and form.validate():
-            return render_template(
-                "forum/new_topic.html", forum=forum_instance,
-                form=form, preview=form.content.data
-            )
+        # if "preview" in request.form and form.validate():
+        #     return render_template(
+        #         "forum/new_topic.html", forum=forum_instance,
+        #         form=form, preview=form.content.data
+        #     )
         if "submit" in request.form and form.validate():
             topic = form.save(current_user, forum_instance)
 
@@ -297,14 +297,14 @@ def new_post(topic_id, slug=None):
 
     form = ReplyForm()
     if form.validate_on_submit():
-        if "preview" in request.form:
-            return render_template(
-                "forum/new_post.html", topic=topic,
-                form=form, preview=form.content.data
-            )
-        else:
-            post = form.save(current_user, topic)
-            return view_post(post.id)
+        # if "preview" in request.form:
+        #     return render_template(
+        #         "forum/new_post.html", topic=topic,
+        #         form=form, preview=form.content.data
+        #     )
+        # else:
+        post = form.save(current_user, topic)
+        return view_post(post.id)
 
     return render_template("forum/new_post.html", topic=topic, form=form)
 
@@ -330,20 +330,20 @@ def reply_post(topic_id, post_id):
 
     form = ReplyForm()
     if form.validate_on_submit():
-        if "preview" in request.form:
-            return render_template(
-                "forum/new_post.html", topic=topic,
-                form=form, preview=form.content.data
-            )
-        else:
-            form.save(current_user, topic)
-            involved_users = User.query.filter(Post.topic_id == topic.id, User.id == Post.user_id).all()
+        # if "preview" in request.form:
+        #     return render_template(
+        #         "forum/new_post.html", topic=topic,
+        #         form=form, preview=form.content.data
+        #     )
+        # else:
+        form.save(current_user, topic)
+        involved_users = User.query.filter(Post.topic_id == topic.id, User.id == Post.user_id).all()
 
-            recipients = list(set(involved_users) - {current_user})
-            if recipients:
-                send_reply_notification(recipients, topic_title=topic.title,
-                                        link="www.metabomatch.com/topic/{}".format(topic_id))
-            return redirect(post.topic.url)
+        recipients = list(set(involved_users))  # - {current_user})
+        if recipients:
+            send_reply_notification(recipients, topic_title=topic.title,
+                                    link="www.metabomatch.com/topic/{}".format(topic_id))
+        return redirect(post.topic.url)
     else:
         form.content.data = format_quote(post)
 
@@ -371,17 +371,17 @@ def edit_post(post_id):
 
     form = ReplyForm()
     if form.validate_on_submit():
-        if "preview" in request.form:
-            return render_template(
-                "forum/new_post.html", topic=post.topic,
-                form=form, preview=form.content.data
-            )
-        else:
-            form.populate_obj(post)
-            post.date_modified = datetime.datetime.utcnow()
-            post.modified_by = current_user.username
-            post.save()
-            return redirect(post.topic.url)
+        # if "preview" in request.form:
+        #     return render_template(
+        #         "forum/new_post.html", topic=post.topic,
+        #         form=form, preview=form.content.data
+        #     )
+        # else:
+        form.populate_obj(post)
+        post.date_modified = datetime.datetime.utcnow()
+        post.modified_by = current_user.username
+        post.save()
+        return redirect(post.topic.url)
     else:
         form.content.data = post.content
 

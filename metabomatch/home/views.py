@@ -1,4 +1,4 @@
-from flask import Blueprint
+from flask import Blueprint, url_for, redirect
 
 from metabomatch.flaskbb.utils.helpers import render_template
 from metabomatch.extensions import db
@@ -10,7 +10,8 @@ home = Blueprint('home', __name__, template_folder='../templates')
 
 @home.route('/')
 def index():
-    return render_template('home/home_layout.html')
+    # return render_template('home/home_layout.html')
+    return redirect(url_for('softwares.index'))
 
 
 @home.route('workflow', methods=['GET'])
@@ -21,3 +22,8 @@ def workflow():
 def leaderboard():
     users = db.session.query(User).order_by(desc(User.global_score)).all()
     return render_template('home/leaderboard.html', users=users)
+
+
+@home.route('about', methods=['GET'])
+def about():
+    return render_template('home/home_layout.html')

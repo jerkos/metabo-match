@@ -1,11 +1,12 @@
 html,
 body {
   height: 100%; /* The html and body elements cannot have any padding or margin. */
+    font-family: 'Hind', sans-serif;
 }
 
 
 .navbar {
-    min-height: 100px;
+    min-height: 60px;
 }
 
 /* Wrapper for page content to push down footer */

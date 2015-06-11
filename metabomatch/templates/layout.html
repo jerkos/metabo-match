@@ -23,6 +23,7 @@
         <link rel="shortcut icon" href="{{ url_for('static', filename='elephant.png') }}">
 
         {% block css %}
+            <link href='http://fonts.googleapis.com/css?family=Hind' rel='stylesheet' type='text/css'>
             <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
             <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
             <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" >
@@ -69,39 +70,57 @@
                                 <span class="icon-bar"></span>
                             </button>
                             <a class="navbar-brand" href="/">
-                                <img src="{{ url_for('static', filename='img/elephant.png') }}"/>
-                                <small><label id="beta" class="label label-info">beta</label></small>
+                                <img src="{{ url_for('static', filename='img/metabomatch-logo.png') }}" width="200"/>
+                                {#                                <small><label id="beta" class="label label-info">beta</label></small>#}
                             </a>
                         </div>
                         <div class="collapse navbar-collapse navbar-ex1-collapse">
                             <ul style="padding-top: 20px" class="nav navbar-nav">
                                 {{ emit_event("before-first-navigation-element") }}
 
-                                {{ topnav(endpoint='home.workflow' , name='Workflow', icon='fa fa-road') }}
+                                {#                                {{ topnav(endpoint='home.workflow' , name='Workflow', icon='fa fa-road') }}#}
 
                                 <li id="software">
-                                    <a class="dropdown-toggle" data-toggle="dropdown">
-                                        <span class="fa fa-desktop"></span> Softwares <span class="caret"></span>
+                                    {#                                    <a class="dropdown-toggle" data-toggle="dropdown">#}
+                                    {#                                        <span class="fa fa-desktop"></span> Softwares#}
+                                    {#                                        <span class="caret"></span>#}
+                                    {#                                    </a>#}
+                                    {#                                    <ul class="dropdown-menu" role="menu">#}
+                                    {#                                        <li><a href="{{ url_for('softwares.index') }}"><span class="fa fa-book"></span>#}
+                                    {#                                            Find/register software</a></li>#}
+                                    {#                                        <li class="divider"></li>#}
+                                <li>
+                                    <a href="{{ url_for('softwares.rankings') }}">
+                                        <span class="fa fa-trophy"></span> Rankings
                                     </a>
-                                    <ul class="dropdown-menu" role="menu">
-                                        <li><a href="{{ url_for('softwares.index') }}"><span class="fa fa-book"></span>
-                                            Find/register software</a></li>
-                                        <li class="divider"></li>
-                                        <li><a href="{{ url_for('softwares.rankings') }}"><span
-                                                class="fa fa-bar-chart"></span> Top softwares, stats</a></li>
-                                    </ul>
+                                    {#                                        </li>#}
+                                    {#                                    </ul>#}
                                 </li>
 
-                                {{ topnav(endpoint='scripts.index' , name='Scripts', icon='fa fa-file-text-o') }}
+                                {#                                {{ topnav(endpoint='scripts.index' , name='Scripts', icon='fa fa-file-text-o') }}#}
                                 {{ topnav(endpoint='forum.index', name='Forum', icon='fa fa-comment', active=active_forum_nav) }}
 
-                                {{ topnav(endpoint='jobs.index', name='Jobs', icon='fa fa-rocket') }}
-                                <li><a>Crowdsourcing
-                                    <small><label class="label label-info">soon</label></small>
-                                </a></li>
-                                {#                            {{ topnav(endpoint='home.index', name='Crowdsourcing') }}#}
-                                {#                                                            {{ topnav(endpoint='forum.memberlist', name='Memberlist', icon='fa fa-user') }}#}
-                                {#                                                            {{ topnav(endpoint='forum.search', name='forumSearch', icon='fa fa-search') }}#}
+                                {#                                {{ topnav(endpoint='jobs.index', name='Jobs', icon='fa fa-rocket') }}#}
+                                {#                                <li><a>Crowdsourcing#}
+                                {#                                    <small><label class="label label-info">soon</label></small>#}
+                                {#                                </a></li>#}
+
+                                <li>
+                                    <a class="dropdown-toggle" data-toggle="dropdown">
+                                        <span class="fa fa-ellipsis-h fa-2x"></span>
+                                        <span class="caret"></span>
+                                    </a>
+                                    <ul class="dropdown-menu" role="menu">
+                                        {{ topnav(endpoint='home.about', name='About', icon='fa fa-info') }}
+                                        {{ topnav(endpoint='home.workflow' , name='Workflow', icon='fa fa-road') }}
+                                        {{ topnav(endpoint='scripts.index' , name='Scripts', icon='fa fa-file-text-o') }}
+                                        {{ topnav(endpoint='jobs.index', name='Jobs', icon='fa fa-rocket') }}
+
+                                    </ul>
+                                </li>
+                                {# {{ topnav(endpoint='home.index', name='Crowdsourcing') }}#}
+                                {# {{ topnav(endpoint='forum.memberlist', name='Memberlist', icon='fa fa-user') }}#}
+                                {# {{ topnav(endpoint='forum.search', name='forumSearch', icon='fa fa-search') }}#}
 
                                 {{ emit_event("after-last-navigation-element") }}
                             </ul>

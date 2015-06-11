@@ -3,6 +3,7 @@
 {% block css %}
     {{ super() }}
     <style>
+
         {#        body {#}
         {#            background: url("static/img/bright_squares.png") repeat;#}
         {#        }#}
@@ -69,15 +70,15 @@
 {% block content %}
     <!---->
 
-    <div class="jumbotron">
-        <div class="container text-center">
-            <h1 style="font-family: Consolas">Metabomatch</h1>
-            <h2 class="text-center">Find the <em>best metabolomic software</em> for your needs.</h2>
-            <p><a id="software-chooser" class="custom-button" href="{{ url_for('softwares.index') }}">Start</a></p>
-            <p class="text-center" style="padding-top: 20px;">Did not find the software you use ? Do not hesitate to <a class="blank-link" href="{{ url_for('softwares.register') }}">register</a> it.</p>
-            <p style="padding-top: 5px;">Discuss about <em>softwares algorithms, problems, features</em> in our <a class="blank-link" href="/forum">forums</a>.</p>
-        </div>
-    </div>
+    {#    <div class="jumbotron">#}
+    {#        <div class="container text-center">#}
+    {#            <h1 style="font-family: Consolas">Metabomatch</h1>#}
+    {#            <h2 class="text-center">Find the <em>best metabolomic software</em> for your needs.</h2>#}
+    {#            <p><a id="software-chooser" class="custom-button" href="{{ url_for('softwares.index') }}">Start</a></p>#}
+    {#            <p class="text-center" style="padding-top: 20px;">Did not find the software you use ? Do not hesitate to <a class="blank-link" href="{{ url_for('softwares.register') }}">register</a> it.</p>#}
+    {#            <p style="padding-top: 5px;">Discuss about <em>softwares algorithms, problems, features</em> in our <a class="blank-link" href="/forum">forums</a>.</p>#}
+    {#        </div>#}
+    {#    </div>#}
 
     <div id="motivation" class="container">
         <div class="row">
