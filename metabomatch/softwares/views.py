@@ -6,6 +6,7 @@ Software views
 from datetime import datetime, timedelta
 from itertools import groupby
 from collections import OrderedDict
+from flask.ext.sqlalchemy import Pagination
 
 from sqlalchemy import desc, func, asc
 from flask import Blueprint, request, redirect, url_for, flash, abort
@@ -43,8 +44,9 @@ def index():
             softs = Software.query.join(Software.tags).filter(Tag.tag == keyword).order_by(asc(Software.name)).paginate(
                 page, SOFT_PAR_PAGE, True)
         elif sort_by_rate is not None:
-            # todo create a pagination object
-            softs = Software.query.join(Software.tags).filter(Tag.tag == keyword).paginate(page, SOFT_PAR_PAGE, True)
+            softs = Software.query.join(Software.tags).filter(Tag.tag == keyword).all()
+            softs = Pagination(None, page, SOFT_PAR_PAGE, len(softs),
+                               sorted(softs, key=lambda _: _.compute_rate(), reverse=True))
         else:
             softs = Software.query.join(Software.tags).filter(Tag.tag == keyword).paginate(page, SOFT_PAR_PAGE, True)
 
@@ -55,8 +57,11 @@ def index():
         if sort_by_name is not None:
             softs = Software.query.order_by(asc(Software.name)).paginate(page, SOFT_PAR_PAGE, True)
         elif sort_by_rate is not None:
-            # todo create a pagination object
-            softs = Software.query.order_by(desc(Software.insertion_date)).paginate(page, SOFT_PAR_PAGE, True)
+            # items = self.limit(per_page).offset((page - 1) * per_page)
+            softs = sorted(Software.query.all(), key=lambda _: _.compute_rate(), reverse=True)
+            p = (page - 1) * SOFT_PAR_PAGE
+            next_p = p + SOFT_PAR_PAGE
+            softs = Pagination(None, page, SOFT_PAR_PAGE, len(softs), softs[p:next_p])
         else:
             softs = Software.query.order_by(desc(Software.insertion_date)).paginate(page, SOFT_PAR_PAGE, True)
         # --- i used to sort by tags number

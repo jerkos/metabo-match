@@ -66,17 +66,36 @@
 
     <div class="row" style="padding: 50px 0 50px 0;">
         <p> Or search a software name: </p>
-        <form class="form-inline" role="form" action="{{url_for('softwares.index')}}" method="GET">
-            <div class="form-group">
-                 <input type="text" class="form-control" name="text" placeholder="Software name">
-            </div>
-            <button type="submit" class="btn btn-default">Filter</button>
-        </form>
+        {#        <form class="form-inline" role="form" action="{{url_for('softwares.index')}}" method="GET">#}
+        {#            <div class="form-group">#}
+        {#                 <input type="text" class="form-control" name="text" placeholder="Software name">#}
+        {#            </div>#}
+        {#            <button type="submit" class="btn btn-default">Filter</button>#}
+        {#        </form>#}
     </div>
 
+
     <div class="row">
-            <h3>Selected softwares</h3>
-            <p class="help-block"><strong>Note:</strong><br/>Each rates and ranking are updated each day, during the night. You must be logged to see all rates.</p>
+        <div class="col-md-3" style="padding: 0; margin: 0">
+            <h3 class="text-left">Selected softwares</h3>
+        </div>
+        <div class="col-md-9" style="padding: 15px 0 0 0;">
+            <form class="form-inline" role="form" action="{{ url_for('softwares.index') }}" method="GET">
+                <div class="form-group">
+                    <input type="text" class="form-control" name="text" placeholder="Software name">
+                </div>
+                <button type="submit" class="btn btn-default">Filter</button>
+            </form>
+        </div>
+    </div>
+    {#    <h3>Selected softwares#}
+    {##}
+    {#    </h3>#}
+
+    <div class="row">
+
+        <p class="help-block"><strong>Note:</strong><br/>Each rates and ranking are updated each day, during the night.
+        </p>
 
             <table class="table table-condensed">
                 <thead>
@@ -91,7 +110,11 @@
                         {% endif %}
                         <th>
                             <small>
-                                <a href="" data-toggle="tooltip" title="sort softwares by rate">
+                                <a href= {% if request.args %}
+                                    "{{ request.url +  '&sort_rate=True' }}"
+                                {% else %}
+                                    "{{ request.url +  '?sort_rate=True' }}"
+                                {% endif %} data-toggle="tooltip" title="sort softwares by rate">
                                     <span class="fa fa-sort-amount-desc"></span>
                                 </a>
                                 <a href=
@@ -163,7 +186,13 @@
                 </tbody>
             </table>
 
+        {% if request.args.get('sort_name') is not none %}
+            {{ render_pagination(softwares, url_for('softwares.index', sort_name=True)) }}
+        {% elif request.args.get('sort_rate') is not none %}
+            {{ render_pagination(softwares, url_for('softwares.index', sort_rate=True)) }}
+        {% else %}
             {{ render_pagination(softwares, url_for('softwares.index')) }}
+        {% endif %}
     </div>
 
     <h2>Recent activity</h2>

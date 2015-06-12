@@ -269,7 +269,13 @@
     {%- for page in page_obj.iter_pages() %}
         {% if page %}
             {% if page != page_obj.page %}
-                <li><a href="{{ url }}?page={{ page }}">{{ page }}</a></li>
+                <li>
+                    {% if not request.args %}
+                        <a href="{{ url }}?page={{ page }}">{{ page }}</a>
+                    {% else %}
+                        <a href="{{ url }}&page={{ page }}">{{ page }}</a>
+                    {% endif %}
+                </li>
             {% else %}
                 <li class="active"><a href="#">{{ page }}</a></li>
             {% endif %}
@@ -278,7 +284,13 @@
         <li class="active"><a href="#">1</a></li>
     {%- endfor %}
     {% if page_obj.has_next %}
-        <li><a href="{{ url }}?page={{ page_obj.next_num }}">&raquo;</a></li>
+        <li>
+            {% if not request.args %}
+                <a href="{{ url }}?page={{ page_obj.next_num }}">&raquo;</a>
+            {% else %}
+                <a href="{{ url }}&page={{ page_obj.next_num }}">&raquo;</a>
+            {% endif %}
+        </li>
     {% endif %}
 </ul>
 {% endmacro %}
