@@ -1,5 +1,10 @@
+from collections import OrderedDict
 import boto
+from metabomatch.extensions import db
+from metabomatch.softwares.models import Software, SentenceSoftwareMapping, Sentence
 import os
+from sqlalchemy import func
+
 try:
     from metabomatch.private_keys import S3_KEY, S3_BUCKET, S3_SECRET, S3_UPLOAD_DIRECTORY
 except ImportError:
@@ -66,3 +71,28 @@ def s3_delete(key):
 
 def mean(l):
     return float(sum(l)) / len(l)
+
+
+def best_softs_by_cat():
+    softwares_name = db.session.query(Software.name).all()
+    softwares_name = (s[0] for s in softwares_name)
+    upvotes_by_software_name = {}
+    for name in softwares_name:
+        r = {'UI': db.session.query(func.sum(SentenceSoftwareMapping.upvote)).join(Sentence).join(Software).filter(
+            Sentence.category == 'UI', Software.name == name).all()[0][0],
+             'PERFORMANCE':
+                 db.session.query(func.sum(SentenceSoftwareMapping.upvote)).join(Sentence).join(Software).filter(
+                     Sentence.category == 'PERFORMANCE', Software.name == name).all()[0][0],
+             'SUPPORT': db.session.query(func.sum(SentenceSoftwareMapping.upvote)).join(Sentence).join(Software).filter(
+                 Sentence.category == 'SUPPORT', Software.name == name).all()[0][0]
+             }
+        upvotes_by_software_name[name] = r
+
+    upvotes_by_software_name_items = upvotes_by_software_name.items()
+    best_ui_software = 'UI', sorted(upvotes_by_software_name_items, key=lambda _: -_[1]['UI'])[0][0]
+    best_performance_software = 'PERFORMANCE', \
+                                sorted(upvotes_by_software_name_items, key=lambda _: -_[1]['PERFORMANCE'])[0][0]
+    best_support_software = 'SUPPORT', sorted(upvotes_by_software_name_items, key=lambda _: -_[1]['SUPPORT'])[0][0]
+    results = OrderedDict((best_ui_software, best_performance_software, best_support_software))
+    print results
+    return OrderedDict((best_ui_software, best_performance_software, best_support_software))

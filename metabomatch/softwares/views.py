@@ -20,7 +20,7 @@ from metabomatch.flaskbb.utils.helpers import render_template
 from metabomatch.flaskbb.utils.permissions import is_admin
 from metabomatch.softwares.models import Software, Tag, Comment, Rating, Sentence, SentenceSoftwareMapping, Upvote
 from metabomatch.softwares.forms import SoftwareForm, SoftwareUpdateForm
-from metabomatch.utils import s3_upload, s3_upload_from_server, s3_delete, mean
+from metabomatch.utils import s3_upload, s3_upload_from_server, s3_delete, mean, best_softs_by_cat
 
 softwares = Blueprint("softwares", __name__, template_folder="../../templates")
 
@@ -71,7 +71,11 @@ def index():
     r = [('comment' if isinstance(x, Comment) else 'rating', x)
          for x in sorted(comment_insts + rating_insts, key=lambda _: _.date_created, reverse=True)]
 
-    return render_template('softwares/softwares.html', softwares=softs, activities=r)
+    return render_template('softwares/softwares.html',
+                           softwares=softs,
+                           activities=r,
+                           best_softwares=best_softs_by_cat(),
+                           today=datetime.now())
 
 
 @softwares.route('/register', methods=['GET', 'POST'])

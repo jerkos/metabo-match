@@ -42,6 +42,31 @@
     </div>
 
     <div class="row">
+        <h2>Current best softwares
+            <small>{{ today | format_date }}</small>
+        </h2>
+        <p class="help-block"><strong>Info</strong> To see more about rankings visit <a
+                href="{{ url_for('softwares.rankings') }}">this.</a></p>
+        <hr/>
+        {% for cat_name, soft in best_softwares.items() %}
+            <div class="col-md-4">
+
+                <p>
+                    {% if cat_name =='UI' %}
+                        <span class="fa fa-eye fa-2x text-muted"></span>
+                    {% elif cat_name =='PERFORMANCE' %}
+                        <span class="fa fa-tachometer fa-2x text-muted"></span>
+                    {% elif cat_name == 'SUPPORT' %}
+                        <span class="fa fa-wrench fa-2x text-muted"></span>
+                    {% endif %}
+                    Best software for <em>{{ cat_name }}</em>: <a
+                        href="{{ url_for('softwares.info', name=soft) }}"><strong>{{ soft }}</strong></a></p>
+            </div>
+        {% endfor %}
+    </div>
+
+
+    <div class="row" style="padding-top: 50px">
         <h2 class="text-left">Select the best software for your needs
             <small>by category</small>
         </h2>
