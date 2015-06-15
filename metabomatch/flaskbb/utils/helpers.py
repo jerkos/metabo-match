@@ -362,7 +362,7 @@ def older_than_one_month(dt):
     now = datetime.utcnow()
     diff = now - dt
 
-    period = diff.days / 30
+    period = diff.days / 30.0
     if period < 1:
         return False
     return True

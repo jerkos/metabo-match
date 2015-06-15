@@ -27,8 +27,8 @@ class DefaultConfig(object):
     # For SQLite:
     except KeyError:
         SQLALCHEMY_DATABASE_URI = 'sqlite:///' + _basedir + '/' + 'flaskbb.sqlite'
-        DEBUG = True
-        TESTING = True
+        DEBUG = False
+        TESTING = False
 
     ## Security
     # This is the secret key that is used for session signing.
@@ -75,18 +75,20 @@ class DefaultConfig(object):
 
     # Google Mail Example
     # MAIL_SERVER = "smtp.live.com"
-    # MAIL_PORT = 25
+    # MAIL_PORT = 587
     # MAIL_USE_TLS = True
     # MAIL_USERNAME = "cram@hotmail.fr"
     # MAIL_PASSWORD = "marco##1986"
-    # MAIL_DEFAULT_SENDER = ("Marco from metabomatch", "marc.dubois@omics-services.com")
+    # MAIL_DEFAULT_SENDER = "contact@metabomatch.com"  # ("Marco from metabomatch", "marc.dubois@omics-services.com")
 
     MAIL_SERVER = "smtp.gmail.com"
     MAIL_PORT = 465
     MAIL_USE_SSL = True
     MAIL_USERNAME = "marc.dubois.omics.services@gmail.com"
     MAIL_PASSWORD = "Marco@1986"
-    MAIL_DEFAULT_SENDER = ("metabomatch informations", "contact@metabomatch.com")
+    MAIL_DEBUG = False
+    MAIL_DEFAULT_SENDER = "contact@metabomatch.com"  # ("metabomatch informations", "contact@metabomatch.com")
+
     # The user who should recieve the error logs
     ADMINS = ["cram@hotmail.fr"]
 

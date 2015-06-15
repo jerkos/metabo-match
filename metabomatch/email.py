@@ -16,7 +16,7 @@ from metabomatch.extensions import mail
 
 def send_reset_token(user, token):
     send_email(
-        subject="Password Reset",
+        subject="[metabomatch: password reset]",
         recipients=[user.email],
         text_body=render_template(
             "email/reset_password.txt",
@@ -32,7 +32,6 @@ def send_reset_token(user, token):
 
 
 def send_reply_notification(users, topic_title, link):
-    print 'IN send_reply_notification'
     send_email(
         subject="[metabomatch: new reply]",
         recipients=[u.email for u in users],
@@ -49,8 +48,11 @@ def send_reply_notification(users, topic_title, link):
     )
 
 
-def send_email(subject, recipients, text_body, html_body, sender=None):
-    msg = Message(subject, recipients=recipients, sender=sender)
-    msg.body = text_body
-    msg.html = html_body
-    mail.send(msg)
+def send_email(subject, recipients, text_body, html_body, sender='contact@metabomatch.com'):
+    try:
+        msg = Message(subject, recipients=recipients, sender=sender)
+        msg.body = text_body
+        msg.html = html_body
+        mail.send(msg)
+    except Exception as e:
+        print e.message

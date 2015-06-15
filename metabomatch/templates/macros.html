@@ -270,7 +270,7 @@
         {% if page %}
             {% if page != page_obj.page %}
                 <li>
-                    {% if not request.args %}
+                    {% if not request.args or (request.args.get('page') is not none and request.args | length == 1) %}
                         <a href="{{ url }}?page={{ page }}">{{ page }}</a>
                     {% else %}
                         <a href="{{ url }}&page={{ page }}">{{ page }}</a>
@@ -285,7 +285,7 @@
     {%- endfor %}
     {% if page_obj.has_next %}
         <li>
-            {% if not request.args %}
+            {% if not request.args or (request.args.get('page') is not none and request.args | length == 1) %}
                 <a href="{{ url }}?page={{ page_obj.next_num }}">&raquo;</a>
             {% else %}
                 <a href="{{ url }}&page={{ page_obj.next_num }}">&raquo;</a>
