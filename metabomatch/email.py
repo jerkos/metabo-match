@@ -8,10 +8,18 @@
     :copyright: (c) 2014 by the FlaskBB Team.
     :license: BSD, see LICENSE for more details.
 """
-from flask import render_template
-from flask.ext.mail import Message
+import os
 
-from metabomatch.extensions import mail
+from flask import render_template
+# from flask.ext.mail import Message
+
+# from metabomatch.extensions import mail
+from postmark import PMMail
+
+try:
+    from metabomatch.private_keys import POSTMARK
+except ImportError:
+    POSTMARK = os.environ.get('POSTMARK_API_TOKEN')
 
 
 def send_reset_token(user, token):
@@ -49,10 +57,12 @@ def send_reply_notification(users, topic_title, link):
 
 
 def send_email(subject, recipients, text_body, html_body, sender='contact@metabomatch.com'):
-    try:
-        msg = Message(subject, recipients=recipients, sender=sender)
-        msg.body = text_body
-        msg.html = html_body
-        mail.send(msg)
-    except Exception as e:
-        print e.message
+    message = PMMail(api_key=POSTMARK,
+                     subject=subject,
+                     sender=sender,
+                     text_body=text_body,
+                     html_body=html_body,
+                     track_opens=True,
+                     to=",".join(recipients)
+                     )
+    message.send()

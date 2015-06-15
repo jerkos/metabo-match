@@ -39,6 +39,7 @@ py==1.4.25
 pytest==2.6.3
 pytest-cov==1.8.0
 pytest-random==0.02
+python-postmark==0.4.7
 redis==2.10.3
 requests==2.4.3
 simplejson==3.6.4

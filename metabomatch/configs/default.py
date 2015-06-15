@@ -27,8 +27,8 @@ class DefaultConfig(object):
     # For SQLite:
     except KeyError:
         SQLALCHEMY_DATABASE_URI = 'sqlite:///' + _basedir + '/' + 'flaskbb.sqlite'
-        DEBUG = False
-        TESTING = False
+        # DEBUG = False
+        # TESTING = False
 
     ## Security
     # This is the secret key that is used for session signing.
