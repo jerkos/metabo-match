@@ -15,7 +15,14 @@
 {% block content %}
     <h1><span class="fa fa-laptop text-muted"></span><a
             href={{ url_for('softwares.info', name=software.name) }}> {{ software.name }}</a>, <span class="text-muted">average:</span>
-        <label class="label label-default">{{ mean | default('NA', true) }}</label></h1>
+        <label class="label label-default">
+            {% if mean %}
+                {{ mean | round(precision=2) }}
+            {% else %}
+                NA
+            {% endif %}
+        </label>
+    </h1>
     <hr/>
     {% if software.ratings %}
         <table class="table table-condensed">
