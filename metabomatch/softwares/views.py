@@ -395,6 +395,8 @@ def rankings():
     # rate evolution
     rate_evolution = {}
     for name in softwares_name:
+
+        rate_evolution[name] = {}
         test = db.session.query(Rating).join(Software).filter(Software.name == name).order_by(Rating.date_created).all()
 
         def grouper(rating):
@@ -402,10 +404,9 @@ def rankings():
 
         for ((year, month), items) in groupby(test, grouper):
             items_list = list(items)
-            # print (year, month), ", ", sum(i.rate for i in items_list) / float(len(items_list))
-            rate_evolution[name] = {
-            datetime(year=int(year), month=int(month), day=1): sum([i.rate for i in items_list]) / float(
-                len(items_list))}
+            # rate_evolution[name].append({datetime(year=int(year), month=int(month), day=1): sum([i.rate for i in items_list]) / float(len(items_list))})
+            rate_evolution[name][datetime(year=int(year), month=int(month), day=1)] = sum(
+                [i.rate for i in items_list]) / float(len(items_list))
 
     sorted_dates = []
     for __, data in rate_evolution.items():
