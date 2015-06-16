@@ -8,6 +8,7 @@ from Bio import Entrez
 
 from metabomatch.extensions import db, cache, github
 from metabomatch.flaskbb.forum.models import Category
+from textblob import TextBlob
 
 Entrez.email = 'cram@hotmail.fr'
 
@@ -161,10 +162,16 @@ class Comment(db.Model):
         db.session.commit()
         return self
 
+    def sentiment_analysis(self):
+        """
+        :return sentiment object containing polarity and subjectivity field
+        """
+        return TextBlob(self.content).sentiment
 
 class Software(db.Model):
     """
     Software models
+    ===============
 
     removed column: `nb_users` unecessary duplicated information (relationship with users instread)
 

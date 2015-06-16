@@ -109,6 +109,8 @@
 
 
 <h2 style="padding-top: 20px;"><span class="fa fa-certificate text-muted"></span> Achievements</h2>
+<p class="help-text text-muted"><strong>Tips</strong> post new softwares, new scripts and
+    talk in our forums to get more achievements !</p>
 <hr/>
 <ul class="list-group">
     {% if software_achievements %}
@@ -124,9 +126,14 @@
         <li class="list-group-item"><strong>{{ forum_name }}</strong> <em>{{ forum_achievements['name'] }}</em> <badge class="badge">level {{ forum_achievements['level'] }}</badge></li>
     {% endif %}
 </ul>
-<p class="help-text text-muted" style="padding-top: 20px;"><strong>Tips</strong> post new softwares, new scripts and
-    talk in our forums to get more achievements !</p>
 
+
+<h2 style="padding-top: 50px;"># Total Software Upvotes: {{ user.upvotes | length }}</h2>
+<ul class="list-group">
+    {% for name, up in (user.upvotes | map(attribute='sentence_software_mapping') | groupby('software.name')) %}
+        <li class="list-group-item">{{ name }} <span class="badge">#{{ up | length }}</span></li>
+    {% endfor %}
+</ul>
 
 <h2 style="padding-top: 50px;"><span class="fa fa-laptop text-muted"></span> Software user</h2>
 <hr/>
@@ -138,8 +145,11 @@
                  height="20"/>
             <a href="{{ url_for('softwares.info', name=software.name) }}">{{ software.name }}</a>
             <small class="text-muted">#users: {{ software.users | length }}</small>
+
+            {% if current_user.id == user.id %}
             <a class="pull-right" href="{{ url_for('softwares.remove_user', name=software.name) }}"><i
                     class="fa fa-trash-o"></i> remove</a>
+            {% endif %}
         </li>
     {% else %}
         <p>You do not have prefered softwares.</p>

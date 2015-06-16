@@ -6,13 +6,15 @@ Software views
 from datetime import datetime, timedelta
 from itertools import groupby
 from collections import OrderedDict
-from flask.ext.sqlalchemy import Pagination
 
 from sqlalchemy import desc, func, asc
 from flask import Blueprint, request, redirect, url_for, flash, abort
 
 from flask.ext.login import login_required, current_user
 from flask.ext.wtf import Form
+from flask.ext.sqlalchemy import Pagination
+
+from textblob import TextBlob
 
 from metabomatch.achievements import SoftwareAchievement, SCORE_SOFT
 from metabomatch.extensions import db

@@ -27,3 +27,8 @@ def leaderboard():
 @home.route('about', methods=['GET'])
 def about():
     return render_template('home/home_layout.html')
+
+
+@home.route('faq', methods=['GET'])
+def faq():
+    return render_template('home/FAQ.html')

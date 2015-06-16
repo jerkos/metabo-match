@@ -41,12 +41,34 @@
                 {% else %}
                 <p class="list-group-item-text">{{ c.content }}</p>
                 {% endif %}
+                <hr/>
+                {% set sentiment =  c.sentiment_analysis() %}
+                <p>
+                    <Strong>Sentiment analysis</Strong><br/>
+                    <em>subjectivity</em>:
+                        <span {% if sentiment.subjectivity > 0.5 %} class="text-warning" {% else %}
+                                                                    class="text-info" {% endif %}>
+                            <strong>{{ sentiment.subjectivity | round(precision=2) }}</strong>
+                        </span>,
+                    <em>polarity</em>:
+                        <span {% if sentiment.polarity < 0.0 %} class="text-danger" {% else %}
+                                                                class="text-success" {% endif %}>
+                            <strong>{{ sentiment.polarity | round(precision=2) }}</strong>
+                        </span>
+                </p>
             </li>
         {% else %}
             <p class="well text-center"><span class="fa fa-coffee fa-2x"></span><br/><strong>No comment found</strong></p>
         {% endfor %}
     </ul>
 
+    <hr/>
+    <p class="help-block">The <strong>polarity score</strong> is a float within the range [-1.0, 1.0]. A score closer to
+        1 means that the comment is <em>positive</em>, whereas
+        closer to -1, it is <em>negative</em>.
+        The <strong>subjectivity score</strong> is a float within the range [0.0, 1.0] where 0.0 is <em>very
+            objective</em> and 1.0 is <em>very subjective</em>.
+    </p>
 {% endblock %}
 
 {% block javascript %}

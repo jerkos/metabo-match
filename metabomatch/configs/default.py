@@ -27,7 +27,7 @@ class DefaultConfig(object):
     # For SQLite:
     except KeyError:
         SQLALCHEMY_DATABASE_URI = 'sqlite:///' + _basedir + '/' + 'flaskbb.sqlite'
-        # DEBUG = False
+        DEBUG = True
         # TESTING = False
 
     ## Security
