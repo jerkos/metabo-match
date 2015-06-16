@@ -309,7 +309,10 @@ class Software(db.Model):
             #bonus
             max_val += min(4, self.nb_maintainers * 0.75)
 
-        max_val += min(25, self.nb_citations * 0.75)
+        max_val += min(20, self.nb_citations * 0.75)
+        upvotes_count = db.session.query(Upvote.id).join(SentenceSoftwareMapping).filter(
+            SentenceSoftwareMapping.software_id == self.name).count()
+        max_val += min(30, upvotes_count * 0.75)
         return round(max_val)
 
     def populate(self):
