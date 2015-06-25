@@ -29,8 +29,7 @@ def add_post():
     title = request.form.get('title')
     if not content or not title:
         flash('Must have a content and a title...', 'warning')
-    html_content = markdown2.markdown(content)
-    a = Article(title, html_content)
+    a = Article(title, content)
     a.save()
 
     return redirect(url_for('news.index'))

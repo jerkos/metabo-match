@@ -28,7 +28,7 @@
                 </div>
                 <div class="panel-content">
                     <div style="padding: 2% 2% 2% 2%;">
-                        {{ article.content | safe }}
+                        {{ article.to_html() | safe }}
                     </div>
                 </div>
             </div>

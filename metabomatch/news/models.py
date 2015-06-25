@@ -3,6 +3,7 @@ from datetime import datetime
 from metabomatch.extensions import db
 from metabomatch.flaskbb.utils.helpers import slugify
 
+import markdown2
 
 class Article(db.Model):
     __tablename__ = 'articles'
@@ -29,3 +30,6 @@ class Article(db.Model):
     def delete(self):
         db.session.delete(self)
         db.session.commit()
+
+    def to_html(self):
+        return markdown2.markdown(self.content)
