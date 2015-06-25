@@ -207,6 +207,17 @@ class Software(db.Model):
     nb_issues = db.Column(db.Integer(), default=0)
     nb_opened_issues = db.Column(db.Integer(), default=0)
 
+    nb_winner_of_the_day_rate = db.Column(db.Integer, default=0)
+    nb_winner_of_the_day_upvote = db.Column(db.Integer, default=0)
+
+    # position in softwares
+    last_position_by_global_rate = db.Column(db.Integer, default=0)
+    last_position_by_tot_upvotes = db.Column(db.Integer, default=0)
+    last_position_by_ui_upvotes = db.Column(db.Integer, default=0)
+    last_position_by_perf_upvotes = db.Column(db.Integer, default=0)
+    last_position_by_support_upvotes = db.Column(db.Integer, default=0)
+    last_position_by_users_rates = db.Column(db.Integer, default=0)
+
     #fixed will be a function call inside template
     #mean_user_rate
 

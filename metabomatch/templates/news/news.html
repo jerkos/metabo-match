@@ -1,0 +1,76 @@
+{% extends theme("layout.html") %}
+{% from theme("macros.html") import render_submit %}
+{% from theme('macros.html') import render_pagination %}
+
+
+{% block keywords %}
+    <meta name="keywords" content="github, pubmed, citation, metabolomics, software, omics services">
+    <meta name="description" content="Blog/news about metabomatch">
+{% endblock %}
+
+
+{% block css %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-markdown.min.css') }}">
+{% endblock %}
+
+{% block content %}
+    <h1>Latest news...</h1>
+    <hr/>
+
+    {% for article in articles.items %}
+        <div class="row">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h2>{{ article.title }}
+                        <small class="text-muted">{{ article.creation_date | format_date }}</small>
+                    </h2>
+                </div>
+                <div class="panel-content">
+                    <div style="padding: 2% 2% 2% 2%;">
+                        {{ article.content | safe }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <p class="well well-sm text-center">No news for the moment...</p>
+    {% endfor %}
+
+    {% if articles.items %}
+        {{ render_pagination(articles, url_for('news.index')) }}
+    {% endif %}
+
+    {% if current_user.username == 'jerkos' %}
+        <hr style="margin-top: 50px;"/>
+        <h2>Administration</h2>
+
+        <h3>Add a new post</h3>
+        <form method="post" action="{{ url_for('news.add_post') }}" style="padding-bottom: 50px;">
+            {{ form.hidden_tag() }}
+            <div class="form-group row">
+                <div class="col-md-12">
+                    <input class="form-control" name="title" type="text" placeholder="title"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-md-12">
+                    <textarea id="editor" name="content" data-provide="markdown" rows="10">
+                    </textarea>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-1">
+                    <button id="submit" type="submit" class="btn btn-success">Post</button>
+                </div>
+            </div>
+        </form>
+    {% endif %}
+{% endblock %}
+
+{% block javascript %}
+    {{ super() }}
+    <script type="text/javascript" src="{{ url_for('static', filename='js/marked.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-markdown.js') }}"></script>
+{% endblock %}

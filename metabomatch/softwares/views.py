@@ -14,8 +14,6 @@ from flask.ext.login import login_required, current_user
 from flask.ext.wtf import Form
 from flask.ext.sqlalchemy import Pagination
 
-from textblob import TextBlob
-
 from metabomatch.achievements import SoftwareAchievement, SCORE_SOFT
 from metabomatch.extensions import db
 from metabomatch.flaskbb.utils.helpers import render_template
