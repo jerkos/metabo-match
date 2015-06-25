@@ -75,7 +75,6 @@ def register():
 
 @scripts.route('/<int:script_id>')
 @scripts.route('/<int:script_id>-<slug>')
-@login_required
 def info(script_id, slug=None):
     sc = Script.query.filter(Script.id == script_id).first_or_404()
     form = ScriptForm()
