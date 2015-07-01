@@ -8,6 +8,7 @@ from Bio import Entrez
 
 from metabomatch.extensions import db, cache, github
 from metabomatch.flaskbb.forum.models import Category
+from sqlalchemy import func
 from textblob import TextBlob
 
 Entrez.email = 'cram@hotmail.fr'
@@ -341,12 +342,36 @@ class Software(db.Model):
         #     p.apply(func, *args)
 
         self.nb_citations = get_publication_citation_nb(self.get_publication_id())
-
         github_infos = self.github_owner_repo()
         self.nb_maintainers = get_nb_maintainers(*github_infos)
         self.nb_commits_year, self.nb_commits_month = get_nb_commits(*github_infos)
         self.nb_issues, self.nb_opened_issues = get_nb_issues(*github_infos)
         self.nb_downloads = get_nb_downloads(*github_infos)
+
+    @staticmethod
+    def pos_delta_by_global_rate():
+        softwares = Software.query.all()
+        softwares.sort(key=lambda _: _.compute_rate(), reverse=True)
+        actual = {softwares[i].name: i + 1 for i in range(len(softwares))}
+        return {s.name: actual[s.name] - s.last_position_global_rate for s in softwares}
+
+    @staticmethod
+    def pos_delta_upvotes(category=None):
+
+        softwares_name = db.session.query(Software.name).all()
+        softwares_perf = []
+        for name in softwares_name:
+            if category is None:
+                c = db.session.query(func.sum(SentenceSoftwareMapping.upvote)).join(Sentence).join(Software).filter(
+                    Software.name == name).all()[0][0]
+            else:
+                c = db.session.query(func.sum(SentenceSoftwareMapping.upvote)).join(Sentence).join(Software).filter(
+                    Sentence.category == category, Software.name == name).all()[0][0]
+            softwares_perf.append((name, c))
+
+        softwares_perf.sort(key=lambda s, count: count, reverse=True)
+        actual = {softwares_perf[i].name: i + 1 for i in range(len(softwares_perf))}
+        return {s.name: actual[s.name] - s.last_position_global_rate for s in softwares_perf}
 
 
 ###---multiprocessing for requesting github API

@@ -1,7 +1,8 @@
 import sys
 
 from flask import current_app
-from metabomatch.softwares.models import Software
+from metabomatch.softwares.models import Software, SentenceSoftwareMapping, Sentence
+from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError, OperationalError
 from flask.ext.script import (Manager, Shell, Server, prompt, prompt_pass,
                               prompt_bool)
@@ -122,6 +123,59 @@ def update_softwares_rates():
     softwares = Software.query.all()
     for s in softwares:
         s.populate()
+
+
+@manager.command
+def init_rankings():
+    softwares = Software.query.all()
+    softwares.sort(key=lambda _: _.compute_rate(), reverse=True)
+
+    for i in range(len(softwares)):
+        softwares[i].last_position_by_global_rate = i + 1
+        softwares[i].save()
+
+    softwares_tot, softwares_ui, softwares_perf, softwares_support = [], [], [], []
+    for s in softwares:
+        c_tot = db.session.query(func.sum(SentenceSoftwareMapping.upvote)).join(Sentence).join(Software) \
+            .filter(Software.name == s.name).all()[0][0]
+        softwares_tot.append((s, c_tot))
+
+        c_ui = db.session.query(func.sum(SentenceSoftwareMapping.upvote)).join(Sentence).join(Software).filter(
+            Sentence.category == 'UI', Software.name == s.name).all()[0][0]
+        softwares_ui.append((s, c_ui))
+
+        c_perf = db.session.query(func.sum(SentenceSoftwareMapping.upvote)).join(Sentence).join(Software).filter(
+            Sentence.category == 'PERFORMANCE', Software.name == s.name).all()[0][0]
+        softwares_perf.append((s, c_perf))
+
+        c_support = db.session.query(func.sum(SentenceSoftwareMapping.upvote)).join(Sentence).join(Software).filter(
+            Sentence.category == 'SUPPORT', Software.name == s.name).all()[0][0]
+        softwares_support.append((s, c_support))
+
+    softwares_tot.sort(key=lambda (soft_tot, count_tot): count_tot, reverse=True)
+    for i in range(len(softwares_tot)):
+        softwares_tot[i][0].last_position_by_tot_upvotes = i + 1
+        softwares_tot[i][0].save()
+
+    softwares_ui.sort(key=lambda (soft_ui, count_ui): count_ui, reverse=True)
+    for i in range(len(softwares_ui)):
+        softwares_ui[i][0].last_position_by_ui_upvotes = i + 1
+        softwares_ui[i][0].save()
+
+    softwares_perf.sort(key=lambda (soft_perf, count_perf): count_perf, reverse=True)
+    for i in range(len(softwares_perf)):
+        softwares_perf[i][0].last_position_by_perf_upvotes = i + 1
+        softwares_perf[i][0].save()
+
+    softwares_support.sort(key=lambda (soft_support, count_support): count_support, reverse=True)
+    for i in range(len(softwares_support)):
+        softwares_support[i][0].last_position_by_support_upvotes = i + 1
+        softwares_support[i][0].save()
+
+    softwares.sort(key=lambda _: _.mean_rate(), reverse=True)
+    for i in range(len(softwares)):
+        softwares[i].last_position_by_users_rate = i + 1
+        softwares[i].save()
 
 if __name__ == "__main__":
     manager.run()
