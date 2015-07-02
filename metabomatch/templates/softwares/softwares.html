@@ -53,14 +53,28 @@
 
                 <p>
                     {% if cat_name =='UI' %}
+                        {% set delta = delta_rankings_ui[soft] %}
                         <span class="fa fa-eye fa-2x text-muted"></span>
                     {% elif cat_name =='PERFORMANCE' %}
+                        {% set delta = delta_rankings_perf[soft] %}
                         <span class="fa fa-tachometer fa-2x text-muted"></span>
                     {% elif cat_name == 'SUPPORT' %}
+                        {% set delta = delta_rankings_support[soft] %}
                         <span class="fa fa-wrench fa-2x text-muted"></span>
                     {% endif %}
-                    Best software for <em>{{ cat_name }}</em>: <a
-                        href="{{ url_for('softwares.info', name=soft) }}"><strong>{{ soft }}</strong></a></p>
+                    Best software for <em>{{ cat_name }}</em>:
+                    <a href="{{ url_for('softwares.info', name=soft) }}">
+                        <strong>{{ soft }}</strong>
+                        {% if delta < 0 %}
+                            <span class="text-danger"><strong>{{ delta }}</strong></span>
+                        {% elif delta > 0 %}
+                            <span class="text-success"><strong>+{{ delta }}</strong></span>
+                        {% else %}
+                            <span data-toggle='tooltip' title="Ranking remains the same"
+                                  class="text-info fa fa-compress"></span>
+                        {% endif %}
+                    </a>
+                </p>
             </div>
         {% endfor %}
     </div>
@@ -105,17 +119,18 @@
 
     <div class="row">
 
-        <p class="help-block"><strong>Note:</strong><br/>Each rates and ranking are updated once a day.
+        <p class="help-block"><strong>Note:</strong><br/>Each rate and ranking are updated once a day.
         </p>
 
             <table class="table table-condensed">
                 <thead>
                     <tr>
                         <th>Software</th>
+                        <th>Ranking</th>
                         <th>Programming Language</th>
-                        <th>Institute</th>
+                        {#                        <th>Institute</th>#}
                         <th>Tags</th>
-                        <th class="text-center">Current Rate</th>
+                        <th>Current Rate</th>
                         {% if current_user.is_authenticated() %}
                             <th></th>
                         {% endif %}
@@ -151,8 +166,19 @@
                                     <small><label class="label label-success">new</label></small>
                                 {% endif %}
                             </th>
+                            <th>
+                                {% set delta_global_rate = delta_rankings_global_rate[soft.name] %}
+                                {% if delta_global_rate < 0 %}
+                                    <span class="text-danger"><strong>{{ delta_global_rate }}</strong></span>
+                                {% elif delta_global_rate > 0 %}
+                                    <span class="text-success"><strong>+{{ delta_global_rate }}</strong></span>
+                                {% else %}
+                                    <span data-toggle='tooltip' title="Ranking remains the same"
+                                          class="text-info fa fa-compress"></span>
+                                {% endif %}
+                            </th>
                             <th><small>{{ soft.programming_language }}</small></th>
-                            <th><small>{{ soft.organization }}</small></th>
+                            {#                            <th><small>{{ soft.organization }}</small></th>#}
                             <th><small>
                                 {% set soft_tags = soft.tags| map(attribute='tag') | join(',') %}
                                 {% if 'Signal Extraction' in soft_tags %}
@@ -173,13 +199,13 @@
                             {#                            {% if current_user.is_authenticated() %}#}
                                 {% set rate = soft.compute_rate() %}
                                 {% if rate >=70 %}
-                                    <th class="text-center"><label class="label label-primary">{{ rate }}</label></th>
+                                    <th><label class="label label-primary">{{ rate }}</label></th>
                                 {% elif  50 <= rate < 70  %}
-                                    <th class="text-center"><label class="label label-success">{{ rate }}</label></th>
+                                    <th><label class="label label-success">{{ rate }}</label></th>
                                 {% elif  30 <= rate < 50  %}
-                                    <th class="text-center"><label class="label label-warning">{{ rate }}</label></th>
+                                    <th><label class="label label-warning">{{ rate }}</label></th>
                                 {% elif  rate < 30 %}
-                                    <th class="text-center"><label class="label label-danger">{{ rate }}</label></th>
+                                    <th><label class="label label-danger">{{ rate }}</label></th>
                                 {% endif %}
                             {#                            {% else %}#}
                             {#                                <th><label class="label label-default">hidden</label></th>#}

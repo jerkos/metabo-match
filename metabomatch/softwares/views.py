@@ -75,6 +75,10 @@ def index():
                            softwares=softs,
                            activities=r,
                            best_softwares=best_softs_by_cat(),
+                           delta_rankings_ui=Software.pos_delta_upvotes(category='UI'),
+                           delta_rankings_perf=Software.pos_delta_upvotes(category='PERFORMANCE'),
+                           delta_rankings_support=Software.pos_delta_upvotes(category='SUPPORT'),
+                           delta_rankings_global_rate=Software.pos_delta_by_global_rate(),
                            today=datetime.now())
 
 
@@ -426,4 +430,7 @@ def rankings():
                            best_ui_softwares=best_ui_softwares,
                            best_performance_softwares=best_performance_softwares,
                            best_support_softwares=best_support_softwares,
+                           delta_rankings_ui=Software.pos_delta_upvotes(category='UI'),
+                           delta_rankings_perf=Software.pos_delta_upvotes(category='PERFORMANCE'),
+                           delta_rankings_support=Software.pos_delta_upvotes(category='SUPPORT'),
                            overall_winner=overall_winner)

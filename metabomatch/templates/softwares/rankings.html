@@ -69,6 +69,7 @@
                     <th><strong># rank</strong></th>
                     <th>software</th>
                     <th>value</th>
+                    <th>evolution</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -78,6 +79,17 @@
                         </th>
                         <th><a href="{{ url_for('softwares.info', name=s) }}">{{ s }}</a></th>
                         <th><span class="badge">{{ upvotes }}</span></th>
+                        <th>
+                            {% set delta_global_rate = delta_rankings_ui[s] %}
+                            {% if delta_global_rate < 0 %}
+                                <span class="text-danger"><strong>{{ delta_global_rate }}</strong></span>
+                            {% elif delta_global_rate > 0 %}
+                                <span class="text-success"><strong>+{{ delta_global_rate }}</strong></span>
+                            {% else %}
+                                <span data-toggle='tooltip' title="Ranking remains the same"
+                                      class="text-info fa fa-compress"></span>
+                            {% endif %}
+                        </th>
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -92,6 +104,7 @@
                     <th><strong># rank</strong></th>
                     <th>software</th>
                     <th>value</th>
+                    <th>evolution</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -101,6 +114,17 @@
                         </th>
                         <th><a href="{{ url_for('softwares.info', name=s) }}">{{ s }}</a></th>
                         <th><span class="badge">{{ upvotes }}</span></th>
+                        <th>
+                            {% set delta_global_rate = delta_rankings_perf[s] %}
+                            {% if delta_global_rate < 0 %}
+                                <span class="text-danger"><strong>{{ delta_global_rate }}</strong></span>
+                            {% elif delta_global_rate > 0 %}
+                                <span class="text-success"><strong>+{{ delta_global_rate }}</strong></span>
+                            {% else %}
+                                <span data-toggle='tooltip' title="Ranking remains the same"
+                                      class="text-info fa fa-compress"></span>
+                            {% endif %}
+                        </th>
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -116,6 +140,7 @@
                     <th><strong># rank</strong></th>
                     <th>software</th>
                     <th>value</th>
+                    <th>evolution</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -125,6 +150,17 @@
                         </th>
                         <th><a href="{{ url_for('softwares.info', name=s) }}">{{ s }}</a></th>
                         <th><span class="badge">{{ upvotes }}</span></th>
+                        <th>
+                            {% set delta_global_rate = delta_rankings_support[s] %}
+                            {% if delta_global_rate < 0 %}
+                                <span class="text-danger"><strong>{{ delta_global_rate }}</strong></span>
+                            {% elif delta_global_rate > 0 %}
+                                <span class="text-success"><strong>+{{ delta_global_rate }}</strong></span>
+                            {% else %}
+                                <span data-toggle='tooltip' title="Ranking remains the same"
+                                      class="text-info fa fa-compress"></span>
+                            {% endif %}
+                        </th>
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -208,7 +244,7 @@
     </div>
 
 
-    <h2 class="alert alert-info text-center">
+    <h2 class="alert alert-default text-center">
         And the award goes to <br/>
         <span class="fa fa-trophy text-muted"></span>
         <strong>

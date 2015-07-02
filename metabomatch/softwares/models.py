@@ -349,30 +349,91 @@ class Software(db.Model):
         self.nb_downloads = get_nb_downloads(*github_infos)
 
     @staticmethod
+    def set_rankings(softwares=None):
+        if softwares is None:
+            softwares = Software.query.all()
+
+        softwares.sort(key=lambda _: _.compute_rate(), reverse=True)
+
+        for i in range(len(softwares)):
+            softwares[i].last_position_by_global_rate = i + 1
+            softwares[i].save()
+
+        softwares_tot, softwares_ui, softwares_perf, softwares_support = [], [], [], []
+        for s in softwares:
+            c_tot = db.session.query(func.sum(SentenceSoftwareMapping.upvote)).join(Sentence).join(Software) \
+                .filter(Software.name == s.name).all()[0][0]
+            softwares_tot.append((s, c_tot))
+
+            c_ui = db.session.query(func.sum(SentenceSoftwareMapping.upvote)).join(Sentence).join(Software).filter(
+                Sentence.category == 'UI', Software.name == s.name).all()[0][0]
+            softwares_ui.append((s, c_ui))
+
+            c_perf = db.session.query(func.sum(SentenceSoftwareMapping.upvote)).join(Sentence).join(Software).filter(
+                Sentence.category == 'PERFORMANCE', Software.name == s.name).all()[0][0]
+            softwares_perf.append((s, c_perf))
+
+            c_support = db.session.query(func.sum(SentenceSoftwareMapping.upvote)).join(Sentence).join(Software).filter(
+                Sentence.category == 'SUPPORT', Software.name == s.name).all()[0][0]
+            softwares_support.append((s, c_support))
+
+        softwares_tot.sort(key=lambda (soft_tot, count_tot): count_tot, reverse=True)
+        for i in range(len(softwares_tot)):
+            softwares_tot[i][0].last_position_by_tot_upvotes = i + 1
+            softwares_tot[i][0].save()
+
+        softwares_ui.sort(key=lambda (soft_ui, count_ui): count_ui, reverse=True)
+        for i in range(len(softwares_ui)):
+            softwares_ui[i][0].last_position_by_ui_upvotes = i + 1
+            softwares_ui[i][0].save()
+
+        softwares_perf.sort(key=lambda (soft_perf, count_perf): count_perf, reverse=True)
+        for i in range(len(softwares_perf)):
+            softwares_perf[i][0].last_position_by_perf_upvotes = i + 1
+            softwares_perf[i][0].save()
+
+        softwares_support.sort(key=lambda (soft_support, count_support): count_support, reverse=True)
+        for i in range(len(softwares_support)):
+            softwares_support[i][0].last_position_by_support_upvotes = i + 1
+            softwares_support[i][0].save()
+
+        softwares.sort(key=lambda _: _.mean_rate(), reverse=True)
+        for i in range(len(softwares)):
+            softwares[i].last_position_by_users_rate = i + 1
+            softwares[i].save()
+
+    @staticmethod
     def pos_delta_by_global_rate():
         softwares = Software.query.all()
         softwares.sort(key=lambda _: _.compute_rate(), reverse=True)
         actual = {softwares[i].name: i + 1 for i in range(len(softwares))}
-        return {s.name: actual[s.name] - s.last_position_global_rate for s in softwares}
+        return {s.name: s.last_position_by_global_rate - actual[s.name] for s in softwares}
 
     @staticmethod
     def pos_delta_upvotes(category=None):
 
-        softwares_name = db.session.query(Software.name).all()
+        softwares = Software.query.all()
         softwares_perf = []
-        for name in softwares_name:
+        for software in softwares:
             if category is None:
                 c = db.session.query(func.sum(SentenceSoftwareMapping.upvote)).join(Sentence).join(Software).filter(
-                    Software.name == name).all()[0][0]
+                    Software.name == software.name).all()[0][0]
             else:
                 c = db.session.query(func.sum(SentenceSoftwareMapping.upvote)).join(Sentence).join(Software).filter(
-                    Sentence.category == category, Software.name == name).all()[0][0]
-            softwares_perf.append((name, c))
+                    Sentence.category == category, Software.name == software.name).all()[0][0]
+            softwares_perf.append((software, c))
 
-        softwares_perf.sort(key=lambda s, count: count, reverse=True)
-        actual = {softwares_perf[i].name: i + 1 for i in range(len(softwares_perf))}
-        return {s.name: actual[s.name] - s.last_position_global_rate for s in softwares_perf}
-
+        softwares_perf.sort(key=lambda _: _[1], reverse=True)
+        print len(softwares), len(softwares_perf)
+        actual = {softwares_perf[i][0].name: i + 1 for i in range(len(softwares_perf))}
+        if category == 'UI':
+            return {s[0].name: s[0].last_position_by_ui_upvotes - actual[s[0].name] for s in softwares_perf}
+        elif category == 'PERFORMANCE':
+            return {s[0].name: s[0].last_position_by_perf_upvotes - actual[s[0].name] for s in softwares_perf}
+        elif category == 'SUPPORT':
+            return {s[0].name: s[0].last_position_by_support_upvotes - actual[s[0].name] for s in softwares_perf}
+        else:
+            pass
 
 ###---multiprocessing for requesting github API
 def get_publication_citation_nb(publication_id):
