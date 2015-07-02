@@ -36,7 +36,7 @@ user = Blueprint("user", __name__, template_folder="templates")
 @user.route("/<username>")
 def profile(username):
     user = User.query.filter_by(username=username).first_or_404()
-    if user.id == GUEST_USER_ID:
+    if user.id == GUEST_USER_ID or username == 'Guest':
         return render_template('errors/forbidden_page.html')
     return render_template("user/profile.html", user=user)
 
