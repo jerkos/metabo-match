@@ -9,12 +9,20 @@
     :license: BSD, see LICENSE for more details.
 """
 from datetime import datetime, timedelta
+import os
 
 from flask import url_for, abort
+from flask.ext.login import current_user
 
 from metabomatch.extensions import db
 from metabomatch.flaskbb.utils.helpers import slugify, get_categories_and_forums, get_forums
 from metabomatch.flaskbb.utils.settings import flaskbb_config
+
+try:
+    from metabomatch.private_keys import GUEST_USER_ID
+except ImportError:
+    GUEST_USER_ID = os.environ.get('GUEST_USER_ID')
+
 from sqlalchemy import func
 
 moderators = db.Table(
@@ -198,8 +206,8 @@ class Post(db.Model):
 
         # Adding a new post
         if user and topic:
-            self.user_id = user.id
-            self.username = user.username
+            self.user_id = user.id if current_user.is_authenticated() else GUEST_USER_ID
+            self.username = user.username if current_user.is_authenticated() else 'Guest'
             self.topic_id = topic.id
             self.date_created = datetime.utcnow()
 
@@ -214,7 +222,8 @@ class Post(db.Model):
             topic.forum.last_post_id = self.id
 
             # Update the post counts
-            user.post_count += 1
+            if current_user.is_authenticated():
+                user.post_count += 1
             topic.post_count += 1
             topic.forum.post_count += 1
 
@@ -501,8 +510,8 @@ class Topic(db.Model):
 
         # Set the forum and user id
         self.forum_id = forum.id
-        self.user_id = user.id
-        self.username = user.username
+        self.user_id = user.id if current_user.is_authenticated() else GUEST_USER_ID
+        self.username = user.username if current_user.is_authenticated() else 'Guest'
 
         # Set the last_updated time. Needed for the readstracker
         self.last_updated = datetime.utcnow()

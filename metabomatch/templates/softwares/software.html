@@ -393,23 +393,24 @@
         </div>
     </div> {# end row  #}
     <hr/>
-    {% if current_user.is_authenticated() %}
+    {#    {% if current_user.is_authenticated() %}#}
         <div class="row">
-            {% if not current_user.has_commented(software.name) or not current_user.has_commented or show_comment_form %}
+            {#            {% if not current_user.has_commented(software.name) or not current_user.has_commented or show_comment_form %}#}
+            {#            {% if show_comment_form %}#}
 
                 <h4 style="padding: 20px 0 20px 0">Post a review about this software...</h4>
                 <form class="form-horizontal" method="post" action="{{ url_for('softwares.comment', name=software.name) }}">
                     {{ form.hidden_tag() }}
-                    {% if not current_user.has_commented(software.name) or show_comment_form %}
+                    {#                    {% if not current_user.has_commented(software.name) or show_comment_form %}#}
                     <div class="form-group">
                         <label class="col-md-3 control-label">Leave a comment or a rating</label>
                         <div class="col-md-9">
                             <textarea class="form-control" rows="10" name="content" placeholder="Fill this!"></textarea>
                         </div>
                     </div>
-                    {% endif %}
+                    {#                    {% endif %}#}
 
-                    {% if not current_user.has_rated(software.name) or show_comment_form %}
+                    {#                    {% if not current_user.has_rated(software.name) or show_comment_form %}#}
                     <div class="form-group">
                         <label class="col-md-3 control-label">rating</label>
                          <div class="col-sm-9">
@@ -420,21 +421,21 @@
 
 
                     </div>
-                    {% endif %}
+                    {#                    {% endif %}#}
                     {{ render_submit() }}
                 </form>
-            {% else %}
+            {#            {% else %}#}
 
-                <p class="alert-info">It seems you have already commented or rated this software.
-                    <a href="{{ ['/softwares/', software.name, '?show_comment_form'] | join('') }}" >Comment this software again</a>
-                </p>
+            {#                <p class="alert-info">It seems you have already commented or rated this software.#}
+            {#                    <a href="{{ ['/softwares/', software.name, '?show_comment_form'] | join('') }}" >Comment this software again</a>#}
+            {#                </p>#}
 
-            {% endif %}
+            {#            {% endif %}#}
 
         </div>
-    {% else %}
-        <h4 class="alert-info"> Login in and post a comment on this software</h4>
-    {% endif %}
+    {#    {% else %}#}
+    {#        <h4 class="alert-info"> Login in and post a comment on this software</h4>#}
+    {#    {% endif %}#}
 
 
     {% if current_user.id == software.owner_id %}

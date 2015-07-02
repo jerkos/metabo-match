@@ -10,6 +10,7 @@
     :license: BSD, see LICENSE for more details.
 """
 from datetime import datetime
+import os
 
 from flask import Blueprint, flash, request, redirect, url_for
 from flask.ext.login import login_required, current_user
@@ -17,6 +18,12 @@ from flask.ext.themes2 import get_themes_list
 
 from metabomatch.extensions import db
 from metabomatch.flaskbb.utils.helpers import render_template
+
+try:
+    from metabomatch.private_keys import GUEST_USER_ID
+except ImportError:
+    GUEST_USER_ID = os.environ.get('GUEST_USER_ID')
+
 from metabomatch.user.models import User, PrivateMessage
 from metabomatch.user.forms import (ChangePasswordForm, ChangeEmailForm,
                                     ChangeUserDetailsForm, GeneralSettingsForm,
@@ -29,7 +36,8 @@ user = Blueprint("user", __name__, template_folder="templates")
 @user.route("/<username>")
 def profile(username):
     user = User.query.filter_by(username=username).first_or_404()
-
+    if user.id == GUEST_USER_ID:
+        return render_template('errors/forbidden_page.html')
     return render_template("user/profile.html", user=user)
 
 

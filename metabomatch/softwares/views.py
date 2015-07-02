@@ -6,6 +6,12 @@ Software views
 from datetime import datetime, timedelta
 from itertools import groupby
 from collections import OrderedDict
+import os
+
+try:
+    from metabomatch.private_keys import GUEST_USER_ID
+except ImportError:
+    GUEST_USER_ID = os.environ.get('GUEST_USER_ID')
 
 from sqlalchemy import desc, func, asc
 from flask import Blueprint, request, redirect, url_for, flash, abort
@@ -161,8 +167,7 @@ def info(name):
                            form=Form())
 
 
-@softwares.route('/<name>/comment', methods=['POST'])
-@login_required
+@softwares.route('/<name>/comment', methods=['POST'])  # @login_required
 def comment(name):
     """
     add a comment or a rating on a software
@@ -174,13 +179,14 @@ def comment(name):
     if content is None and rating is None:
         flash("Must post a comment or/and a rate", "danger")
 
+    user_id = current_user.id if current_user.is_authenticated() else GUEST_USER_ID
     if content:
         c = Comment(content)
-        c.user_id = current_user.id
+        c.user_id = user_id
         c.software_id = name
         c.save()
     if rating:
-        r = Rating(rating, current_user.id, name)
+        r = Rating(rating, user_id, name)
         r.save()
     return redirect(url_for('softwares.info', name=name))
 

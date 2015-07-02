@@ -150,8 +150,7 @@ def view_post(post_id):
 
 
 @forum.route("/<int:forum_id>/topic/new", methods=["POST", "GET"])
-@forum.route("/<int:forum_id>-<slug>/topic/new", methods=["POST", "GET"])
-@login_required
+@forum.route("/<int:forum_id>-<slug>/topic/new", methods=["POST", "GET"])  # @login_required
 def new_topic(forum_id, slug=None):
     forum_instance = Forum.query.filter_by(id=forum_id).first_or_404()
 
