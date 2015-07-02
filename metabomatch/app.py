@@ -8,7 +8,6 @@
     :copyright: (c) 2014 by the FlaskBB Team.
     :license: BSD, see LICENSE for more details.
 """
-from flask.ext.gzip import Gzip
 
 try:
     from metabomatch.private_keys import GITHUB_CLIENT_SECRET
@@ -177,9 +176,6 @@ def configure_extensions(app):
     gravatar.init_app(app)
 
     babel.init_app(app)
-
-    gzip = Gzip(app)
-
 
 
 def configure_template_filters(app):
