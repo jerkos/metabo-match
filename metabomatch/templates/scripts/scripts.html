@@ -1,6 +1,11 @@
 {% extends theme("layout.html") %}
 {% from theme('macros.html') import render_pagination %}
 
+{% block title %}
+    Scripts/parameters - MetaboMatch
+{% endblock %}
+
+
 {% block keywords %}
     <meta name="keywords" content="metabomatch, software, parameters, scripts, programming languages, crowdsourcing">
     <meta name="description" content="List all scripts and parameters posted by metabomatch users.">
@@ -30,9 +35,10 @@
     <p class="help-block">
         <strong>Help ?</strong><br/>You can provide here some piece of code you find useful and or refer a
         <strong>gist</strong>
-        file from <a href="github.com">github</a>. For more complex scripts or example, we strongly encourage to use
-        Gist
-        and its versioning system.
+        file from <a href="github.com">github</a>.
+        {#        For more complex scripts or example, we strongly encourage to use#}
+        {#        Gist#}
+        {#        and its versioning system.#}
     </p>
     <p class="help-block">
         You can also provide a set of <strong>parameters</strong> for a software algorithm for a specific mass
