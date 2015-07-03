@@ -169,6 +169,9 @@ class Comment(db.Model):
         """
         return TextBlob(self.content).sentiment
 
+    def get_content(self):
+        return self.content.replace('\n', '<br/>')
+
 class Software(db.Model):
     """
     Software models
@@ -458,7 +461,7 @@ def get_nb_commits(owner, repo):
     if owner is None:
         return 0, 0
     rep = github.get("".join(['repos/', owner, '/', repo, '/stats/commit_activity']))
-
+    print rep
     if not rep:
         return 0, 0
 

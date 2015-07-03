@@ -303,7 +303,8 @@
                                     </b>
                                     <small class="text-muted">{{ c.date_created | format_date }}</small>
                                     <br/>
-                                    <i class="fa fa-quote-left"></i> {{ c.content }} <i class="fa fa-quote-right"></i>
+                                    <i class="fa fa-quote-left"></i> {{ c.get_content() | safe }} <i
+                                        class="fa fa-quote-right"></i>
                                 </p>
                             {% else %}
                                 <p class="well well-lg text-center text-muted">Nothing to show</p>

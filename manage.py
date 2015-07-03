@@ -1,7 +1,7 @@
 import sys
 
 from flask import current_app
-from metabomatch.softwares.models import Software, SentenceSoftwareMapping, Sentence
+from metabomatch.softwares.models import Software, SentenceSoftwareMapping, Sentence, get_nb_commits
 from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError, OperationalError
 from flask.ext.script import (Manager, Shell, Server, prompt, prompt_pass,
@@ -121,8 +121,9 @@ def initflaskbb(username=None, password=None, email=None):
 @manager.command
 def update_softwares_rates():
     softwares = Software.query.all()
-    for s in softwares:
-        s.populate()
+    for i in range(2):
+        for s in softwares:
+            s.populate()
 
     Software.set_rankings(softwares)
 
@@ -131,6 +132,10 @@ def update_softwares_rates():
 def init_rankings():
     Software.set_rankings()
 
+
+@manager.command
+def test_commits():
+    print get_nb_commits('OpenMS', 'OpenMS')
 
 if __name__ == "__main__":
     manager.run()

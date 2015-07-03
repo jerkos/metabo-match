@@ -39,12 +39,10 @@
                         <button disabled type="submit" id="submit-{{ c.id }}" class="btn btn-success">Update</button>
                     </form>
                 {% else %}
-                <p class="list-group-item-text">{{ c.content }}</p>
+                    <p class="list-group-item-text">{{ c.get_content() | safe }}</p>
                 {% endif %}
-                <hr/>
                 {% set sentiment =  c.sentiment_analysis() %}
-                <p>
-                    <Strong>Sentiment analysis</Strong><br/>
+                <p class="text-right" style="font-size: 0.8em">
                     <em>subjectivity</em>:
                         <span {% if sentiment.subjectivity > 0.5 %} class="text-warning" {% else %}
                                                                     class="text-info" {% endif %}>
