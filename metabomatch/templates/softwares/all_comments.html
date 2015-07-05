@@ -1,13 +1,24 @@
 {% extends theme("layout.html") %}
 
-{% block css %}
-    {{ super() }}
-    <style>
-        h2 {
-            font-size: 1.4em;
-        }
-    </style>
+{#{% block css %}#}
+{#    {{ super() }}#}
+{#    <style>#}
+{#        h2 {#}
+{#            font-size: 1.4em;#}
+{#        }#}
+{#    </style>#}
+{#{% endblock %}#}
+
+{% block title %}
+    {{ software.name }} comments - Metabomatch
 {% endblock %}
+
+{% block keywords %}
+    <meta name="keywords" content="metabomatch, software, comments, user">
+    <meta name="description" content="User Comments on {{ software.name }} software">
+{% endblock %}
+
+
 
 {% block content %}
     <h1><span class="fa fa-laptop text-muted"></span><a

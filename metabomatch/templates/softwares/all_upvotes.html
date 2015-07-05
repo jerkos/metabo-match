@@ -1,12 +1,12 @@
 {% extends theme("layout.html") %}
 
-{% block css %}
-    {{ super() }}
-    <style>
-        h3 {
-            font-size: 1.2em;
-        }
-    </style>
+{% block title %}
+    {{ software.name }} upvotes - Metabomatch
+{% endblock %}
+
+{% block keywords %}
+    <meta name="keywords" content="metabomatch, software, upvotes, category, user">
+    <meta name="description" content="List of users who upvoted sentences of particular software">
 {% endblock %}
 
 {% block content %}

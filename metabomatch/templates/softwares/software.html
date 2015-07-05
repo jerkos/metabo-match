@@ -1,6 +1,10 @@
 {% extends theme("layout.html") %}
 {% from theme("macros.html") import render_submit %}
 
+{% block title %}
+    {{ software.name }} informations - Metabomatch
+{% endblock %}
+
 {% block keywords %}
     <meta name="keywords" content="{{ software.name }}, github, pubmed, citation, metabolomics, software, omics services">
     <meta name="description" content="Information and statistics about the {{ software.name }} software.">

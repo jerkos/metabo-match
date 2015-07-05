@@ -1,12 +1,18 @@
 {% extends theme("layout.html") %}
 
+{% block title %}
+    About - Metabomatch
+{% endblock %}
+
+{% block keywords %}
+    <meta name="keywords" content="metabomatch, about">
+    <meta name="description" content="The reasons why we made metabomatch">
+{% endblock %}
+
+
 {% block css %}
     {{ super() }}
     <style>
-
-        {#        body {#}
-        {#            background: url("static/img/bright_squares.png") repeat;#}
-        {#        }#}
 
         .navbar {
             padding: 0 23% 0 22%;

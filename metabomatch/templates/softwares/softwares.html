@@ -1,27 +1,13 @@
 {% extends theme("layout.html") %}
 {% from theme('macros.html') import render_pagination %}
 
+{% block title %}
+    All softwares - Metabomatch
+{% endblock %}
+
 {% block keywords %}
     <meta name="keywords" content="omics services, metabolomics, softwares, LC-MS, workflow, peak-picking, alignment, identification, database search, statistical analysis">
     <meta name="description" content="Compare metabolomics softwares on Metabomatch using feedback statistics analysis">
-{% endblock %}
-
-{% block css %}
-    {{ super() }}
-    <style>
-        h1 {
-            font-size: 2em;
-        }
-
-        h2 {
-            font-size: 1.6em;
-        }
-
-        h3 {
-            font-size: 1.5em;
-        }
-
-    </style>
 {% endblock %}
 
 {% block content %}

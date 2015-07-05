@@ -1,18 +1,14 @@
 {% extends theme("layout.html") %}
-{% block css %}
-    {{ super() }}
-    {#    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/default.min.css">#}
-    <style>
-        h1 {
-            font-size: 1.8em;
-        }
 
-        h2 {
-            font-size: 1.2em;
-        }
-    </style>
-
+{% block title %}
+    Script-{{ script.title }}
 {% endblock %}
+
+{% block keywords %}
+    <meta name="keywords" content="metabomatch, software, parameters, scripts, {{ script.software.name }}">
+    <meta name="description" content="List all scripts and parameters posted by metabomatch users.">
+{% endblock %}
+
 {% block content %}
 
     <h1><span class="text-muted">Software:</span> {{ script.software.name | default('No software defined') }}</h1>

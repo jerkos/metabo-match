@@ -1,6 +1,11 @@
 {% extends theme("layout.html") %}
 {% from theme('macros.html') import render_pagination %}
 
+
+{% block title %}
+    {{ job.title }} - Metabomatch
+{% endblock %}
+
 {% block keywords %}
     <meta name="keywords" content="jobs, metabolomics, {{ job.company }}, {{ job.name }}, {{ job.job_tags | join(',') }}">
     <meta name="description" content="Job offer posted by {{ job.company }}. Users can find some useful information here.">

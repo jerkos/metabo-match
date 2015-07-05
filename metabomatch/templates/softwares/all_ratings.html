@@ -1,4 +1,14 @@
 {% extends theme("layout.html") %}
+
+{% block title %}
+    {{ software.name }} ratings - Metabomatch
+{% endblock %}
+
+{% block keywords %}
+    <meta name="keywords" content="metabomatch, software, ratings, category, user">
+    <meta name="description" content="User ratings for {{ software.name }} software.">
+{% endblock %}
+
 {% block css %}
     {{ super() }}
     <style>
@@ -7,7 +17,7 @@
         }
 
         h2 {
-            font-size: 1.2em;
+        {#            font-size: 1.2em;#}
             margin: 0;
         }
     </style>

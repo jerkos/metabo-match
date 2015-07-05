@@ -5,6 +5,16 @@
 {% from theme("macros.html") import field_description %}
 {% from theme("macros.html") import field_errors %}
 
+
+{% block title %}
+    Register job - Metabomatch
+{% endblock %}
+
+{% block keywords %}
+    <meta name="keywords" content="metabomatch, register, job">
+    <meta name="description" content="Register a job offer on this page">
+{% endblock %}
+
 {% block css %}
     {{ super() }}
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/monokai.min.css">
@@ -19,9 +29,9 @@
             border-radius: 5px;
         }
 
-        h1 {
-            font-size: 1.8em;
-        }
+        {#        h1 {#}
+        {#            font-size: 1.8em;#}
+        {#        }#}
     </style>
 {% endblock %}
 
