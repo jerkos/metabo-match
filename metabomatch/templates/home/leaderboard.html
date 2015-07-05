@@ -24,20 +24,24 @@
             </thead>
             <tbody>
                 {% for user in users %}
-                    <tr {% if user.id == current_user.id %} class="info"{% endif %}>
-                        <th><strong>{{ loop.index }}</strong></th>
-                        <th>
-                            {% if user.avatar %}
-                                <img class='img-rounded' src="{{ user.avatar }}" alt="gravatar" height="30" width="30">
-                            {% else %}
-                                <img class='img-rounded' src="{{ user.email | gravatar }}" alt="gravatar" height="30"
-                                     width="30">
-                            {% endif %} <a
-                                href="{{ url_for('user.profile', username=user.username) }}">{{ user.username }}</a>
-                        </th>
-                        <th>{{ user.date_joined | format_date }}</th>
-                        <th>{{ user.global_score }}</th>
-                    </tr>
+                    {% if user.username != 'Guest' %}
+                        <tr {% if user.id == current_user.id %} class="info"{% endif %}>
+                            <th><strong>{{ loop.index }}</strong></th>
+                            <th>
+                                {% if user.avatar %}
+                                    <img class='img-rounded' src="{{ user.avatar }}" alt="gravatar" height="30"
+                                         width="30">
+                                {% else %}
+                                    <img class='img-rounded' src="{{ user.email | gravatar }}" alt="gravatar"
+                                         height="30"
+                                         width="30">
+                                {% endif %} <a
+                                    href="{{ url_for('user.profile', username=user.username) }}">{{ user.username }}</a>
+                            </th>
+                            <th>{{ user.date_joined | format_date }}</th>
+                            <th>{{ user.global_score }}</th>
+                        </tr>
+                    {% endif %}
                 {% endfor %}
             </tbody>
         </table>
