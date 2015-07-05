@@ -32,7 +32,11 @@
     <h2 style="padding-top: 20px;">
         <span class="fa fa-glass text-muted"></span> Winner of the day: user rates
         <small class="text-muted">{{ today | format_date }}</small>
-        : <a href={{ url_for('softwares.info', name=winning_software) }}>{{ winning_software }}</a>
+        :  {% if winning_software != "No winner today..." %}
+        <a href={{ url_for('softwares.info', name=winning_software) }}>{{ winning_software }}</a>
+    {% else %}
+        {{ winning_software }}
+    {% endif %}
     </h2>
 
     {% if winning_software != "No winner today..." %}
@@ -46,7 +50,11 @@
     <h2 style="padding-top: 20px;">
         <span class="fa fa-glass text-muted"></span> Winner of the day: upvotes
         <small class="text-muted">{{ today | format_date }}</small>
-        : <a href={{ url_for('softwares.info', name=winning_software_upvotes) }}>{{ winning_software_upvotes }}</a>
+        : {% if winning_software != "No winner today..." %}
+        <a href={{ url_for('softwares.info', name=winning_software_upvotes) }}>{{ winning_software_upvotes }}</a>
+    {% else %}
+        {{ winning_software_upvotes }}
+    {% endif %}
     </h2>
     {% if winning_software_upvotes != "No winner today..." %}
     <div class="row">

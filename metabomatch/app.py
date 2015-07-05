@@ -46,7 +46,7 @@ from metabomatch.flaskbb.forum.models import Post, Topic, Category, Forum
 
 # extensions
 from metabomatch.extensions import db, login_manager, mail, cache, redis_store, \
-    migrate, themes, plugin_manager, github, csrf, gravatar, babel  # ,debugtoolbar
+    migrate, themes, plugin_manager, github, csrf, gravatar, babel, compress  # ,debugtoolbar
 
 # various helpers
 from metabomatch.flaskbb.utils.helpers import format_date, time_since, crop_title, \
@@ -176,6 +176,9 @@ def configure_extensions(app):
     gravatar.init_app(app)
 
     babel.init_app(app)
+
+    #
+    compress.init_app(app)
 
 
 def configure_template_filters(app):

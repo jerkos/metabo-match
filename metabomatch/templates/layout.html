@@ -75,7 +75,7 @@
                             </a>
                         </div>
                         <div class="collapse navbar-collapse navbar-ex1-collapse">
-                            <ul style="padding-top: 20px" class="nav navbar-nav">
+                            <ul style="padding-top: 15px" class="nav navbar-nav">
                                 {{ emit_event("before-first-navigation-element") }}
 
                                 {#                                {{ topnav(endpoint='home.workflow' , name='Workflow', icon='fa fa-road') }}#}
@@ -130,7 +130,7 @@
 
 
                             {% if current_user and current_user.is_authenticated() %}
-                                <div style="padding-top:20px;padding-left: 15px; margin-right: -10px"
+                                <div style="padding-top:15px;padding-left: 15px; margin-right: -10px"
                                      class="btn-group navbar-btn navbar-right">
 
                                 <a class="btn btn-primary"
@@ -161,7 +161,7 @@
                                     </ul>
                                 </div>
 
-                                <div style="padding-top:20px" class="btn-group navbar-btn navbar-right">
+                                <div style="padding-top:15px" class="btn-group navbar-btn navbar-right">
                                     <button type="button" class="btn btn-success dropdown-toggle"
                                             data-toggle="dropdown">
                                         <span class="fa fa-envelope"></span> <span
@@ -175,7 +175,7 @@
                                     </ul>
                                 </div>
                             {% else %}
-                                <div style="padding-top:20px" class="btn-group navbar-btn navbar-right">
+                                <div style="padding-top:15px" class="btn-group navbar-btn navbar-right">
                                     <a class="btn btn-primary" href="{{ url_for('auth.login') }}">
                                         <span class="fa fa-user"></span> Login
                                     </a>

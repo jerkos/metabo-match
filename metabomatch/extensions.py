@@ -8,6 +8,7 @@
     :copyright: (c) 2014 by the FlaskBB Team.
     :license: BSD, see LICENSE for more details.
 """
+from flask.ext.compress import Compress
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager
 from flask.ext.mail import Mail
@@ -58,3 +59,5 @@ gravatar = Gravatar(default='identicon')
 csrf = CsrfProtect()
 
 babel = Babel()
+
+compress = Compress()
