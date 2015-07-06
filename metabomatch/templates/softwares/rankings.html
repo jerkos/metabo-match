@@ -34,7 +34,7 @@
     <h2 style="padding-top: 20px;">
         <span class="fa fa-glass text-muted"></span> Winner of the day: upvotes
         <small class="text-muted">{{ today | format_date }}</small>
-        : {% if winning_software != "No winner today..." %}
+        : {% if winning_software_upvotes != "No winner today..." %}
         <a href={{ url_for('softwares.info', name=winning_software_upvotes) }}>{{ winning_software_upvotes }}</a>
     {% else %}
         {{ winning_software_upvotes }}
