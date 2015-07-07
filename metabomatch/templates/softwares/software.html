@@ -287,7 +287,7 @@
                                     {#                                    <b><a href="{{ url_for('user.profile', username=c.user.username) }}">{{ c.user.username }}</a></b> :#}
                                     <a href="{{ url_for('user.profile', username=c.user.username) }}">
 
-                                        <img
+                                        <img class="img img-circle"
                                                 {% if c.user.avatar %}
                                                     src="{{ c.user.avatar }}"
                                                 {% else %}
@@ -312,7 +312,7 @@
                                 <p class="well">
                                     <b>
                                         <a href="{{ url_for('user.profile', username=c.user.username) }}">
-                                            <img
+                                            <img class="img img-circle"
                                                     {% if c.user.avatar %}
                                                         src="{{ c.user.avatar }}"
                                                     {% else %}
@@ -413,13 +413,51 @@
             </div>
         </div>
     </div> {# end row  #}
-    <hr/>
+    {#    <hr/>#}
+    <div class="row" style="padding-top:20px;">
+        <h3><span class="text-muted fa fa-user"></span> Regular users</h3>
+        <hr/>
+        <p class="lead">
+            There are currently <span class="badge">{{ software.users | length }}</span> <strong>metabomatch
+            users</strong> using this software:
+            {% for u in software.users[:5] %}
+
+                <a href="{{ url_for('user.new_message', to_user=u.username) }}">
+                    <img class="img img-circle"
+                            {% if u.avatar %}
+                         src="{{ u.avatar }}"
+                            {% else %}
+                         src="{{ u.email | gravatar }}"
+                            {% endif %}
+                         width="25" height="25" data-toggle="tooltip" title="{{ u.username }}">
+                </a>
+
+            {% endfor %}
+            ...
+        </p>
+
+
+        {% if current_user.is_authenticated() and not software.name in (current_user.softwares_used | map(attribute='name')) %}
+            <p>Do you use this software regularly ? <a class="btn btn-sm btn-default"
+                                                       href="{{ url_for('softwares.register_user', name=software.name) }}"
+                                                       rel="nofollow">Yes</a></p>
+        {% elif current_user.is_authenticated() and software.name in (current_user.softwares_used | map(attribute='name')) %}
+            {#        <p><a class="btn btn-sm btn-primary" href="/" rel="nofollow"><span class="fa fa-certificate"></span> software user !</a></th>#}
+            <p class="text-info">You are using this software regularly. <a class="btn btn-sm btn-default"
+                                                                           href="{{ url_for('softwares.remove_user', name=software.name) }}"
+                                                                           rel="nofollow">No more ?</a></p>
+
+            {#        {% else %}#}
+            {#            <p class="well text-center"><strong>Must be logged to view</strong></p>#}
+        {% endif %}
+    </div>
     {#    {% if current_user.is_authenticated() %}#}
-        <div class="row">
+    <div class="row" style="padding-top:20px;">
             {#            {% if not current_user.has_commented(software.name) or not current_user.has_commented or show_comment_form %}#}
             {#            {% if show_comment_form %}#}
 
-                <h4 style="padding: 20px 0 20px 0">Post a review about this software...</h4>
+        <h3><span class="text-muted fa fa-comment"></span> Post a review about this software...</h3>
+        <hr/>
                 <form class="form-horizontal" method="post" action="{{ url_for('softwares.comment', name=software.name) }}">
                     {{ form.hidden_tag() }}
                     {#                    {% if not current_user.has_commented(software.name) or show_comment_form %}#}
@@ -457,6 +495,7 @@
     {#    {% else %}#}
     {#        <h4 class="alert-info"> Login in and post a comment on this software</h4>#}
     {#    {% endif %}#}
+
 
 
     {% if current_user.id == software.owner_id %}

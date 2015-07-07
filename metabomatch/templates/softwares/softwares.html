@@ -106,9 +106,9 @@
 
     <div class="row">
 
-        <p class="help-block"><strong>Note:</strong><br/>Each rate and ranking are updated once a day.
-        </p>
+        <p class="help-block"><strong>Note:</strong><br/>Each rate and ranking are updated once a day.</p>
 
+        <div class="col-md-11">
             <table class="table table-condensed">
                 <thead>
                     <tr>
@@ -117,30 +117,31 @@
                         <th>Programming Language</th>
                         {#                        <th>Institute</th>#}
                         <th>Tags</th>
-                        <th>Current Rate</th>
-                        {% if current_user.is_authenticated() %}
-                            <th></th>
-                        {% endif %}
+                        <th class="text-center">Current Rate</th>
+                        {#                        {% if current_user.is_authenticated() %}#}
+                        {#                            <th></th>#}
+                        {#                        {% endif %}#}
                         <th>
-                            <small>
-                                <a href= {% if request.args %}
-                                    "{{ request.url +  '&sort_rate=True' }}"
-                                {% else %}
-                                    "{{ request.url +  '?sort_rate=True' }}"
-                                {% endif %} data-toggle="tooltip" title="sort softwares by rate">
-                                    <span class="fa fa-sort-amount-desc"></span>
-                                </a>
-                                <a href=
-                                           {% if request.args %}
-                                               "{{ request.url +  '&sort_name=True' }}"
-                                           {% else %}
-                                               "{{ request.url +  '?sort_name=True' }}"
-                                           {% endif %}
-                                data-toggle="tooltip"
-                                   title="sort softwares by name">
-                                    <span class="fa fa-sort-alpha-asc"></span>
-                                </a>
-                            </small>
+
+                            {#                            <small>#}
+                            {#                                <a href= {% if request.args %}#}
+                            {#                                    "{{ request.url +  '&sort_rate=True' }}"#}
+                            {#                                {% else %}#}
+                            {#                                    "{{ request.url +  '?sort_rate=True' }}"#}
+                            {#                                {% endif %} data-toggle="tooltip" title="sort softwares by rate">#}
+                            {#                                    <span class="fa fa-sort-amount-desc"></span>#}
+                            {#                                </a>#}
+                            {#                                <a href=#}
+                            {#                                           {% if request.args %}#}
+                            {#                                               "{{ request.url +  '&sort_name=True' }}"#}
+                            {#                                           {% else %}#}
+                            {#                                               "{{ request.url +  '?sort_name=True' }}"#}
+                            {#                                           {% endif %}#}
+                            {#                                data-toggle="tooltip"#}
+                            {#                                   title="sort softwares by name">#}
+                            {#                                    <span class="fa fa-sort-alpha-asc"></span>#}
+                            {#                                </a>#}
+                            {#                            </small>#}
                         </th>
                     </tr>
                 </thead>
@@ -185,31 +186,57 @@
                             </th>
                             {#                            {% if current_user.is_authenticated() %}#}
                                 {% set rate = soft.compute_rate() %}
-                                {% if rate >=70 %}
-                                    <th><label class="label label-primary">{{ rate }}</label></th>
-                                {% elif  50 <= rate < 70  %}
-                                    <th><label class="label label-success">{{ rate }}</label></th>
-                                {% elif  30 <= rate < 50  %}
-                                    <th><label class="label label-warning">{{ rate }}</label></th>
-                                {% elif  rate < 30 %}
-                                    <th><label class="label label-danger">{{ rate }}</label></th>
-                                {% endif %}
-                            {#                            {% else %}#}
-                            {#                                <th><label class="label label-default">hidden</label></th>#}
-                            {#                            {% endif %}#}
-                            {% if current_user.is_authenticated() and not soft.name in (current_user.softwares_used | map(attribute='name')) %}
-                                <th class="text-right"><a class="btn btn-sm btn-default"
-                                                          href="{{ url_for('softwares.register_user', name=soft.name) }}">Using
-                                    this software ?</a></th>
-                            {% elif current_user.is_authenticated() and soft.name in (current_user.softwares_used | map(attribute='name')) %}
-                                <th class="text-right"><a class="btn btn-sm btn-primary" href="/"><i
-                                        class="fa fa-certificate"></i> software user !</a></th>
-                            {% endif %}
+                            <th class="text-center">
+                                <label
+                                        {% if rate >=70 %}
+                                            class="label label-primary">
+                                        {% elif 50 <= rate < 70 %}
+                                            class="label label-success">
+                                        {% elif 30 <= rate < 50 %}
+                                            class="label label-warning">
+                                        {% elif rate < 30 %}
+                                            class="label label-danger">
+                                        {% endif %}
+                                {{ rate }}
+                                </label>
+                            </th>
                         </tr>
                     {% endfor %}
                 </tbody>
             </table>
+        </div>
+        <div class="col-md-1">
+            <div class="dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="true">
+                    sort by
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                    <li>
+                        {% if request.args %}
+                            <a href="{{ request.url +  '&sort_rate=True' }}"><span
+                                    class="fa fa-sort-amount-desc"></span> rate</a>
+                        {% else %}
+                            <a href="{{ request.url +  '?sort_rate=True' }}"><span
+                                    class="fa fa-sort-amount-desc"></span> rate</a>
+                        {% endif %}
 
+                    </li>
+                    <li>
+                        {% if request.args %}
+                            <a href="{{ request.url +  '&sort_name=True' }}"><span class="fa fa-sort-alpha-asc"></span>
+                                name</a>
+                        {% else %}
+                            <a href="{{ request.url +  '?sort_name=True' }}"><span class="fa fa-sort-alpha-asc"></span>
+                                name</a>
+                        {% endif %}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="row">
         {% if request.args.get('sort_name') is not none %}
             {{ render_pagination(softwares, url_for('softwares.index', sort_name=True)) }}
         {% elif request.args.get('sort_rate') is not none %}

@@ -292,8 +292,8 @@ def remove_user(name):
         current_user.save()
     except ValueError:
         pass
-    return redirect(url_for('user.profile', username=current_user.username))
-
+    # return redirect(url_for('user.profile', username=current_user.username))
+    return redirect(url_for('softwares.info', name=name))
 
 @softwares.route('/<name>/update', methods=['GET', 'POST'])
 @login_required
