@@ -13,20 +13,21 @@
 
     <h1><span class="text-muted">Software:</span> {{ script.software.name | default('No software defined') }}</h1>
 
+    {% if current_user.id == script.user.id %}
+        <form class="form-inline" method="post" action="{{ url_for('scripts.update_software', script_id=script.id) }}">
+            {{ form_software.hidden_tag() }}
 
-    <form class="form-inline" method="post" action="{{ url_for('scripts.update_software', script_id=script.id) }}">
-        {{ form_software.hidden_tag() }}
-
-        <div class="form-group">
-            <label>Change software:</label>
-            <select name='software' class="form-control ">
-                {% for c in form_software.software.choices %}
-                    <option value="{{ c[0] }}"> {{ c[0] }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <button class="btn btn-sm btn-default" type="submit">Change</button>
-    </form>
+            <div class="form-group">
+                <label>Change software:</label>
+                <select name='software' class="form-control ">
+                    {% for c in form_software.software.choices %}
+                        <option value="{{ c[0] }}"> {{ c[0] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button class="btn btn-sm btn-default" type="submit">Change</button>
+        </form>
+    {% endif %}
 
     <h2>
         <span class="text-muted">Script title:</span> {{ script.title }} by <a
