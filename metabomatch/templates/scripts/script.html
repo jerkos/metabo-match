@@ -32,8 +32,8 @@
     <h2>
         <span class="text-muted">Script title:</span> {{ script.title }} by <a
             href="{{ url_for('user.profile', username=script.user.username) }}">{{ script.user.username }}</a>
-        <a class="pull-right" href="{{ url_for('scripts.upvote', script_id=script.id) }}"><i
-                class="fa fa-thumbs-o-up"></i><span class="badge">{{ script.up_votes }}</span></a>
+        <a class="pull-right" href="{{ url_for('scripts.upvote', script_id=script.id) }}" rel="nofollow"><span
+                class="fa fa-thumbs-o-up"></span><span class="badge">{{ script.up_votes }}</span></a>
     </h2>
     <p class="help-block"> Click on <span class="fa fa-thumbs-o-up"></span> to upvote this script ! </p>
     <hr/>
