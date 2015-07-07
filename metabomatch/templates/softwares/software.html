@@ -39,7 +39,8 @@
                     <a href="{{ software.get_category_url() }}">Forum</a>,
                      {% if software.owner.avatar %}
                          <small>owner: <a href="{{ url_for('user.new_message', to_user=software.owner.username) }}"><img
-                                 src="{{ software.owner.avatar }}" width="30" height="30"></a></small>
+                                 class="img img-rounded" src="{{ software.owner.avatar }}" width="30" height="30"></a>
+                         </small>
                     {% else %}
                         <small>owner: <a href="{{ url_for('user.new_message', to_user=software.owner.username) }}"><img class="img img-rounded" src="{{ software.owner.email | gravatar }}" width="30" height="30"></a></small>
                     {% endif %}
