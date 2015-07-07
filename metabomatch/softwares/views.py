@@ -275,7 +275,7 @@ def register_user(name):
     soft = Software.query.filter(Software.name == name).first_or_404()
     current_user.softwares_used.append(soft)
     current_user.save()
-    return redirect(url_for('softwares.index'))
+    return redirect(url_for('softwares.info', name=name))
 
 
 @softwares.route('/<name>/remove_user')
