@@ -48,7 +48,7 @@ class RegisterForm(Form):
         DataRequired(message="Confirm Password required"),
         EqualTo("password", message="Passwords do not match")])
 
-    accept_tos = BooleanField("Accept Terms of Service", default=True)
+    # accept_tos = BooleanField("Accept Terms of Service", default=True)
 
     def validate_username(self, field):
         user = User.query.filter_by(username=field.data).first()
@@ -74,14 +74,11 @@ class RegisterRecaptchaForm(RegisterForm):
 
 
 class ReauthForm(Form):
-    password = PasswordField('Password', valdidators=[
-        DataRequired()])
+    password = PasswordField('Password', valdidators=[DataRequired()])
 
 
 class ForgotPasswordForm(Form):
-    email = StringField('Email', validators=[
-        DataRequired(message="Email reguired"),
-        Email()])
+    email = StringField('Email', validators=[DataRequired(message="Email required"), Email()])
 
 
 class ResetPasswordForm(Form):

@@ -108,7 +108,7 @@ class DefaultConfig(object):
     REDIS_DATABASE = 0
 
     # URL Prefixes.
-    FORUM_URL_PREFIX = "/forum"
+    FORUM_URL_PREFIX = "/discuss"
     USER_URL_PREFIX = "/user"
     AUTH_URL_PREFIX = "/auth"
     ADMIN_URL_PREFIX = "/admin"
