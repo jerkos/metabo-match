@@ -30,11 +30,11 @@
             {#        {% else %}#}
             {#            <p class="well text-center"><span class="fa fa-coffee fa-2x"></span><br/><strong>No upvote yet</strong></p>#}
         {% endfor %}
-        {#        {% if guest_count %}#}
-        {#            <li class="list-group-item">#}
-        {#                <h3>Guest <span class="badge pull-right">x{{ guest_count }}</span></h3>#}
-        {#            </li>#}
-        {#        {% endif %}#}
+        {% if guest_count %}
+            <li class="list-group-item">
+                <h3>Guest <span class="badge pull-right">x{{ guest_count }}</span></h3>
+            </li>
+        {% endif %}
     </ul>
 
 {% endblock %}
