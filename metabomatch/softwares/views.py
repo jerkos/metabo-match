@@ -236,8 +236,8 @@ def upvote(name, mapping_id):
     # create an upvote record
     upvote_inst = Upvote()
     upvote_inst.sentence_software_mapping_id = mapping_id if s_mapp is not None else abort(404)
-    if current_user.is_authenticated():
-        upvote_inst.user_id = current_user.id
+    upvote_inst.user_id = current_user.id if current_user.is_authenticated() else GUEST_USER_ID
+
     upvote_inst.save()
 
     flash("Vote taken into account ! ", "success")
@@ -255,15 +255,14 @@ def upvote_details(name, mapping_id):
     if s_mapp is None:
         abort(404)
     upvotes = Upvote.query.filter(Upvote.sentence_software_mapping_id == mapping_id).all()
-    guest_count = 0
+    non_guest_count = 0
     for u in upvotes:
-        if u.user is not None:
-            if u.user_id == GUEST_USER_ID:
-                guest_count += 1
+        if u.user is not None and u.user_id != GUEST_USER_ID:
+            non_guest_count += 1
     # fix bug
     upvotes = [u for u in upvotes if u.user_id != GUEST_USER_ID and u.user is not None]
     return render_template("softwares/all_upvotes.html", software=soft, upvotes=upvotes, soft_mapping=s_mapp,
-                           guest_count=guest_count)
+                           guest_count=s_mapp.upvote - non_guest_count)
 
 
 @softwares.route('/<name>/register_user')
