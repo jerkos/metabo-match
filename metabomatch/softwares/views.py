@@ -257,9 +257,8 @@ def upvote_details(name, mapping_id):
     upvotes = Upvote.query.filter(Upvote.sentence_software_mapping_id == mapping_id).all()
     guest_count = 0
     for u in upvotes:
-        if u.user is not None:
-            if u.user_id == GUEST_USER_ID:
-                guest_count += 1
+        if u.user_id == GUEST_USER_ID or u.user is None:
+            guest_count += 1
     # fix bug
     upvotes = [u for u in upvotes if u.user_id != GUEST_USER_ID and u.user is not None]
     return render_template("softwares/all_upvotes.html", software=soft, upvotes=upvotes, soft_mapping=s_mapp,
