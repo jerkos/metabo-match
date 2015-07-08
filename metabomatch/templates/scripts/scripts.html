@@ -23,18 +23,19 @@
 
 {% block content %}
     <p class="help-block">
-        <strong>Help ?</strong><br/>You can provide here some piece of code you find useful and or refer a
-        <strong>gist</strong>
-        file from <a href="github.com">github</a>.
-        {#        For more complex scripts or example, we strongly encourage to use#}
-        {#        Gist#}
-        {#        and its versioning system.#}
+        <strong>Help ?</strong>
+        <br/>
+        You can provide here some piece of code you find useful and or refer a <strong>gist</strong> file from <a
+            href="github.com">github</a>.
     </p>
     <p class="help-block">
         You can also provide a set of <strong>parameters</strong> for a software algorithm for a specific mass
-        spectrometer.
-        You can <strong>tag</strong> your parameters with mass spectrometer vendor names (e.g. <em>thermo, orbitrap,
+        spectrometer and <strong>tag</strong> your parameters with mass spectrometer vendor names (e.g. <em>thermo,
+        orbitrap,
         fusion</em>).
+    </p>
+    <p class="help-block">
+        Finally, you can also store anything under plain text.
     </p>
 
     <h1><i class="fa fa-code-fork text-muted"></i> # available scripts/parameters: {{ scripts.total }}</h1>

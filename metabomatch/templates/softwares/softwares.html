@@ -115,34 +115,8 @@
                         <th>Software</th>
                         <th>Ranking</th>
                         <th>Programming Language</th>
-                        {#                        <th>Institute</th>#}
                         <th>Tags</th>
-                        <th class="text-center">Current Rate</th>
-                        {#                        {% if current_user.is_authenticated() %}#}
-                        {#                            <th></th>#}
-                        {#                        {% endif %}#}
-                        <th>
-
-                            {#                            <small>#}
-                            {#                                <a href= {% if request.args %}#}
-                            {#                                    "{{ request.url +  '&sort_rate=True' }}"#}
-                            {#                                {% else %}#}
-                            {#                                    "{{ request.url +  '?sort_rate=True' }}"#}
-                            {#                                {% endif %} data-toggle="tooltip" title="sort softwares by rate">#}
-                            {#                                    <span class="fa fa-sort-amount-desc"></span>#}
-                            {#                                </a>#}
-                            {#                                <a href=#}
-                            {#                                           {% if request.args %}#}
-                            {#                                               "{{ request.url +  '&sort_name=True' }}"#}
-                            {#                                           {% else %}#}
-                            {#                                               "{{ request.url +  '?sort_name=True' }}"#}
-                            {#                                           {% endif %}#}
-                            {#                                data-toggle="tooltip"#}
-                            {#                                   title="sort softwares by name">#}
-                            {#                                    <span class="fa fa-sort-alpha-asc"></span>#}
-                            {#                                </a>#}
-                            {#                            </small>#}
-                        </th>
+                        <th class="text-center">Global rate</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -166,26 +140,24 @@
                                 {% endif %}
                             </th>
                             <th><small>{{ soft.programming_language }}</small></th>
-                            {#                            <th><small>{{ soft.organization }}</small></th>#}
                             <th><small>
                                 {% set soft_tags = soft.tags| map(attribute='tag') | join(',') %}
                                 {% if 'Signal Extraction' in soft_tags %}
-                                    <i class="btn btn-primary fa fa-tag"></i>
+                                    <span class="btn btn-primary fa fa-tag"></span>
                                 {% endif %}
                                 {% if 'LC Alignment' in soft_tags %}
-                                    <i class="btn btn-success fa fa-tag"></i>
+                                    <span class="btn btn-success fa fa-tag"></span>
                                 {% endif %}
                                 {% if 'Database Search' in soft_tags %}
-                                    <i class="btn btn-warning fa fa-tag"></i>
+                                    <span class="btn btn-warning fa fa-tag"></span>
                                 {% endif %}
                                 {% if 'Statistical Analysis' in soft_tags %}
-                                    <i class="btn btn-danger fa fa-tag"></i>
+                                    <span class="btn btn-danger fa fa-tag"></span>
                                 {% endif %}
                                 </small>
 
                             </th>
-                            {#                            {% if current_user.is_authenticated() %}#}
-                                {% set rate = soft.compute_rate() %}
+                            {% set rate = soft.compute_rate() %}
                             <th class="text-center">
                                 <label
                                         {% if rate >=70 %}
@@ -221,7 +193,6 @@
                             <a href="{{ request.url +  '?sort_rate=True' }}"><span
                                     class="fa fa-sort-amount-desc"></span> rate</a>
                         {% endif %}
-
                     </li>
                     <li>
                         {% if request.args %}

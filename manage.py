@@ -1,13 +1,21 @@
 import sys
+import os
+from itertools import groupby
 
 from flask import current_app
-from metabomatch.softwares.models import Software, SentenceSoftwareMapping, Sentence, get_nb_commits
+
+try:
+    from metabomatch.private_keys import GUEST_USER_ID
+except ImportError:
+    GUEST_USER_ID = os.environ.get('GUEST_USER_ID')
+
 from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError, OperationalError
 from flask.ext.script import (Manager, Shell, Server, prompt, prompt_pass,
                               prompt_bool)
 from flask.ext.migrate import MigrateCommand
 
+from metabomatch.softwares.models import Software, SentenceSoftwareMapping, Sentence, get_nb_commits, Upvote
 from metabomatch.app import create_app
 from metabomatch.extensions import db
 from metabomatch.flaskbb.utils.populate import (create_test_data, create_welcome_forum,
@@ -132,10 +140,27 @@ def update_softwares_rates():
 def init_rankings():
     Software.set_rankings()
 
-
 @manager.command
-def test_commits():
-    print get_nb_commits('OpenMS', 'OpenMS')
+def fix_upvotes():
+    sentence_soft_map = SentenceSoftwareMapping.query.all()
+    for o in sentence_soft_map:
+        for i in range(3):
+            o.upvote -= 1
+        o.save()
+    upvotes = Upvote.query.all()
+    for key, group in groupby(upvotes, key=lambda _: _.sentence_software_mapping.software_id):
+        up = set(group)
+        i = 0
+        to_break = False
+        while i < 3 and not to_break:
+            for u in up:
+                if u.user_id == GUEST_USER_ID:
+                    up.delete()
+                    up.remove(u)
+                    i += 1
+                    break
+            if GUEST_USER_ID not in {u.user_id for u in up}:
+                to_break = True
 
 if __name__ == "__main__":
     manager.run()

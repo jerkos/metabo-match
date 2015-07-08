@@ -16,8 +16,6 @@
         .big-font {
             font-size: 1.2em;
         }
-
-
         /*add line github style */
         .github-li.active {
             border-top: 3px solid #D26911;
@@ -284,7 +282,6 @@
                             <hr/>
                             {% for c in software.ratings[-5:] %}
                                 <p class="text-center">
-                                    {#                                    <b><a href="{{ url_for('user.profile', username=c.user.username) }}">{{ c.user.username }}</a></b> :#}
                                     <a href="{{ url_for('user.profile', username=c.user.username) }}">
 
                                         <img class="img img-circle"
@@ -331,11 +328,6 @@
                             {% endfor %}
 
                         </div>
-                        {#                        <div class="col-md-4">#}
-                        {#                            <h5 class="text-center"><i class="fa fa-flash text-muted"></i> Last matches</h5>#}
-                        {#                            <hr/>#}
-                        {#                            <p class="text-center"><label class="label label-danger">Available soon !</label></p>#}
-                        {#                        </div>#}
                     </div>
                 </div>
 
@@ -447,16 +439,15 @@
                                                                            href="{{ url_for('softwares.remove_user', name=software.name) }}"
                                                                            rel="nofollow">No more ?</a></p>
 
-            {#        {% else %}#}
-            {#            <p class="well text-center"><strong>Must be logged to view</strong></p>#}
         {% endif %}
     </div>
-    {#    {% if current_user.is_authenticated() %}#}
+
+    <!-- Post a review row -->
     <div class="row" style="padding-top:20px;">
             {#            {% if not current_user.has_commented(software.name) or not current_user.has_commented or show_comment_form %}#}
             {#            {% if show_comment_form %}#}
 
-        <h3><span class="text-muted fa fa-comment"></span> Post a review about this software...</h3>
+        <h3><span class="text-muted fa fa-comment"></span> Post a review about this software</h3>
         <hr/>
                 <form class="form-horizontal" method="post" action="{{ url_for('softwares.comment', name=software.name) }}">
                     {{ form.hidden_tag() }}
@@ -464,7 +455,8 @@
                     <div class="form-group">
                         <label class="col-md-3 control-label">Leave a comment or a rating</label>
                         <div class="col-md-9">
-                            <textarea class="form-control" rows="10" name="content" placeholder="Fill this!"></textarea>
+                            <textarea class="form-control" rows="10" name="content"
+                                      placeholder="Your thoughts about {{ software.name }}"></textarea>
                         </div>
                     </div>
                     {#                    {% endif %}#}
@@ -492,11 +484,6 @@
             {#            {% endif %}#}
 
         </div>
-    {#    {% else %}#}
-    {#        <h4 class="alert-info"> Login in and post a comment on this software</h4>#}
-    {#    {% endif %}#}
-
-
 
     {% if current_user.id == software.owner_id %}
         <hr/>

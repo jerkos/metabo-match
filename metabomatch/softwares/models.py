@@ -102,6 +102,11 @@ class Upvote(db.Model):
         db.session.commit()
         return self
 
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+
 class Tag(db.Model):
     """Tag model representing step in the classical metabolomic pipeline"""
 
