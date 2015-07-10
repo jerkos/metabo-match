@@ -18,7 +18,7 @@ NEWS_PER_PAGE = 5
 @news.route('/')
 def index():
     page = request.args.get('page', 1, type=int)
-    articles = Article.query.order_by(asc(Article.creation_date)).paginate(page, NEWS_PER_PAGE, True)
+    articles = Article.query.order_by(desc(Article.creation_date)).paginate(page, NEWS_PER_PAGE, True)
     print [a.creation_date for a in articles.items]
     return render_template('news/news.html', articles=articles, form=Form())
 
