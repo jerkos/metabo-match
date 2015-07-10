@@ -230,6 +230,7 @@ def update_comment(name, comment_id):
     flash("Comment content successfully updated", "success")
     return redirect(url_for('softwares.comments', name=soft.name))
 
+
 @softwares.route('/<name>/ratings')
 def ratings(name):
     soft = Software.query.filter(Software.name == name).first_or_404()
