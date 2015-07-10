@@ -6,6 +6,7 @@ Software views
 from datetime import datetime, timedelta
 from itertools import groupby
 from collections import OrderedDict
+from metabomatch.user.models import User
 import os
 
 try:
@@ -74,8 +75,30 @@ def index():
         # softs.sort(key=lambda _: -len(_.tags))
     comment_insts = Comment.query.order_by(desc(Comment.date_created)).limit(5).all()
     rating_insts = Rating.query.order_by(desc(Rating.date_created)).limit(5).all()
-    r = [('comment' if isinstance(x, Comment) else 'rating', x)
-         for x in sorted(comment_insts + rating_insts, key=lambda _: _.date_created, reverse=True)]
+    upvote_insts = Upvote.query.order_by(desc(Upvote.date_created)).limit(5).all()
+
+    guest_user = User.query.filter(User.id == GUEST_USER_ID).first()
+
+    upvotes_fixed = []
+    for u in upvote_insts:
+        if u.user is None:
+            u.user = guest_user
+            u.save()
+        u.date_created = datetime(u.date_created.year, u.date_created.month, u.date_created.day)
+        upvotes_fixed.append(u)
+
+    r = []
+    for x in sorted(comment_insts + rating_insts + upvotes_fixed, key=lambda _: _.date_created, reverse=True)[:10]:
+        if isinstance(x, Comment):
+            s = 'comment'
+        elif isinstance(x, Rating):
+            s = 'rating'
+        else:
+            # upvote
+            s = 'upvote'
+        r.append((s, x))
+    # r = [('comment' if isinstance(x, Comment) else 'rating', x)
+    #      for x in sorted(comment_insts + rating_insts, key=lambda _: _.date_created, reverse=True)]
 
     return render_template('softwares/softwares.html',
                            softwares=softs,

@@ -224,7 +224,7 @@
             <div class="container" style="width:100%">
                 <div class="col-md-1">
 
-                    <span class="fa  {% if kind == 'comment' %} fa-comments-o {% else %} fa-certificate {% endif %} fa-3x text-muted"></span>
+                    <span class="fa  {% if kind == 'comment' %} fa-comments-o {% elif kind == 'rating' %} fa-certificate {% else %} fa-chevron-circle-up {% endif %} fa-3x text-muted"></span>
                 </div>
                 <div class="col-md-11">
                     <p></p>
@@ -237,7 +237,7 @@
                                 <em>{{ inst.date_created | time_since }}</em>
                             </strong>
                         </p>
-                    {% else %}
+                    {% elif kind == 'rating' %}
                         <p>
                             <strong>
                                 <a href="{{ url_for('user.profile', username=inst.user.username) }}">{{ inst.user.username }}</a>
@@ -245,6 +245,16 @@
                                 for <a
                                     href="{{ url_for('softwares.info', name=inst.software.name) }}">{{ inst.software.name }}</a>
                                 <em>{{ inst.date_created | time_since }}</em>
+                            </strong>
+                        </p>
+                    {% else %}
+                        <p>
+                            <strong>
+                                <a href="{{ url_for('user.profile', username=inst.user.username) }}">{{ inst.user.username }}</a>
+                                upvoted
+                                <a href="{{ url_for('softwares.info', name=inst.sentence_software_mapping.software.name) }}">{{ inst.sentence_software_mapping.software.name }}
+                                </a>
+                                <em>{{ inst.date_created | time_since }}</em> ago.
                             </strong>
                         </p>
                     {% endif %}
