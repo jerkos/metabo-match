@@ -126,6 +126,7 @@ def initflaskbb(username=None, password=None, email=None):
 
     flask_app.logger.info("Congratulations! FlaskBB has been successfully installed")
 
+
 @manager.command
 def update_softwares_rates():
     softwares = Software.query.all()
@@ -139,6 +140,7 @@ def update_softwares_rates():
 @manager.command
 def init_rankings():
     Software.set_rankings()
+
 
 @manager.command
 def fix_upvotes():
@@ -161,6 +163,18 @@ def fix_upvotes():
                     break
             if GUEST_USER_ID not in {u.user_id for u in up}:
                 to_break = True
+
+
+@manager.command
+def reset_upvotes():
+    sentence_soft_map = SentenceSoftwareMapping.query.all()
+    for o in sentence_soft_map:
+        o.upvote -= 1
+        o.save()
+    upvotes = Upvote.query.all()
+    for u in upvotes:
+        u.delete()
+
 
 if __name__ == "__main__":
     manager.run()
