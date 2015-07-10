@@ -169,7 +169,7 @@ def fix_upvotes():
 def reset_upvotes():
     sentence_soft_map = SentenceSoftwareMapping.query.all()
     for o in sentence_soft_map:
-        o.upvote -= 1
+        o.upvote = 0
         o.save()
     upvotes = Upvote.query.all()
     for u in upvotes:
