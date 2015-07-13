@@ -156,16 +156,16 @@
         {% set soft_tags = software.tags| map(attribute='tag') | join(',') %}
         <small style="font-size:0.5em;">
         {% if 'Signal Extraction' in soft_tags %}
-            <span class="btn btn-primary fa fa-tag">Signal Extraction</span>
+            <span class="btn btn-primary"><span class="fa fa-tag"></span> Signal Extraction</span>
         {% endif %}
         {% if 'LC Alignment' in soft_tags %}
-            <span class="btn btn-success fa fa-tag">LC Alignment</span>
+            <span class="btn btn-success"><span class="fa fa-tag"></span> LC Alignment</span>
         {% endif %}
         {% if 'Database Search' in soft_tags %}
-            <span class="btn btn-warning fa fa-tag">Database Search</span>
+            <span class="btn btn-warning"><span class="fa fa-tag"></span> Database Search</span>
         {% endif %}
         {% if 'Statistical Analysis' in soft_tags %}
-            <span class="btn btn-danger fa fa-tag">Statistical/Pathway analysis</span>
+            <span class="btn btn-danger"><span class="fa fa-tag"></span> Statistical/Pathway analysis</span>
         {% endif %}
         </small>
         </h3>
