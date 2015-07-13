@@ -432,7 +432,7 @@
         <hr/>
         <p class="lead">
             There are currently <span class="badge">{{ software.users | length }}</span> <strong>metabomatch
-            users</strong> using this software:
+            users</strong> using this software {% if software.users | length %} : {% else %}.{% endif %}
             {% for u in software.users[:5] %}
 
                 <a href="{{ url_for('user.new_message', to_user=u.username) }}">
