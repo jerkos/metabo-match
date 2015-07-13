@@ -31,9 +31,9 @@
             <h1>{{ software.name }}
                 <small>
                     <label style="font-size: 0.4em;" class="label label-success">{{ software.insertion_date | time_since }}</label>
-                    {% if software.omictools_id %}
-                        <a href='/'>{{ software.omictools_id }}</a>,
-                    {% endif %}
+                    <!--{% if software.omictools_id %}-->
+                        <!--<a href='/'>{{ software.omictools_id }}</a>,-->
+                    <!--{% endif %}-->
                     <a href="{{ software.get_category_url() }}">Forum</a>,
                      {% if software.owner.avatar %}
                          <small>owner: <a href="{{ url_for('user.new_message', to_user=software.owner.username) }}"><img
@@ -47,7 +47,7 @@
             </h1>
             <div class="container" style="width:100%">
                 <div class="row">
-                    <img src="http://metabomatch.s3.amazonaws.com/{{ [software.name|lower] |join("") }}" class="img-responsive thumbnail" width="300" height="150"/>
+                    <img src="http://metabomatch.s3.amazonaws.com/{{ [software.name|lower] |join('') }}" class="img-responsive thumbnail" width="300" height="150"/>
                 </div>
 
                 <div class="row" style="padding-top: 20px;">
