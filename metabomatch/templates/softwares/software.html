@@ -147,9 +147,29 @@
             {% endif %}
         </div>
     </div>
-    <p class="help-block" style="padding-bottom: 50px;"><em>Click on buttons to navigate</em></p>
+    <p class="help-block" style="padding-bottom: 20px;"><em>Click on buttons to navigate</em></p>
 
     <div class="row" style="padding-bottom: 50px;">
+        <h3>
+            <span class="text-muted">Tags: </span>
+
+        {% set soft_tags = software.tags| map(attribute='tag') | join(',') %}
+        <small style="font-size:0.5em;">
+        {% if 'Signal Extraction' in soft_tags %}
+            <span class="btn btn-primary fa fa-tag">Signal Extraction</span>
+        {% endif %}
+        {% if 'LC Alignment' in soft_tags %}
+            <span class="btn btn-success fa fa-tag">LC Alignment</span>
+        {% endif %}
+        {% if 'Database Search' in soft_tags %}
+            <span class="btn btn-warning fa fa-tag">Database Search</span>
+        {% endif %}
+        {% if 'Statistical Analysis' in soft_tags %}
+            <span class="btn btn-danger fa fa-tag">Statistical/Pathway analysis</span>
+        {% endif %}
+        </small>
+        </h3>
+
         <h3>
             <span class="text-muted">Organization: </span>
 

@@ -6,6 +6,7 @@ Software views
 from datetime import datetime, timedelta
 from itertools import groupby
 from collections import OrderedDict
+from metabomatch.news.models import Article
 from metabomatch.user.models import User
 import os
 
@@ -100,9 +101,12 @@ def index():
     # r = [('comment' if isinstance(x, Comment) else 'rating', x)
     #      for x in sorted(comment_insts + rating_insts, key=lambda _: _.date_created, reverse=True)]
 
+    last_articles = Article.query.order_by(desc(Article.creation_date)).limit(5)
+
     return render_template('softwares/softwares.html',
                            softwares=softs,
                            activities=r,
+                           last_articles=last_articles,
                            best_softwares=best_softs_by_cat(),
                            delta_rankings_ui=Software.pos_delta_upvotes(category='UI'),
                            delta_rankings_perf=Software.pos_delta_upvotes(category='PERFORMANCE'),

@@ -217,14 +217,17 @@
         {% endif %}
     </div>
 
+    <div class="row">
+
+    <div class="col-md-8 col-sm-12">
     <h2>Recent activity</h2>
     <hr/>
     {% for kind, inst in activities %}
-        <div class="alert alert-default">
-            <div class="container" style="width:100%">
+        <div class="alert alert-default" style="padding-top:0">
+            <div class="container" style="width:100%;">
                 <div class="col-md-1">
 
-                    <span class="fa  {% if kind == 'comment' %} fa-comments-o {% elif kind == 'rating' %} fa-certificate {% else %} fa-chevron-circle-up {% endif %} fa-3x text-muted"></span>
+                    <span class="fa  {% if kind == 'comment' %} fa-comments-o {% elif kind == 'rating' %} fa-certificate {% else %} fa-chevron-circle-up {% endif %} fa-2x text-muted"></span>
                 </div>
                 <div class="col-md-11">
                     <p></p>
@@ -266,7 +269,18 @@
                 </div>
             </div>
         </div>
-    {% endfor %}
+            {% endfor %}
+
+        </div>
+
+        <div class="col-md-4 col-sm-12 text-right">
+            <h2>Last news</h2>
+            <hr/>
+            {% for article in last_articles %}
+                <h4>{{ article.title | crop_title(50) }} <small class="text-muted">{{article.creation_date | format_date}}</small></h4>
+            {% endfor %}
+        </div>
+    </div>
 {% endblock %}
 
 {% block javascript %}

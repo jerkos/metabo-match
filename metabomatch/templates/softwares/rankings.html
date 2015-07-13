@@ -14,12 +14,12 @@
     <hr/>
 
     <h2 style="padding-top: 20px;">
-        <span class="fa fa-glass text-muted"></span> Winner of the day: user rates
+        <span class="fa fa-glass text-muted"></span> Winner of the day by <em>user rates</em>
         <small class="text-muted">{{ today | format_date }}</small>
         :  {% if winning_software != "No winner today..." %}
-        <a href={{ url_for('softwares.info', name=winning_software) }}>{{ winning_software }}</a>
+        <small><a href="{{ url_for('softwares.info', name=winning_software) }}">{{ winning_software }}</a></small>
     {% else %}
-        {{ winning_software }}
+        <small>{{ winning_software }}</small>
     {% endif %}
     </h2>
 
@@ -32,12 +32,14 @@
     {% endif %}
 
     <h2 style="padding-top: 20px;">
-        <span class="fa fa-glass text-muted"></span> Winner of the day: upvotes
+        <span class="fa fa-glass text-muted"></span> Winner of the day by <em>upvotes</em>
         <small class="text-muted">{{ today | format_date }}</small>
         : {% if winning_software_upvotes != "No winner today..." %}
-        <a href={{ url_for('softwares.info', name=winning_software_upvotes) }}>{{ winning_software_upvotes }}</a>
+        <small>
+            <a href="{{ url_for('softwares.info', name=winning_software_upvotes) }}">{{ winning_software_upvotes }}</a>
+        </small>
     {% else %}
-        {{ winning_software_upvotes }}
+        <small>{{ winning_software_upvotes }}</small>
     {% endif %}
     </h2>
     {% if winning_software_upvotes != "No winner today..." %}
@@ -61,27 +63,27 @@
                     <th><strong># rank</strong></th>
                     <th>software</th>
                     <th>value</th>
-                    <th>evolution</th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for s, upvotes in best_ui_softwares %}
-                    <tr {% if loop.index == 1 %} style="font-size: 2em;" class="info"{% endif %}>
+                    <tr {% if loop.index == 1 %} style="font-size: 1.6em;" class="info"{% endif %}>
                         <th>{{ loop.index }} {% if loop.index == 1 %} <span class="fa fa-diamond"></span>{% endif %}
                         </th>
-                        <th><a href="{{ url_for('softwares.info', name=s) }}">{{ s }}</a></th>
-                        <th><span class="badge">{{ upvotes }}</span></th>
                         <th>
+                            <a href="{{ url_for('softwares.info', name=s) }}">{{ s }}</a>
                             {% set delta_global_rate = delta_rankings_ui[s] %}
                             {% if delta_global_rate < 0 %}
-                                <span class="text-danger"><strong>{{ delta_global_rate }}</strong></span>
+                                <small class="text-danger"><strong>{{ delta_global_rate }}</strong></small>
                             {% elif delta_global_rate > 0 %}
-                                <span class="text-success"><strong>+{{ delta_global_rate }}</strong></span>
+                                <small class="text-success"><strong>+{{ delta_global_rate }}</strong></small>
                             {% else %}
-                                <span data-toggle='tooltip' title="Ranking remains the same"
-                                      class="text-info fa fa-compress"></span>
+                                <small data-toggle='tooltip' title="Ranking remains the same"
+                                      class="text-info fa fa-compress"></small>
                             {% endif %}
                         </th>
+                        <th><span class="badge">{{ upvotes }}</span></th>
+
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -96,27 +98,27 @@
                     <th><strong># rank</strong></th>
                     <th>software</th>
                     <th>value</th>
-                    <th>evolution</th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for s, upvotes in best_performance_softwares %}
-                    <tr {% if loop.index == 1 %} style="font-size: 2em;" class="info"{% endif %}>
+                    <tr {% if loop.index == 1 %} style="font-size: 1.6em;" class="info"{% endif %}>
                         <th>{{ loop.index }} {% if loop.index == 1 %} <span class="fa fa-diamond"></span>{% endif %}
                         </th>
-                        <th><a href="{{ url_for('softwares.info', name=s) }}">{{ s }}</a></th>
-                        <th><span class="badge">{{ upvotes }}</span></th>
                         <th>
+                            <a href="{{ url_for('softwares.info', name=s) }}">{{ s }}</a>
                             {% set delta_global_rate = delta_rankings_perf[s] %}
                             {% if delta_global_rate < 0 %}
-                                <span class="text-danger"><strong>{{ delta_global_rate }}</strong></span>
+                                <small class="text-danger"><strong>{{ delta_global_rate }}</strong></small>
                             {% elif delta_global_rate > 0 %}
-                                <span class="text-success"><strong>+{{ delta_global_rate }}</strong></span>
+                                <small class="text-success"><strong>+{{ delta_global_rate }}</strong></small>
                             {% else %}
-                                <span data-toggle='tooltip' title="Ranking remains the same"
-                                      class="text-info fa fa-compress"></span>
+                                <small data-toggle='tooltip' title="Ranking remains the same"
+                                      class="text-info fa fa-compress"></small>
                             {% endif %}
+
                         </th>
+                        <th><span class="badge">{{ upvotes }}</span></th>
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -132,27 +134,26 @@
                     <th><strong># rank</strong></th>
                     <th>software</th>
                     <th>value</th>
-                    <th>evolution</th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for s, upvotes in best_support_softwares %}
-                    <tr {% if loop.index == 1 %} style="font-size: 2em;" class="info"{% endif %}>
+                    <tr {% if loop.index == 1 %} style="font-size: 1.6em;" class="info"{% endif %}>
                         <th>{{ loop.index }} {% if loop.index == 1 %} <span class="fa fa-diamond"></span>{% endif %}
                         </th>
-                        <th><a href="{{ url_for('softwares.info', name=s) }}">{{ s }}</a></th>
-                        <th><span class="badge">{{ upvotes }}</span></th>
                         <th>
+                            <a href="{{ url_for('softwares.info', name=s) }}">{{ s }}</a>
                             {% set delta_global_rate = delta_rankings_support[s] %}
                             {% if delta_global_rate < 0 %}
-                                <span class="text-danger"><strong>{{ delta_global_rate }}</strong></span>
+                                <small class="text-danger"><strong>{{ delta_global_rate }}</strong></small>
                             {% elif delta_global_rate > 0 %}
-                                <span class="text-success"><strong>+{{ delta_global_rate }}</strong></span>
+                                <small class="text-success"><strong>+{{ delta_global_rate }}</strong></small>
                             {% else %}
-                                <span data-toggle='tooltip' title="Ranking remains the same"
-                                      class="text-info fa fa-compress"></span>
+                                <small data-toggle='tooltip' title="Ranking remains the same"
+                                      class="text-info fa fa-compress"></small>
                             {% endif %}
                         </th>
+                        <th><span class="badge">{{ upvotes }}</span></th>
                     </tr>
                 {% endfor %}
                 </tbody>
