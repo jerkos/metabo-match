@@ -351,11 +351,10 @@ def update_description(name):
 
     if soft.owner_id != current_user.id and not is_admin(current_user):
         return abort(401)
-    print request.form
     soft.algorithm_description = request.form['description']
     soft.save()
     flash('description updated', 'success')
-    return redirect(url_for('softwares.info', name=name, form=Form()))
+    return redirect(url_for('softwares.info', name=name))
 
 
 @softwares.route('/rankings', methods=['GET'])

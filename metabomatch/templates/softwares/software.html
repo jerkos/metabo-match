@@ -62,7 +62,7 @@
                             <textarea name="description" style="resize: none" class="form-control" rows="5" placeholder="You can write a tagline here">{{ software.algorithm_description |default('', true) }}</textarea>
                         {% else %}
                             {% if software.algorithm_description %}
-                                <p style="font-size: 1.2em">{{ software.algorithm_description| replace('\r\n', '<br/>') | safe }}</p>
+                                <p style="font-size: 1.2em; text-align:justified;">{{ software.algorithm_description| replace('\r\n', '<br/>') | safe }}</p>
                             {% endif %}
                         {% endif %}
 
