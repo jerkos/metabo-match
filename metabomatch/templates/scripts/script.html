@@ -32,8 +32,11 @@
     <h2>
         <span class="text-muted">Script title:</span> {{ script.title }} by <a
             href="{{ url_for('user.profile', username=script.user.username) }}">{{ script.user.username }}</a>
-        <a class="pull-right" href="{{ url_for('scripts.upvote', script_id=script.id) }}" rel="nofollow"><span
-                class="fa fa-thumbs-o-up"></span><span class="badge">{{ script.up_votes }}</span></a>
+        <a class="pull-right a-upvotes" data-scriptid="{{script.id}}" href="#">
+            <!--"{{ url_for('scripts.upvote', script_id=script.id) }}"-->
+            <span class="fa fa-thumbs-o-up"></span>
+            <span class="badge">{{ script.up_votes }}</span>
+        </a>
     </h2>
     <p class="help-block"> Click on <span class="fa fa-thumbs-o-up"></span> to upvote this script ! </p>
     <hr/>
@@ -103,5 +106,13 @@
             f.appendChild(script_content);
             f.submit();
         });
+    </script>
+
+    <script>
+    $('.a-upvotes').on('click',  function(e){
+        e.preventDefault();
+        var script_id = $(this).data('scriptid');
+        $.get("/scripts/" + script_id + "/upvote", function() {location.reload()});
+    });
     </script>
 {% endblock %}

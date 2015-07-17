@@ -246,8 +246,8 @@
                                 <li class="list-group-item">
                                     <strong>{{ sentence_mapping.sentence.sentence }}</strong>
 
-                                    <a href="{{ url_for('softwares.upvote', name=software.name, mapping_id=sentence_mapping.id) }}"
-                                       rel="nofollow">
+                                    <a class="a-upvotes" data-mappingid="{{sentence_mapping.id}}" href="#" rel="nofollow">
+                                            <!--href="{{ url_for('softwares.upvote', name=software.name, mapping_id=sentence_mapping.id) }}"-->
                                         <span class="fa fa-chevron-circle-up fa-2x"></span>
                                     </a>
 
@@ -549,7 +549,13 @@
 
         $('#software').addClass('active');
     </script>
-
+    <script>
+        $('.a-upvotes').on('click',  function(e){
+            e.preventDefault();
+            var mapping_id = $(this).data('mappingid');
+            $.get("/softwares/{{software.name}}/upvote/" + mapping_id, function() {location.reload()});
+        });
+    </script>
     <script src="{{ url_for('static', filename='js/jquery.sparklines.min.js') }}"></script>
 
 {% endblock %}
