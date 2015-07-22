@@ -26,8 +26,9 @@ from metabomatch.achievements import SoftwareAchievement, SCORE_SOFT
 from metabomatch.extensions import db
 from metabomatch.flaskbb.utils.helpers import render_template
 from metabomatch.flaskbb.utils.permissions import is_admin
-from metabomatch.softwares.models import Software, Tag, Comment, Rating, Sentence, SentenceSoftwareMapping, Upvote
-from metabomatch.softwares.forms import SoftwareForm, SoftwareUpdateForm
+from metabomatch.softwares.models import Software, Tag, Comment, Rating, Sentence, SentenceSoftwareMapping, Upvote, \
+    ProCons, ProConsUpvote
+from metabomatch.softwares.forms import SoftwareForm, SoftwareUpdateForm, ProConsForm
 from metabomatch.utils import s3_upload, s3_upload_from_server, s3_delete, mean, best_softs_by_cat
 
 softwares = Blueprint("softwares", __name__, template_folder="../../templates")
@@ -194,6 +195,8 @@ def info(name):
                            form=Form())
 
 
+# COMMENTS and RATINGS
+# ----------------------------------------------------------------------------------------------------------------------
 @softwares.route('/<name>/comment', methods=['POST'])  # @login_required
 def comment(name):
     """
@@ -242,6 +245,8 @@ def ratings(name):
     return render_template('softwares/all_ratings.html', software=soft, mean=m)
 
 
+# SENTENCES upvotes
+# ----------------------------------------------------------------------------------------------------------------------
 @softwares.route('/<name>/upvote/<int:mapping_id>')
 def upvote(name, mapping_id):
     """
@@ -293,6 +298,45 @@ def upvote_details(name, mapping_id):
                            guest_count=s_mapp.upvote - non_guest_count)
 
 
+# PROCONS routes
+# ----------------------------------------------------------------------------------------------------------------------
+@softwares.route('/<name>/register_procon', methods=['GET', 'POST'])
+def register_procon(name):
+    form = ProConsForm()
+    if form.validate_on_submit():
+        # create new procon object
+        procon = ProCons(request.form['kind'], request.form['title'], request.form['description'])
+        procon.owner_id = current_user.id if current_user.is_authenticated() else GUEST_USER_ID
+        procon.software_name = name
+        procon.save()
+        flash('successfully saved !', 'success')
+        return redirect(url_for('softwares.info', name=name))
+    soft = Software.query.filter(Software.name == name).first_or_404()
+    return render_template('softwares/register_procons.html', software=soft, form=form)
+
+
+@softwares.route('/<name>/procons_upvote/<int:procon_id>')
+def upvote_procon(name, procon_id):
+    user_id = current_user.id if current_user.is_authenticated() else GUEST_USER_ID
+    proconup = ProConsUpvote(procon_id, user_id)
+    proconup.save()
+    return redirect(url_for('softwares.info', name=name))
+
+
+@softwares.route('/<name>/pros')
+def pros(name):
+    soft = Software.query.filter(Software.name == name).first_or_404()
+    return render_template('softwares/all_pros.html', software=soft)
+
+
+@softwares.route('/<name>/cons')
+def cons(name):
+    soft = Software.query.filter(Software.name == name).first_or_404()
+    return render_template('softwares/all_cons.html', software=soft)
+
+
+# software users routes
+# ----------------------------------------------------------------------------------------------------------------------
 @softwares.route('/<name>/register_user')
 @login_required
 def register_user(name):
@@ -324,6 +368,9 @@ def remove_user(name):
     # return redirect(url_for('user.profile', username=current_user.username))
     return redirect(url_for('softwares.info', name=name))
 
+
+# Update software informations and description
+# ----------------------------------------------------------------------------------------------------------------------
 @softwares.route('/<name>/update', methods=['GET', 'POST'])
 @login_required
 def update(name):
@@ -357,6 +404,8 @@ def update_description(name):
     return redirect(url_for('softwares.info', name=name))
 
 
+# RANKINGS
+# ----------------------------------------------------------------------------------------------------------------------
 @softwares.route('/rankings', methods=['GET'])
 def rankings():
     softwares_inst = Software.query.all()

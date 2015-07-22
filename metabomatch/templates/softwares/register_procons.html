@@ -1,0 +1,59 @@
+{% extends theme("layout.html") %}
+{% from theme("macros.html") import horizontal_field %}
+{% from theme("macros.html") import horizontal_field_fa %}
+
+{% from theme("macros.html") import field_label %}
+{% from theme("macros.html") import render_boolean_field %}
+
+
+{% block title %}
+    Register procons - Metabomatch
+{% endblock %}
+
+{% block keywords %}
+    <meta name="keywords" content="metabomatch, software, register, pro, cons, upvote, backed, database, ranking">
+    <meta name="description" content="Register new pro or cons for {{ software.name }} in metabomatch database">
+{% endblock %}
+
+{% block css %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/selectize.bootstrap3.css') }}">
+{% endblock %}
+
+{% block content %}
+
+    <h1>Register new pro/con for <a title="{{ software.name }} informations"
+                                    href="{{ url_for('softwares.info', name=software.name) }}">{{ software.name }}</a>
+    </h1>
+
+    <form class="form-horizontal" action="{{ url_for('softwares.register_procon', name=software.name) }}" role="form"
+          method="POST">
+        {{ form.hidden_tag() }}
+
+        <div class="form-group row">
+            <label class="control-label col-md-3">Pro or con ?</label>
+
+            <div class="col-md-9">
+                <select name='kind' class="form-control ">
+                    {% for c in form.kind.choices %}
+                        <option value="{{ c[0] }}">{{ c[0] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        {{ horizontal_field(form.title, icon_class='fa fa-laptop fa-2x') }}
+        {{ horizontal_field(form.description, icon_class='fa fa-briefcase fa-2x') }}
+
+
+        <div class="form-group">
+            <div class="col-sm-offset-3 col-sm-9">
+                <button type="submit" class="btn btn-success">Register</button>
+            </div>
+        </div>
+    </form>
+{% endblock %}
+
+{% block javascript %}
+    {{ super() }}
+    <script src="{{ url_for('static', filename='js/selectize.js') }}"></script>
+{% endblock %}

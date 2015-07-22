@@ -107,6 +107,68 @@ class Upvote(db.Model):
         db.session.commit()
 
 
+class ProCons(db.Model):
+    __tablename__ = 'procons'
+    possible_kinds = {'pro', 'con'}
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    kind = db.Column(db.String, nullable=False, default='pro')
+    title = db.Column(db.String, nullable=False)
+    description = db.Column(db.String)
+    # upvote = db.Column(db.Integer, default=0)  # more precisely upvote counts
+
+    # Foreign keys
+    software_name = db.Column(db.String, db.ForeignKey("softwares.name"), nullable=False)
+    owner_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+
+    # Relationship
+    software = db.relationship('Software', foreign_keys=[software_name], backref='procons')
+    owner = db.relationship('User', foreign_keys=[owner_id], backref='procons')
+
+    def __init__(self, kind, title, description):
+        if kind not in ProCons.possible_kinds:
+            kind = 'pro'
+        self.kind = kind
+        self.title = title
+        self.description = description
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def delete(self):
+        db.session.remove(self)
+        db.session.commit()
+
+
+class ProConsUpvote(db.Model):
+    __tablename__ = 'procons_upvotes'
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    upvote_date = db.Column(db.DateTime, default=datetime.now())
+
+    procons_id = db.Column(db.Integer, db.ForeignKey("procons.id"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)  # case user was not identified
+
+    # RelationShip
+    procons = db.relationship('ProCons', foreign_keys=[procons_id], backref='procons_upvotes')
+    user = db.relationship('User', foreign_keys=[user_id], backref='procons_upvotes', lazy='joined')
+
+    def __init__(self, procons_id, user_id):
+        self.procons_id = procons_id
+        self.user_id = user_id
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def delete(self):
+        db.session.remove(self)
+        db.session.commit()
+
+
 class Tag(db.Model):
     """Tag model representing step in the classical metabolomic pipeline"""
 
@@ -176,6 +238,7 @@ class Comment(db.Model):
 
     def get_content(self):
         return self.content.replace('\n', '<br/>')
+
 
 class Software(db.Model):
     """
@@ -356,6 +419,15 @@ class Software(db.Model):
         self.nb_issues, self.nb_opened_issues = get_nb_issues(*github_infos)
         self.nb_downloads = get_nb_downloads(*github_infos)
 
+    @property
+    def pros(self):
+        # todo: replace pro by constant
+        return sorted([p for p in self.procons if p.kind == 'pro'], key=lambda x: -len(x.procons_upvotes))
+
+    @property
+    def cons(self):
+        return sorted([p for p in self.procons if p.kind == 'con'], key=lambda x: -len(x.procons_upvotes))
+
     @staticmethod
     def set_rankings(softwares=None):
         if softwares is None:
@@ -442,6 +514,7 @@ class Software(db.Model):
             return {s[0].name: s[0].last_position_by_support_upvotes - actual[s[0].name] for s in softwares_perf}
         else:
             pass
+
 
 ###---multiprocessing for requesting github API
 def get_publication_citation_nb(publication_id):

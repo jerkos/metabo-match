@@ -1,0 +1,90 @@
+{% extends theme("layout.html") %}
+
+{% block title %}
+    {{ software.name }} pros - Metabomatch
+{% endblock %}
+
+{% block keywords %}
+    <meta name="keywords" content="metabomatch, rankings, pros, cons, software, comments, user">
+    <meta name="description" content="All pro arguments concerning the {{ software.name }} software">
+{% endblock %}
+
+{% block css %}
+    {{ super() }}
+    <style>
+        .custom-button {
+            display: inline;
+            padding: 2px 2px 2px 2px;
+            border-radius: 5px;
+        }
+
+        .border-green {
+            border: 1px solid green;
+        }
+
+        .border-red {
+            border: 1px solid darkred;
+        }
+    </style>
+{% endblock %}
+
+
+{% block content %}
+    <h1>
+        <span class="fa fa-thumbs-o-up text-muted"></span>
+        <a href={{ url_for('softwares.info', name=software.name) }}> {{ software.name }}</a> All pros
+    </h1>
+    <hr/>
+    <ul class="list-group">
+        {% for con in software.pros %}
+            <li class="list-group-item">
+
+                <h2 class="list-group-item-heading text-success">
+                    <div class="custom-button border-green">
+                        <span class="fa fa-fire"></span>
+                        | <a style="color:inherit; text-decoration: none;" class="procons-upvote"
+                             data-proconid="{{ con.id }}" href="#">upvotes: {{ con.procons_upvotes | length }}</a>
+                    </div>
+                    <span style="padding-left:10px"></span>
+                    {{ con.title }}
+                    {% if con.owner.avatar %}
+                        <img class='img-rounded' src="{{ con.owner.avatar }}" alt="gravatar" height="25" width="25">
+                    {% else %}
+                        <img class='img-rounded' src="{{ con.owner.email | gravatar }}" alt="gravatar" height="25"
+                             width="25">
+                    {% endif %}
+                </h2>
+                <p class="list-group-item-text">
+                    {{ con.description }} <br/>
+                    <span class="text-success"><em>backed by</em> <strong>{{ con.procons_upvotes | length }}
+                        users</strong></span>
+                    {% for proc_up in con.procons_upvotes %}
+                        <a href="{{ url_for('user.new_message', to_user=proc_up.user.username) }}">
+                            <img class="img img-circle"
+                                    {% if proc_up.user.avatar %}
+                                 src="{{ proc_up.user.avatar }}"
+                                    {% else %}
+                                 src="{{ proc_up.user.email | gravatar }}"
+                                    {% endif %}
+                                 width="25" height="25" data-toggle="tooltip" title="{{ proc_up.user.username }}">
+                        </a>
+                    {% endfor %}
+                </p>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+
+{% block javascript %}
+    {{ super() }}
+
+    <script>
+        $('.procons-upvote').on('click', function (e) {
+            e.preventDefault();
+            var proconid = $(this).data('proconid');
+            $.get("/softwares/{{software.name}}/procons_upvote/" + proconid, function () {
+                location.reload()
+            });
+        });
+    </script>
+{% endblock %}

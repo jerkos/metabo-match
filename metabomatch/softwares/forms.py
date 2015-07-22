@@ -3,14 +3,14 @@ Softwares forms
 """
 from flask.ext.login import current_user
 from flask.ext.wtf import Form, RecaptchaField
-from wtforms import StringField, IntegerField, BooleanField, SelectField, FileField
+from wtforms import StringField, IntegerField, BooleanField, SelectField, FileField, TextAreaField
 from wtforms.validators import DataRequired, Email, EqualTo, regexp, ValidationError, Optional, URL
 
 from metabomatch.flaskbb.forum.models import Category, Forum
 from metabomatch.flaskbb.utils.populate import create_sentences_mapping
 
 from metabomatch.extensions import db
-from metabomatch.softwares.models import Software, Tag, Sentence
+from metabomatch.softwares.models import Software, Tag, Sentence, ProCons
 
 
 class SoftwareForm(Form):
@@ -112,3 +112,8 @@ class SoftwareUpdateForm(SoftwareForm):
         return soft.save()
 
 
+class ProConsForm(Form):
+    kind = SelectField("Pro or Con ?", description="Select the appropriate tag",
+                       choices=[(p, p) for p in {'pro', 'con'}])
+    title = StringField('title', validators=[DataRequired(message='a title is needed')])
+    description = TextAreaField('short description', validators=[Optional()])
