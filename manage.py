@@ -153,16 +153,21 @@ def fix_upvotes():
     for key, group in groupby(upvotes, key=lambda _: _.sentence_software_mapping.software_id):
         up = set(group)
         i = 0
-        to_break = False
-        while i < 3 and not to_break:
+        if key in ('Proteowizard', 'Rdisop'):
             for u in up:
                 if u.user_id == GUEST_USER_ID:
                     u.delete()
-                    up.remove(u)
-                    i += 1
-                    break
-            if GUEST_USER_ID not in {u.user_id for u in up}:
-                to_break = True
+                break
+        to_break = False
+        # while i < 3 and not to_break:
+        #     for u in up:
+        #         if u.user_id == GUEST_USER_ID:
+        #             u.delete()
+        #             up.remove(u)
+        #             i += 1
+        #             break
+        #     if GUEST_USER_ID not in {u.user_id for u in up}:
+        #         to_break = True
 
 
 @manager.command
