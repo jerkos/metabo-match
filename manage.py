@@ -144,21 +144,23 @@ def init_rankings():
 
 @manager.command
 def fix_upvotes():
-    # sentence_soft_map = SentenceSoftwareMapping.query.all()
-    # for o in sentence_soft_map:
-    #     for i in range(3):
-    #         o.upvote -= 1
-    #     o.save()
-    upvotes = Upvote.query.all()
-    for key, group in groupby(upvotes, key=lambda _: _.sentence_software_mapping.software_id):
-        up = set(group)
-        i = 0
-        if key in ('Proteowizard', 'Rdisop'):
-            for u in up:
-                if u.user_id == GUEST_USER_ID:
-                    u.delete()
-                break
-        to_break = False
+    sentence_soft_map = SentenceSoftwareMapping.query.all()
+    for o in sentence_soft_map:
+        if o.software.name in ('Proteowizard', 'Rdisop'):
+            o.upvote -= 1
+            o.save()
+
+            # upvotes = Upvote.query.all()
+            # for key, group in groupby(upvotes, key=lambda _: _.sentence_software_mapping.software_id):
+            #     up = set(group)
+            #     i = 0
+            #     if key in ('Proteowizard', 'Rdisop'):
+            #         for u in up:
+            #             if u.user_id == GUEST_USER_ID:
+            #                 u.delete()
+            #             break
+
+            # to_break = False
         # while i < 3 and not to_break:
         #     for u in up:
         #         if u.user_id == GUEST_USER_ID:
