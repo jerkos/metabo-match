@@ -188,7 +188,7 @@ def reset_upvotes():
 def fix_procon_upvote():
     procon_upvote = ProConsUpvote.query.all()
     for p in procon_upvote:
-        if p.title.startswith("One") and p.procons.software_name == 'Proteowizard':
+        if p.procons.software_name == 'Proteowizard':
             p.kind = 'pro'
             p.save()
 
