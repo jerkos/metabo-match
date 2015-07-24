@@ -16,7 +16,7 @@ from flask.ext.script import (Manager, Shell, Server, prompt, prompt_pass,
 from flask.ext.migrate import MigrateCommand
 
 from metabomatch.softwares.models import Software, SentenceSoftwareMapping, Sentence, get_nb_commits, Upvote, \
-    ProConsUpvote
+    ProConsUpvote, ProCons
 from metabomatch.app import create_app
 from metabomatch.extensions import db
 from metabomatch.flaskbb.utils.populate import (create_test_data, create_welcome_forum,
@@ -186,9 +186,9 @@ def reset_upvotes():
 
 @manager.command
 def fix_procon_upvote():
-    procon_upvote = ProConsUpvote.query.all()
+    procon_upvote = ProCons.query.all()
     for p in procon_upvote:
-        if p.procons.software_name == 'Proteowizard':
+        if p.software_name == 'Proteowizard':
             p.kind = 'pro'
             p.save()
 
