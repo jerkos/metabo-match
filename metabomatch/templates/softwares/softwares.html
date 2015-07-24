@@ -274,12 +274,19 @@
 
         </div>
 
-        <div class="col-md-4 col-sm-12 text-right">
+        <div class="col-md-4 col-sm-12">
+            {#         text-right">#}
             <h2>Last news</h2>
             <hr/>
             {% for article in last_articles %}
-                <h4>{{ article.title | crop_title(50) }} <small class="text-muted">{{article.creation_date | format_date}}</small></h4>
+                <div class="alert alert-default">
+                    <h4>{{ article.title | crop_title(50) }}
+                        <small class="text-muted">{{ article.creation_date | format_date }}</small>
+                    </h4>
+                    <p><em>{{ article.to_html() | safe | crop_title(50) }}</em></p>
+                </div>
             {% endfor %}
+            </ul>
         </div>
     </div>
 {% endblock %}
