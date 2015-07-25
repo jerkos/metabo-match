@@ -9,6 +9,7 @@
     <meta name="description" content="List all scripts and parameters posted by metabomatch users.">
 {% endblock %}
 
+
 {% block content %}
 
     <h1><span class="text-muted">Software:</span> {{ script.software.name | default('No software defined') }}</h1>
@@ -72,11 +73,11 @@
 
 {% block javascript %}
     {{ super() }}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.9/ace.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.0/ace.js"></script>
     <script>
         var editor = ace.edit("editor");
         editor.getSession().setUseWorker(false);
-        editor.setTheme("ace/theme/monokai");
+        editor.setTheme("ace/theme/dawn");
         editor.getSession().setMode("ace/mode/{{ script.programming_language | lower }}");
         editor.setOptions({
             maxLines: 100,
