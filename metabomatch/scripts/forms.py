@@ -33,8 +33,10 @@ class ScriptForm(Form):
         script = Script(self.title.data, self.programming_language.data)
         script.description = self.description.data
         script.user_id = current_user.id
-        if software_name != 'None':
+        if software_name != 'None' and software_name != '---':
             script.software_id = software_name
+        else:
+            script.software_id = None
         script.up_votes = 0
 
         if self.github_gist_url.data:
