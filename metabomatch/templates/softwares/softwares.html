@@ -228,7 +228,7 @@
             <div class="container" style="width:100%;">
                 <div class="col-md-1">
 
-                    <span class="fa  {% if kind == 'comment' %} fa-comments-o {% elif kind == 'rating' %} fa-certificate {% else %} fa-chevron-circle-up {% endif %} fa-2x text-muted"></span>
+                    <span class="fa  {% if kind == 'comment' %} fa-comments-o {% elif kind == 'script' %} fa-code {% elif kind == 'rating' %} fa-certificate {% else %} fa-chevron-circle-up {% endif %} fa-2x text-muted"></span>
                 </div>
                 <div class="col-md-11">
                     <p></p>
@@ -239,6 +239,15 @@
                                 posted a comment on <a
                                     href="{{ url_for('softwares.info', name=inst.software.name) }}">{{ inst.software.name }}</a>
                                 <em>{{ inst.date_created | time_since }}</em>
+                            </strong>
+                        </p>
+                    {% elif kind == 'script' %}
+                        <p>
+                            <strong>
+                                <a href="{{ url_for('user.profile', username=inst.user.username) }}">{{ inst.user.username }}</a>
+                                just submit a <a
+                                    href="{{ url_for('scripts.info', script_id=inst.id, slug=inst.slug) }}">new
+                                script</a> <em>{{ inst.creation_date | time_since }}</em>
                             </strong>
                         </p>
                     {% elif kind == 'rating' %}

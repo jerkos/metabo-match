@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 from itertools import groupby
 from collections import OrderedDict
 from metabomatch.news.models import Article
+from metabomatch.scripts.models import Script
 from metabomatch.user.models import User
 import os
 
@@ -78,6 +79,7 @@ def index():
     comment_insts = Comment.query.order_by(desc(Comment.date_created)).limit(5).all()
     rating_insts = Rating.query.order_by(desc(Rating.date_created)).limit(5).all()
     upvote_insts = Upvote.query.order_by(desc(Upvote.date_created)).limit(5).all()
+    script_insts = Script.query.order_by(desc(Script.creation_date)).limit(5).all()
 
     guest_user = User.query.filter(User.id == GUEST_USER_ID).first()
 
@@ -90,11 +92,15 @@ def index():
         upvotes_fixed.append(u)
 
     r = []
-    for x in sorted(comment_insts + rating_insts + upvotes_fixed, key=lambda _: _.date_created, reverse=True)[:10]:
+    for x in sorted(script_insts + comment_insts + rating_insts + upvotes_fixed,
+                    key=lambda _: _.date_created if isinstance(_, (Upvote, Rating, Comment)) else _.creation_date,
+                    reverse=True)[:10]:
         if isinstance(x, Comment):
             s = 'comment'
         elif isinstance(x, Rating):
             s = 'rating'
+        elif isinstance(x, Script):
+            s = 'script'
         else:
             # upvote
             s = 'upvote'

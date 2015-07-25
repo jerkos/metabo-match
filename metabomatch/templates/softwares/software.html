@@ -325,7 +325,7 @@
                                                 {% else %}
                                                     src="{{ c.user.email | gravatar }}"
                                                 {% endif %}
-                                                    width="25" height="25">
+                                             width="25" height="25" data-toggle="tooltip" title="{{ c.user.username }}">
                                     </a>
                                     gave
                                     {% set nb_stars = (c.rate / 10.0) | int %}
@@ -350,7 +350,8 @@
                                                     {% else %}
                                                         src="{{ c.user.email | gravatar }}"
                                                     {% endif %}
-                                                        width="25" height="25">
+                                                 width="25" height="25" data-toggle="tooltip"
+                                                 title="{{ c.user.username }}">
                                         </a>
                                     </b>
                                     <small class="text-muted">{{ c.date_created | format_date }}</small>
