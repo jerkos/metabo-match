@@ -50,7 +50,8 @@ def index():
         filtered_scripts = Script.query.order_by(desc(Script.creation_date)).paginate(page, SCRIPTS_PER_PAGE, True)
     return render_template('scripts/scripts.html',
                            scripts=filtered_scripts,
-                           softwares=softwares)
+                           softwares=softwares,
+                           search_form=Form())
 
 
 @scripts.route('/register', methods=['GET', 'POST'])

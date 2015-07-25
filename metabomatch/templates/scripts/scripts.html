@@ -38,11 +38,19 @@
         Finally, you can also store anything under plain text.
     </p>
 
-    <h1><i class="fa fa-code-fork text-muted"></i> # available scripts/parameters: {{ scripts.total }}</h1>
+    <h2>You want to submit a piece of code ? <a class="btn btn-default" href="{{ url_for('scripts.register') }}">Register
+        new script</a></h2>
+    <p class="help-block">
+        All users will be able to see your script or parameters set: share something useful !
+    </p>
+
+    <h1 style="padding-top: 20px;"><i class="fa fa-code-fork text-muted"></i> # available
+        scripts/parameters: {{ scripts.total }}</h1>
     <hr/>
 
     <h2>Search</h2>
     <form class="form-inline" method="get" action="{{ url_for('scripts.index') }}">
+        {{ search_form.hidden_tag() }}
         <div class="form-group">
             <select class="form-control" id="exampleInputEmail2" name="software">
                 <option>---</option>
@@ -105,11 +113,7 @@
     </div>
     <hr/>
 
-    <h2>You want to submit a piece of code ? <a class="btn btn-default" href="{{ url_for('scripts.register') }}">Register
-        new script</a></h2>
-    <p class="help-block">
-        All users will be able to see your script or parameters set: share something useful !
-    </p>
+
 {% endblock %}
 
 
