@@ -34,14 +34,17 @@
 
 {% block content %}
     <p class="help-block">
-        <strong>Help ?</strong><br/>Posting a job here may help you to find the best candidate in metabolomics <em>bioinformatics</em>
-        !
+        <strong>Help ?</strong><br/>
+        Posting a job here may help you to find the best candidate in metabolomics <em>bioinformatics</em> !
+        <a style="margin-left: 10px;" class="btn btn-default" href="{{ url_for('jobs.register') }}">Register a job
+            offer</a>
     </p>
 
     <h1>
-        <span class="fa fa-briefcase text-muted"></span> Find the job of your dream in <em>metabolomics</em> area
-        <small class="text-muted">or post a new <a href="{{ url_for('jobs.register') }}">job offer</a></small>
+        <span class="fa fa-briefcase text-muted"></span> Find the job of your dream in the field of
+        <em>metabolomics</em>.
     </h1>
+
     <hr/>
 
     {% if jobs.total %}
