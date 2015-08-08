@@ -30,11 +30,11 @@
             <div class="panel-heading text-center"><strong>user basic informations</strong></div>
             <div class="panel-content cont">
                 {% if user.avatar %}
-                    <img style="margin-top:20px" src="{{ user.avatar }}" alt="Avatar" height="150" width="150">
+                    <img style="margin-top:20px" class='img-responsive img-rounded' src="{{ user.avatar }}" alt="Avatar" height="150" width="150">
                 {% else %}
-                    <img style="margin-top:20px" class='img-rounded' src="{{ user.email | gravatar }}" alt="gravatar"
-                         height="200" width="200" data-toggle="tooltip" data-placement="bottom"
-                         title="Tooltip on bottom">
+                    <img style="margin-top:20px" class='img-responsive img-rounded' src="{{ user.email | gravatar }}" alt="gravatar"
+                         height="150" width="150" data-toggle="tooltip" data-placement="bottom"
+                         title="{{user.username}}">
                 {% endif %}
 
                 <h1>{{ user.username }}

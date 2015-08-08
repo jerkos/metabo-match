@@ -85,9 +85,9 @@ def index():
 
     upvotes_fixed = []
     for u in upvote_insts:
-        if u.user is None:
-            u.user = guest_user
-            u.save()
+        # if u.user is None:
+        #     u.user = guest_user
+        #     u.save()
         u.date_created = datetime(u.date_created.year, u.date_created.month, u.date_created.day)
         upvotes_fixed.append(u)
 
