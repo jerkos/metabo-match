@@ -326,7 +326,7 @@
                     <h4>{{ article.title | crop_title(50) }}
                         <small class="text-muted">{{ article.creation_date | format_date }}</small>
                     </h4>
-                    <p><em>{{ article.to_html() | safe | crop_title(50) }}</em></p>
+                    <!--<p><em>{{ article.to_html() | safe | crop_title(50) }}</em></p>-->
                 </div>
             {% endfor %}
             </ul>
