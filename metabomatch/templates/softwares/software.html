@@ -42,13 +42,13 @@
 
     <div class="row">
         <div class="col-md-9">
-            <h1>{{ software.name }}
+            <h1><a href="{{ software.get_category_url() }}">{{ software.name }}</a>
                 <small>
                     <label style="font-size: 0.4em;" class="label label-success">{{ software.insertion_date | time_since }}</label>
                     <!--{% if software.omictools_id %}-->
                         <!--<a href='/'>{{ software.omictools_id }}</a>,-->
                     <!--{% endif %}-->
-                    <a href="{{ software.get_category_url() }}">Forum</a>,
+                    <!--<a href="{{ software.get_category_url() }}">Forum</a>,-->
                      {% if software.owner.avatar %}
                          <small>owner: <a href="{{ url_for('user.new_message', to_user=software.owner.username) }}"><img
                                  class="img img-rounded" src="{{ software.owner.avatar }}" width="30" height="30"></a>
