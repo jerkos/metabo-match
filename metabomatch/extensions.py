@@ -19,6 +19,7 @@ from flask.ext.migrate import Migrate
 from flask.ext.themes2 import Themes
 from flask.ext.plugins import PluginManager
 from flask.ext.github import GitHub
+from flask_htmlmin import HTMLMIN
 from flask_wtf.csrf import CsrfProtect
 from flask_gravatar import Gravatar
 from flask_babel import Babel
@@ -61,3 +62,5 @@ csrf = CsrfProtect()
 babel = Babel()
 
 compress = Compress()
+
+htmlminify = HTMLMIN()

@@ -49,6 +49,7 @@ class DefaultConfig(object):
     REAUTH_VIEW = "auth.reauth"
     LOGIN_MESSAGE_CATEGORY = "error"
 
+    MINIFY_PAGE = True
     ## Caching
     # For all available caching types, take a look at the Flask-Cache docs
     # https://pythonhosted.org/Flask-Cache/#configuring-flask-cache
