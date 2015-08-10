@@ -155,7 +155,7 @@ def configure_extensions(app):
 
         # to show unread messages in the toolbar
         unread_count = db.session.query(db.func.count(PrivateMessage.id)).\
-            filter(PrivateMessage.unread is True,
+            filter(PrivateMessage.unread,
                    PrivateMessage.user_id == user_id).subquery()
         u = db.session.query(User, unread_count).filter(User.id == user_id).first()
 
