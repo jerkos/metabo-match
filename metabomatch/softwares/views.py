@@ -94,7 +94,7 @@ def index():
     r = []
     for x in sorted(script_insts + comment_insts + rating_insts + upvotes_fixed,
                     key=lambda _: _.date_created if isinstance(_, (Upvote, Rating, Comment)) else _.creation_date,
-                    reverse=True)[:10]:
+                    reverse=True):
         if isinstance(x, Comment):
             s = 'comment'
         elif isinstance(x, Rating):
