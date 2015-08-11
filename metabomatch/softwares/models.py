@@ -89,7 +89,7 @@ class Upvote(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     sentence_software_mapping_id = db.Column(db.Integer, db.ForeignKey("sentences_software_mapping.id"), nullable=False)
-    date_created = db.Column(db.Date, default=datetime.now())
+    date_created = db.Column(db.Date, default=datetime.utcnow())
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)  # case user was not identified
 
     sentence_software_mapping = db.relationship('SentenceSoftwareMapping',
@@ -147,7 +147,7 @@ class ProConsUpvote(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
 
-    upvote_date = db.Column(db.DateTime, default=datetime.now())
+    upvote_date = db.Column(db.DateTime, default=datetime.utcnow())
 
     procons_id = db.Column(db.Integer, db.ForeignKey("procons.id"), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)  # case user was not identified
