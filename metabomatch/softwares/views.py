@@ -109,7 +109,7 @@ def index():
             s = 'script'
         else:
             # upvote
-            t = most_recent - x.creation_date
+            t = most_recent - x.date_created
             s = 'upvote'
         if t.days < 30:
             r.append((s, x))
