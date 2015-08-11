@@ -111,7 +111,7 @@ def index():
             # upvote
             t = most_recent - x.date_created
             s = 'upvote'
-        if t.days < 30:
+        if t.days < 50:
             r.append((s, x))
     # r = [('comment' if isinstance(x, Comment) else 'rating', x)
     #      for x in sorted(comment_insts + rating_insts, key=lambda _: _.date_created, reverse=True)]
