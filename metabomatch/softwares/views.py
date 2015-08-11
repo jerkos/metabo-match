@@ -92,19 +92,27 @@ def index():
         upvotes_fixed.append(u)
 
     r = []
-    for x in sorted(script_insts + comment_insts + rating_insts + upvotes_fixed,
-                    key=lambda _: _.date_created if isinstance(_, (Upvote, Rating, Comment)) else _.creation_date,
-                    reverse=True):
+    sorted_insts = sorted(script_insts + comment_insts + rating_insts + upvotes_fixed,
+                          key=lambda _: _.date_created if isinstance(_, (Upvote, Rating, Comment)) else _.creation_date,
+                          reverse=True)
+    most_recent = sorted_insts[0].creation_date if isinstance(sorted_insts[0], Script) else sorted_insts[0].date_created
+    for x in sorted_insts:
+        t = 0
         if isinstance(x, Comment):
+            t = most_recent - x.date_created
             s = 'comment'
         elif isinstance(x, Rating):
+            t = most_recent - x.date_created
             s = 'rating'
         elif isinstance(x, Script):
+            t = most_recent - x.creation_date
             s = 'script'
         else:
             # upvote
+            t = most_recent - x.creation_date
             s = 'upvote'
-        r.append((s, x))
+        if t.days < 30:
+            r.append((s, x))
     # r = [('comment' if isinstance(x, Comment) else 'rating', x)
     #      for x in sorted(comment_insts + rating_insts, key=lambda _: _.date_created, reverse=True)]
 
