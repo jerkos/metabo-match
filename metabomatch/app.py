@@ -180,7 +180,8 @@ def configure_extensions(app):
     #
     compress.init_app(app)
 
-    htmlminify.init_app(app)
+    # problem in script formatting
+    # htmlminify.init_app(app)
 
 def configure_template_filters(app):
     """
