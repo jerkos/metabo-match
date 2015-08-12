@@ -45,7 +45,7 @@
     We don't insert ourselves the job name so you can present it as you want.</p>
     <div class="row">
 
-        <div class="col-md-8">
+        <div class="col-md-12">
             <form id="register-job-form" class="form-horizontal" role="form" method="POST" action="{{ url_for('jobs.register') }}">
                 {{ form.hidden_tag() }}
 
@@ -113,25 +113,25 @@
             </form>
         </div>
 
-        <div id="stats" class="col-md-4">
-            <div class="container">
-                <div class="row">
-                    <h4>Total job offers: <span class="badge">{{ jobs_count }}</span></h4>
-                    <h4>Total job views: <span class="badge">{{ sum_views | default(0, true) }}</span></h4>
-                </div>
-                <div class="row">
-                    <h4>Top 5 companies</h4>
-                        <ul>
-                            {% for nb, company in top_companies %}
-                                <li><a href="#">{{ company }}</a></li>
-                            {% else %}
-                                <li>Nothing here yet</li>
-                            {% endfor %}
-                        </ul>
-                </div>
-            </div>
+        <!--<div id="stats" class="col-md-4">-->
+            <!--<div class="container">-->
+                <!--<div class="row">-->
+                    <!--<h4>Total job offers: <span class="badge">{{ jobs_count }}</span></h4>-->
+                    <!--<h4>Total job views: <span class="badge">{{ sum_views | default(0, true) }}</span></h4>-->
+                <!--</div>-->
+                <!--<div class="row">-->
+                    <!--<h4>Top 5 companies</h4>-->
+                        <!--<ul>-->
+                            <!--{% for nb, company in top_companies %}-->
+                                <!--<li><a href="#">{{ company }}</a></li>-->
+                            <!--{% else %}-->
+                                <!--<li>Nothing here yet</li>-->
+                            <!--{% endfor %}-->
+                        <!--</ul>-->
+                <!--</div>-->
+            <!--</div>-->
 
-        </div>
+        <!--</div>-->
 
 
     </div>
