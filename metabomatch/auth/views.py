@@ -5,18 +5,45 @@
     resetting the password of a user if he has lost his password
 
 """
-from flask import Blueprint, flash, redirect, url_for, request, current_app, session
-from flask.ext.login import (current_user, login_user, login_required,
-                             logout_user, confirm_login, login_fresh)
 
-from metabomatch.extensions import github
+import os
+
+from flask import Blueprint, flash, redirect, url_for, request, current_app, session
+from flask_login import current_user, login_user, login_required, logout_user, confirm_login, login_fresh
+
+from metabomatch.extensions import github, oauth
 from metabomatch.flaskbb.utils.helpers import render_template
 from metabomatch.email import send_reset_token
-from metabomatch.auth.forms import (LoginForm, ReauthForm, ForgotPasswordForm, ResetPasswordForm)
+from metabomatch.auth.forms import LoginForm, ReauthForm, ForgotPasswordForm, ResetPasswordForm
 from metabomatch.user.models import User
+
+try:
+    from metabomatch.private_keys import TWITTER_CONSUMER_KEY, TWITTER_CONSUMER_SECRET
+except ImportError:
+    TWITTER_CONSUMER_KEY, TWITTER_CONSUMER_SECRET = None, None
 
 
 auth = Blueprint("auth", __name__)
+
+
+# Use Twitter as example remote application
+twitter = oauth.remote_app('twitter',
+                           # unless absolute urls are used to make requests, this will be added
+                           # before all URLs.  This is also true for request_token_url and others.
+                           base_url='https://api.twitter.com/1.1/',
+                           # where flask should look for new request tokens
+                           request_token_url='https://api.twitter.com/oauth/request_token',
+                           # where flask should exchange the token with the remote application
+                           access_token_url='https://api.twitter.com/oauth/access_token',
+                           # twitter knows two authorizatiom URLs.  /authorize and /authenticate.
+                           # they mostly work the same, but for sign on /authenticate is
+                           # expected because this will give the user a slightly different
+                           # user interface on the twitter side.
+                           authorize_url='https://api.twitter.com/oauth/authenticate',
+                           # the consumer keys from the twitter application registry.
+                           consumer_key=TWITTER_CONSUMER_KEY or os.environ.get('TWITTER_CONSUMER_KEY'),
+                           consumer_secret=TWITTER_CONSUMER_SECRET or os.environ.get('TWITTER_CONSUMER_SECRET')
+                           )
 
 
 @auth.route("/login", methods=["GET", "POST"])
@@ -34,7 +61,7 @@ def login():
                                                 form.password.data)
 
         if user and authenticated:
-            #remove this key when a user is authenticated
+            # remove this key when a user is authenticated
             session.pop('nb_views', None)
             login_user(user, remember=form.remember_me.data)
             return redirect(request.args.get("next") or url_for("home.index"))
@@ -158,10 +185,34 @@ def login_github():
     return github.authorize()
 
 
+# twitter authentication
+@auth.route('/login_twitter')
+def login_twitter():
+    callback_url = url_for('auth.twitter_authorized', next=request.args.get('next'))
+    return twitter.authorize(callback=callback_url or request.referrer or None)
+
+
+@auth.route('/twitter-authorized')
+def twitter_authorized():
+    next_url = request.args.get('next') or url_for('softwares.index')
+    resp = twitter.authorized_response()
+    if resp is None:
+        flash('Twitter login failed !', 'danger')
+        return redirect(url_for('softwares.index'))
+
+    user = User.query.filter(User.username == resp['screen_name']).first()
+    if user is None:
+        user = User.create_from_twitter_oauth(resp)
+
+    login_user(user, True)
+    flash("Twitter login succeeded.", "success")
+    return redirect(next_url)
+
+
 @auth.route('/github-callback')
 @github.authorized_handler
 def authorized(oauth_token):
-    #next_url = request.args.get('next') or url_for('index')
+    next_url = request.args.get('next') or url_for('softwares.index')
     if oauth_token is None:
         flash("Authorization failed.", "danger")
         return redirect(url_for('auth.login'))
@@ -170,21 +221,21 @@ def authorized(oauth_token):
     if user is None:
         user = User.create_github_account(oauth_token)
 
-    if user is None:
-        flash("An error occurred during github auth.", "danger")
-        return redirect(url_for('auth.login'))
-
-    session.pop('nb_views', None)
-    #  force remembering
+    # session.pop('nb_views', None)
+    # force remembering
     login_user(user, True)
-    flash("Github oauth succeeded.", "success")
+    flash("Github login succeeded.", "success")
 
-    return redirect(url_for('softwares.index'))
+    return redirect(next_url)
 
 
 @github.access_token_getter
 def token_getter():
-    #token = User.options(load_only("id", "github_access_token")).filter(User.id == 1).first()
-    #return token[1]
     u = User.query.filter(User.id == 1).first()
     return u.github_access_token
+
+
+@twitter.tokengetter
+def get_twitter_token(token=None):
+    if current_user.is_authenticated() and current_user.twitter_access_token is not None:
+        return current_user.twitter_access_token, current_user.twitter_secret_token

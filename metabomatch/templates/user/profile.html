@@ -43,14 +43,19 @@
                     {% else %}
                         <small class="label label-default">Offline</small>
                     {% endif %}
+                    {% if user.signature != None %}
                     <br/>
-                    <small>{{ user.signature | default(user.email, true) }}</small>
+                    <small>{{ user.signature }}</small>
+                     <!-- | default(user.email, true) }}</small> -->
+                    {% endif %}
                 </h1>
 
                 <p>
                     <a href="{{ url_for('user.view_all_topics', username=user.username) }}">all topics</a>,
-                    <a href="{{ url_for('user.view_all_posts', username=user.username) }}">all posts</a>,
-                    <a href="{{url_for('user.new_message', to_user=user.username) }}" class="label label-danger">Private message</a>
+                    <a href="{{ url_for('user.view_all_posts', username=user.username) }}">all posts</a>
+                </p>
+                <p>
+                    <a href="{{url_for('user.new_message', to_user=user.username) }}" class="label label-danger">Send private message</a>
                 </p>
 
             </div>
@@ -72,7 +77,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="col-md-3">
 
         <div class="panel panel-default">
@@ -94,7 +99,7 @@
                     {%- endif -%}
 
                     <br/><br/>
-                    <em>Location</em>: {%- if user.location -%} {{ user.location }} {%- else -%} No Info {%- endif -%}
+                    <em>Location</em>: {%- if user.location -%} {{ user.location | crop_title(25)}} {%- else -%} No Info {%- endif -%}
                     <br/><br/>
                 </p>
             </div>

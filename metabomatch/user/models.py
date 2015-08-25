@@ -89,6 +89,9 @@ class User(db.Model, UserMixin):
     #logged with github api, is nullable
     github_access_token = db.Column(db.String(200))
 
+    twitter_access_token = db.Column(db.String(200))
+    twitter_secret_token = db.Column(db.String(200))
+
     _password = db.Column('password', db.String(120), nullable=False)
     date_joined = db.Column(db.DateTime, default=datetime.utcnow())
     lastseen = db.Column(db.DateTime, default=datetime.utcnow())
@@ -149,6 +152,30 @@ class User(db.Model, UserMixin):
         u.date_joined = datetime.utcnow()
         u.github_access_token = oauth_token
         return u.save()
+
+    @staticmethod
+    def create_from_twitter_oauth(resp):
+        """
+
+        :param response: twitter response
+        :return:
+        """
+        u = User()
+        u.username = resp['screen_name']
+        u.password = '1234'
+        u.email = 'noway@hotmail.com'
+        u.primary_group_id = 4
+        u.date_joined = datetime.utcnow()
+        u.twitter_access_token = resp['oauth_token']
+        u.twitter_secret_token = resp['oauth_token_secret']
+        return u.save()
+        # session['access_token'] = access_token
+    # session['screen_name'] = resp['screen_name']
+    #
+    # session['twitter_token'] = (
+    #     resp['oauth_token'],
+    #     resp['oauth_token_secret']
+    # )
 
     def has_commented(self, software_name):
         return any([c.software.name == software_name for c in self.comments])

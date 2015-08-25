@@ -23,6 +23,7 @@ from flask_htmlmin import HTMLMIN
 from flask_wtf.csrf import CsrfProtect
 from flask_gravatar import Gravatar
 from flask_babel import Babel
+from flask_oauthlib.client import OAuth
 
 # Database
 db = SQLAlchemy()
@@ -64,3 +65,6 @@ babel = Babel()
 compress = Compress()
 
 htmlminify = HTMLMIN()
+
+#twitter oauth
+oauth = OAuth()
