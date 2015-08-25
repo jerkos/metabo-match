@@ -99,7 +99,7 @@
                     {%- endif -%}
 
                     <br/><br/>
-                    <em>Location</em>: {%- if user.location -%} {{ user.location | crop_title(25)}} {%- else -%} No Info {%- endif -%}
+                    <em>Location</em>: {%- if user.location -%} {{ user.location | crop_title(10)}} {%- else -%} No Info {%- endif -%}
                     <br/><br/>
                 </p>
             </div>
