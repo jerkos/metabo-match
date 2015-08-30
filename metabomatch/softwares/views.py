@@ -3,7 +3,7 @@
 Software views
 """
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from itertools import groupby
 from collections import OrderedDict
 from metabomatch.news.models import Article
@@ -17,11 +17,11 @@ except ImportError:
     GUEST_USER_ID = os.environ.get('GUEST_USER_ID')
 
 from sqlalchemy import desc, func, asc
-from flask import Blueprint, request, redirect, url_for, flash, abort
+from flask import Blueprint, request, redirect, url_for, flash, abort, jsonify
 
-from flask.ext.login import login_required, current_user
-from flask.ext.wtf import Form
-from flask.ext.sqlalchemy import Pagination
+from flask_login import login_required, current_user
+from flask_wtf import Form
+from flask_sqlalchemy import Pagination
 
 from metabomatch.achievements import SoftwareAchievement, SCORE_SOFT
 from metabomatch.extensions import db
@@ -46,6 +46,7 @@ SOFT_PAR_PAGE = 10
 def index():
     """dealing with GET args"""
     page = request.args.get("page", 1, type=int)
+    month = request.args.get('month', 1, type=int)
     sort_by_name = request.args.get('sort_name')
     sort_by_rate = request.args.get('sort_rate')
     if request.args.get('category') is not None:
@@ -67,21 +68,23 @@ def index():
         if sort_by_name is not None:
             softs = Software.query.order_by(asc(Software.name)).paginate(page, SOFT_PAR_PAGE, True)
         elif sort_by_rate is not None:
-            # items = self.limit(per_page).offset((page - 1) * per_page)
             softs = sorted(Software.query.all(), key=lambda _: _.compute_rate(), reverse=True)
             p = (page - 1) * SOFT_PAR_PAGE
             next_p = p + SOFT_PAR_PAGE
             softs = Pagination(None, page, SOFT_PAR_PAGE, len(softs), softs[p:next_p])
         else:
             softs = Software.query.order_by(desc(Software.insertion_date)).paginate(page, SOFT_PAR_PAGE, True)
-        # --- i used to sort by tags number
-        # softs.sort(key=lambda _: -len(_.tags))
-    comment_insts = Comment.query.order_by(desc(Comment.date_created)).limit(5).all()
-    rating_insts = Rating.query.order_by(desc(Rating.date_created)).limit(5).all()
-    upvote_insts = Upvote.query.order_by(desc(Upvote.date_created)).limit(5).all()
-    script_insts = Script.query.order_by(desc(Script.creation_date)).limit(5).all()
 
-    guest_user = User.query.filter(User.id == GUEST_USER_ID).first()
+    # loading objects
+    current_time = datetime.utcnow()
+    month_ago = current_time - timedelta(weeks=month * 4)
+    comment_insts = Comment.query.filter(Comment.date_created > month_ago).all()
+    rating_insts = Rating.query.filter(Rating.date_created > month_ago).all()
+    upvote_insts = Upvote.query.filter(Upvote.date_created > month_ago).all()
+    script_insts = Script.query.filter(Script.creation_date > month_ago).all()
+
+    # seems to be not used anymore
+    # guest_user = User.query.filter(User.id == GUEST_USER_ID).first()
 
     upvotes_fixed = []
     for u in upvote_insts:
@@ -95,26 +98,26 @@ def index():
     sorted_insts = sorted(script_insts + comment_insts + rating_insts + upvotes_fixed,
                           key=lambda _: _.date_created if isinstance(_, (Upvote, Rating, Comment)) else _.creation_date,
                           reverse=True)
-    most_recent = sorted_insts[0].creation_date if isinstance(sorted_insts[0], Script) else sorted_insts[0].date_created
-    for x in sorted_insts:
-        t = 0
-        if isinstance(x, Comment):
-            t = most_recent - x.date_created
-            s = 'comment'
-        elif isinstance(x, Rating):
-            t = most_recent - x.date_created
-            s = 'rating'
-        elif isinstance(x, Script):
-            t = most_recent - x.creation_date
-            s = 'script'
-        else:
-            # upvote
-            t = most_recent - x.date_created
-            s = 'upvote'
-        if t.days < 50:
+    if sorted_insts:
+        # most_recent = sorted_insts[0].creation_date if isinstance(sorted_insts[0], Script)
+        # else sorted_insts[0].date_created
+        for x in sorted_insts:
+            # t = 0
+            if isinstance(x, Comment):
+                # t = most_recent - x.date_created
+                s = 'comment'
+            elif isinstance(x, Rating):
+                # t = most_recent - x.date_created
+                s = 'rating'
+            elif isinstance(x, Script):
+                # t = most_recent - x.creation_date
+                s = 'script'
+            else:
+                # upvote
+                # t = most_recent - x.date_created
+                s = 'upvote'
+            # if t.days < 50 * month:
             r.append((s, x))
-    # r = [('comment' if isinstance(x, Comment) else 'rating', x)
-    #      for x in sorted(comment_insts + rating_insts, key=lambda _: _.date_created, reverse=True)]
 
     last_articles = Article.query.order_by(desc(Article.creation_date)).limit(5)
 
@@ -128,6 +131,44 @@ def index():
                            delta_rankings_support=Software.pos_delta_upvotes(category='SUPPORT'),
                            delta_rankings_global_rate=Software.pos_delta_by_global_rate(),
                            today=datetime.now())
+
+
+@softwares.route('/get-more-notifications')
+def get_more_notifications():
+    month = int(request.args['current_month']) if 'current_month' in request.args else 1
+
+    print "Month", month
+    current_time = datetime.utcnow()
+    month_datetime = current_time - timedelta(weeks=month * 4)
+
+    next_month_datetime = month_datetime - timedelta(weeks=4)  # come back one month earlier
+
+    comment_insts = Comment.query.filter(Comment.date_created < month_datetime,
+                                         Comment.date_created > next_month_datetime).all()
+
+    rating_insts = Rating.query.filter(Rating.date_created < month_datetime,
+                                       Rating.date_created > next_month_datetime).all()
+
+    upvote_insts = Upvote.query.filter(Upvote.date_created < month_datetime,
+                                       Upvote.date_created > next_month_datetime).all()
+
+    script_insts = Script.query.filter(Script.creation_date < month_datetime,
+                                       Script.creation_date > next_month_datetime).all()
+
+    upvotes_fixed = []
+    for u in upvote_insts:
+        # if u.user is None:
+        #     u.user = guest_user
+        #     u.save()
+        u.date_created = datetime(u.date_created.year, u.date_created.month, u.date_created.day)
+        upvotes_fixed.append(u)
+
+    sorted_insts = sorted(script_insts + comment_insts + rating_insts + upvotes_fixed,
+                          key=lambda _: _.date_created if isinstance(_, (Upvote, Rating, Comment)) else _.creation_date,
+                          reverse=True)
+    for x in sorted_insts:
+        print x.__dict__
+    return jsonify([x.__dict__ for x in sorted_insts])
 
 
 @softwares.route('/register', methods=['GET', 'POST'])
