@@ -3,6 +3,7 @@
 metabomatch: softwares model
 """
 from datetime import datetime
+import json
 
 from Bio import Entrez
 
@@ -10,6 +11,8 @@ from metabomatch.extensions import db, cache, github
 from metabomatch.flaskbb.forum.models import Category
 from sqlalchemy import func
 from textblob import TextBlob
+
+from metabomatch.flaskbb.utils.serialization import SerializableMixin
 
 Entrez.email = 'cram@hotmail.fr'
 
@@ -64,6 +67,7 @@ class SentenceSoftwareMapping(db.Model):
     """
     mapping between softwares and sentences describing it
     """
+
     __tablename__ = 'sentences_software_mapping'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -84,7 +88,7 @@ class SentenceSoftwareMapping(db.Model):
         db.session.commit()
 
 
-class Upvote(db.Model):
+class Upvote(SerializableMixin, db.Model):
     __tablename__ = 'upvotes'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -180,7 +184,7 @@ class Tag(db.Model):
         self.tag = tag
 
 
-class Rating(db.Model):
+class Rating(SerializableMixin, db.Model):
     """Represents the rate a user can add to a software"""
 
     __tablename__ = 'ratings'
@@ -206,7 +210,7 @@ class Rating(db.Model):
         return self
 
 
-class Comment(db.Model):
+class Comment(SerializableMixin, db.Model):
     """Comment by user on software"""
 
     __tablename__ = 'comments'
@@ -527,6 +531,7 @@ def get_publication_citation_nb(publication_id):
         pass
     return nb_citations
 
+
 # GITHUB BACKEND
 def get_nb_maintainers(owner, repo):
     if owner is None:
@@ -534,6 +539,7 @@ def get_nb_maintainers(owner, repo):
 
     rep = github.get("".join(['repos/', owner, '/', repo, '/contributors']))
     return len(rep)
+
 
 def get_nb_commits(owner, repo):
     if owner is None:
@@ -548,6 +554,7 @@ def get_nb_commits(owner, repo):
     last_month_activity = sum([r['total'] for r in rep[-4:]])
     return year_activity, last_month_activity
 
+
 def get_nb_issues(owner, repo):
     """GET /repos/:owner/:repo/issues"""
     if owner is None:
@@ -558,6 +565,7 @@ def get_nb_issues(owner, repo):
         if r['state'] == 'open':
             opened += 1
     return len(rep), opened
+
 
 def get_nb_downloads(owner, repo):
     if owner is None:

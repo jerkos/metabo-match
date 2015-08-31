@@ -323,7 +323,9 @@
             </div>
         </div>
             {% endfor %}
-        <p class="text-center"><a href="{{ url_for('softwares.get_more_notifications', current_month=-1) }}">See More</a></p>
+        <p class="text-center"><a href="{{ url_for('softwares.index', month=current_month + 1) }}">See More</a></p>
+        {#                <p class="text-center"><a href="{{ url_for('softwares.get_more_notifications', month=current_month + 1) }}">See More</a></p>#}
+
 
         </div>
 

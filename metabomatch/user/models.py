@@ -21,11 +21,9 @@ from flask.ext.github import GitHubError
 from metabomatch._compat import max_integer
 from metabomatch.extensions import db, cache, github
 from metabomatch.flaskbb.utils.settings import flaskbb_config
-from metabomatch.flaskbb.forum.models import (Post, Topic, topictracker, TopicsRead,
-                                  ForumsRead)
-
+from metabomatch.flaskbb.forum.models import Post, Topic, topictracker, TopicsRead, ForumsRead
 from metabomatch.achievements import SoftwareAchievement, ScriptAchievement, ForumAchievement, JobAchievement
-
+from metabomatch.flaskbb.utils.serialization import SerializableMixin
 
 groups_users = db.Table(
     'groups_users',
@@ -33,7 +31,7 @@ groups_users = db.Table(
     db.Column('group_id', db.Integer(), db.ForeignKey('groups.id')))
 
 
-class Group(db.Model):
+class Group(SerializableMixin, db.Model):
     __tablename__ = "groups"
 
     id = db.Column(db.Integer, primary_key=True)
@@ -78,7 +76,7 @@ class Group(db.Model):
         return self
 
 
-class User(db.Model, UserMixin):
+class User(db.Model, UserMixin, SerializableMixin):
     __tablename__ = "users"
     __searchable__ = ['username', 'email']
 

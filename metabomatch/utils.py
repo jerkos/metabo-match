@@ -1,4 +1,6 @@
 from collections import OrderedDict
+import random
+import itertools
 import boto
 from metabomatch.extensions import db
 from metabomatch.softwares.models import Software, SentenceSoftwareMapping, Sentence
@@ -96,3 +98,24 @@ def best_softs_by_cat():
     results = OrderedDict((best_ui_software, best_performance_software, best_support_software))
     print results
     return OrderedDict((best_ui_software, best_performance_software, best_support_software))
+
+
+def sample_wr(population, k):
+    """Chooses k random elements (with replacement) from a population"""
+
+    n = len(population)
+    _random, _int = random.random, int  # speed hack
+    return [population[_int(_random() * n)] for _ in itertools.repeat(None, k)]
+
+
+def random_email(prefix=(2, 8), domain=(5, 20), sufix=(2, 4)):
+    """
+
+    :return:
+    """
+    l = 'abcdefghijklmnopqrstuvwxyz1234567890'
+    p = random.randrange(*prefix)
+    d = random.randrange(*domain)
+    s = random.randrange(*sufix)
+
+    return '{}@{}.{}'.format("".join(sample_wr(l, p)), "".join(sample_wr(l, d)), "".join(sample_wr(l, s)))

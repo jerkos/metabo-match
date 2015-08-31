@@ -3,13 +3,14 @@
 Software views
 """
 
-from datetime import datetime, timedelta, date
+from datetime import datetime, timedelta
 from itertools import groupby
 from collections import OrderedDict
+import json
+import os
+
 from metabomatch.news.models import Article
 from metabomatch.scripts.models import Script
-from metabomatch.user.models import User
-import os
 
 try:
     from metabomatch.private_keys import GUEST_USER_ID
@@ -17,7 +18,7 @@ except ImportError:
     GUEST_USER_ID = os.environ.get('GUEST_USER_ID')
 
 from sqlalchemy import desc, func, asc
-from flask import Blueprint, request, redirect, url_for, flash, abort, jsonify
+from flask import Blueprint, request, redirect, url_for, flash, abort
 
 from flask_login import login_required, current_user
 from flask_wtf import Form
@@ -32,12 +33,15 @@ from metabomatch.softwares.models import Software, Tag, Comment, Rating, Sentenc
 from metabomatch.softwares.forms import SoftwareForm, SoftwareUpdateForm, ProConsForm
 from metabomatch.utils import s3_upload, s3_upload_from_server, s3_delete, mean, best_softs_by_cat
 
+
 softwares = Blueprint("softwares", __name__, template_folder="../../templates")
+
 
 SOFT_MAP = {'1': 'Signal Extraction',
             '2': 'LC Alignment',
             '3': 'Database Search',
             '4': 'Statistical Analysis'}
+
 
 SOFT_PAR_PAGE = 10
 
@@ -77,7 +81,7 @@ def index():
 
     # loading objects
     current_time = datetime.utcnow()
-    month_ago = current_time - timedelta(weeks=month * 4)
+    month_ago = current_time - timedelta(weeks=month * 5)
     comment_insts = Comment.query.filter(Comment.date_created > month_ago).all()
     rating_insts = Rating.query.filter(Rating.date_created > month_ago).all()
     upvote_insts = Upvote.query.filter(Upvote.date_created > month_ago).all()
@@ -99,24 +103,15 @@ def index():
                           key=lambda _: _.date_created if isinstance(_, (Upvote, Rating, Comment)) else _.creation_date,
                           reverse=True)
     if sorted_insts:
-        # most_recent = sorted_insts[0].creation_date if isinstance(sorted_insts[0], Script)
-        # else sorted_insts[0].date_created
         for x in sorted_insts:
-            # t = 0
             if isinstance(x, Comment):
-                # t = most_recent - x.date_created
                 s = 'comment'
             elif isinstance(x, Rating):
-                # t = most_recent - x.date_created
                 s = 'rating'
             elif isinstance(x, Script):
-                # t = most_recent - x.creation_date
                 s = 'script'
             else:
-                # upvote
-                # t = most_recent - x.date_created
                 s = 'upvote'
-            # if t.days < 50 * month:
             r.append((s, x))
 
     last_articles = Article.query.order_by(desc(Article.creation_date)).limit(5)
@@ -130,18 +125,22 @@ def index():
                            delta_rankings_perf=Software.pos_delta_upvotes(category='PERFORMANCE'),
                            delta_rankings_support=Software.pos_delta_upvotes(category='SUPPORT'),
                            delta_rankings_global_rate=Software.pos_delta_by_global_rate(),
+                           current_month=month,  # or could be accessible from the request object from template directly
                            today=datetime.now())
 
 
 @softwares.route('/get-more-notifications')
 def get_more_notifications():
-    month = int(request.args['current_month']) if 'current_month' in request.args else 1
+    """
+    supposed to be ajax retrieved, go problems
+    :return:
+    """
+    month = int(request.args['month']) if 'month' in request.args else 1
 
-    print "Month", month
     current_time = datetime.utcnow()
-    month_datetime = current_time - timedelta(weeks=month * 4)
+    month_datetime = current_time - timedelta(weeks=month * 5)
 
-    next_month_datetime = month_datetime - timedelta(weeks=4)  # come back one month earlier
+    next_month_datetime = month_datetime - timedelta(weeks=5)  # come back one month earlier
 
     comment_insts = Comment.query.filter(Comment.date_created < month_datetime,
                                          Comment.date_created > next_month_datetime).all()
@@ -166,9 +165,8 @@ def get_more_notifications():
     sorted_insts = sorted(script_insts + comment_insts + rating_insts + upvotes_fixed,
                           key=lambda _: _.date_created if isinstance(_, (Upvote, Rating, Comment)) else _.creation_date,
                           reverse=True)
-    for x in sorted_insts:
-        print x.__dict__
-    return jsonify([x.__dict__ for x in sorted_insts])
+    dicts = [x.to_json() for x in sorted_insts]
+    return json.dumps(dicts)
 
 
 @softwares.route('/register', methods=['GET', 'POST'])
@@ -196,7 +194,11 @@ def register():
             s3_upload_from_server('static/img/placeholder.jpg', form.name.data.lower())
 
         return redirect(url_for('softwares.index'))
-    return render_template('softwares/register_software.html', form=form)
+
+    last_soft_name = db.session.query(Software.name).order_by(desc(Software.insertion_date)).first()[0]
+    tot_soft_count = db.session.query(Software.name).count()
+    return render_template('softwares/register_software.html', form=form,
+                           last_soft_name=last_soft_name, tot_soft_count=tot_soft_count)
 
 
 @softwares.route('/<name>/delete')
