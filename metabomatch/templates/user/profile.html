@@ -32,7 +32,8 @@
                 {% if user.avatar %}
                     <img style="margin-top:20px" class='img-responsive img-rounded' src="{{ user.avatar }}" alt="Avatar" height="150" width="150">
                 {% else %}
-                    <img style="margin-top:20px" class='img-responsive img-rounded' src="{{ user.email | gravatar }}" alt="gravatar"
+                    <img style="margin-top:20px" class='img-responsive img-rounded'
+                         src="{{ user.email | gravatar(size=150) }}" alt="gravatar"
                          height="150" width="150" data-toggle="tooltip" data-placement="bottom"
                          title="{{user.username}}">
                 {% endif %}
