@@ -2,6 +2,7 @@ from datetime import datetime
 
 from metabomatch.extensions import db
 from metabomatch.flaskbb.utils.helpers import slugify
+from metabomatch.flaskbb.utils.serialization import SerializableMixin
 
 script_tags_script_mapping = db.Table(
     'script_tags_script_mapping',
@@ -16,7 +17,7 @@ script_tags_script_mapping = db.Table(
 )
 
 
-class ScriptTags(db.Model):
+class ScriptTags(SerializableMixin, db.Model):
     __tablename__ = 'script_tags'
 
     name = db.Column(db.String(200), primary_key=True)
@@ -30,7 +31,7 @@ class ScriptTags(db.Model):
         return self
 
 
-class Script(db.Model):
+class Script(SerializableMixin, db.Model):
     """Script model"""
     __tablename__ = "scripts"
 

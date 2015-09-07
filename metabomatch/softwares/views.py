@@ -9,6 +9,8 @@ from collections import OrderedDict
 import json
 import os
 
+from jinja2 import Template
+
 from metabomatch.news.models import Article
 from metabomatch.scripts.models import Script
 
@@ -18,12 +20,13 @@ except ImportError:
     GUEST_USER_ID = os.environ.get('GUEST_USER_ID')
 
 from sqlalchemy import desc, func, asc
-from flask import Blueprint, request, redirect, url_for, flash, abort
+from flask import Blueprint, request, redirect, url_for, flash, abort, render_template_string, jsonify
 
 from flask_login import login_required, current_user
 from flask_wtf import Form
 from flask_sqlalchemy import Pagination
 
+from metabomatch.flaskbb.utils.helpers import crop_title, time_since
 from metabomatch.achievements import SoftwareAchievement, SCORE_SOFT
 from metabomatch.extensions import db
 from metabomatch.flaskbb.utils.helpers import render_template
@@ -44,6 +47,107 @@ SOFT_MAP = {'1': 'Signal Extraction',
 
 
 SOFT_PAR_PAGE = 10
+
+TEMPLATE = """
+            {% for kind, inst in activities %}
+                <div class="alert alert-default" style="padding-top:0">
+                    <div class="container" style="width:100%;">
+                        <div class="col-md-1">
+                            <span class="fa  {% if kind == 'comment' %} fa-comments-o {% elif kind == 'script' %} fa-code {% elif kind == 'rating' %} fa-certificate {% else %} fa-chevron-circle-up {% endif %} fa-2x text-muted"></span>
+                        </div>
+                        <div class="col-md-11">
+                            <p></p>
+                            {% if kind =='comment' %}
+                                <p>
+                                    <strong>
+                                        <a href="{{ url_for('user.profile', username=inst.user.username) }}">
+                                        {% if inst.user.avatar %}
+                                            <img src="{{ inst.user.avatar }}" alt="Avatar" height="20" width="20"
+                                                 data-toggle="tooltip" data-placement="bottom"
+                                                 title="{{inst.user.username}}">
+                                        {% else %}
+                                            <img src="{{ inst.user.email | gravatar }}" alt="gravatar"
+                                                 height="20" width="20" data-toggle="tooltip" data-placement="bottom"
+                                                 title="{{inst.user.username}}">
+                                        {% endif %}
+                                        </a>
+                                        posted a comment on <a
+                                            href="{{ url_for('softwares.info', name=inst.software.name) }}">{{ inst.software.name }}</a>
+                                        &bull;
+                                        <em>{{ inst.date_created | time_since }}</em>
+                                    </strong>
+                                </p>
+                                 <p>
+                                    <small class=text-muted>{{ inst.content | crop_title(length=200) }}</small>
+                                </p>
+
+                            {% elif kind == 'script' %}
+                                <p>
+                                    <strong>
+                                        <a href="{{ url_for('user.profile', username=inst.user.username) }}">
+                                        {% if inst.user.avatar %}
+                                            <img src="{{ inst.user.avatar }}" alt="Avatar" height="20" width="20"
+                                                    data-toggle="tooltip" data-placement="bottom"
+                                                 title="{{inst.user.username}}">
+                                        {% else %}
+                                            <img src="{{ inst.user.email | gravatar }}" alt="gravatar"
+                                                 height="20" width="20" data-toggle="tooltip" data-placement="bottom"
+                                                 title="{{inst.user.username}}">
+                                        {% endif %}
+                                        </a>
+                                        just submit a <a
+                                            href="{{ url_for('scripts.info', script_id=inst.id, slug=inst.slug) }}">new
+                                        script</a>
+                                        &bull;
+                                        <em>{{ inst.creation_date | time_since }}</em>
+                                    </strong>
+                                </p>
+                            {% elif kind == 'rating' %}
+                                <p>
+                                    <strong>
+                                        <a href="{{ url_for('user.profile', username=inst.user.username) }}">
+                                        {% if inst.user.avatar %}
+                                            <img src="{{ inst.user.avatar }}" alt="Avatar" height="20" width="20"
+                                                    data-toggle="tooltip" data-placement="bottom"
+                                                 title="{{inst.user.username}}" >
+                                        {% else %}
+                                            <img src="{{ inst.user.email | gravatar }}" alt="gravatar"
+                                                 height="20" width="20" data-toggle="tooltip" data-placement="bottom"
+                                                 title="{{inst.user.username}}">
+                                        {% endif %}
+                                        </a>
+                                        gave <label class="label label-info" style="font-size: 1.2em;">{{ inst.rate }}</label>
+                                        for <a
+                                            href="{{ url_for('softwares.info', name=inst.software.name) }}">{{ inst.software.name }}</a>
+                                        &bull;
+                                        <em>{{ inst.date_created | time_since }}</em>
+                                    </strong>
+                                </p>
+                            {% else %}
+                                <p>
+                                    <strong>
+                                        <a href="{{ url_for('user.profile', username=inst.user.username) }}">
+                                        {% if inst.user.avatar %}
+                                            <img src="{{ inst.user.avatar }}" alt="Avatar" height="20" width="20">
+                                        {% else %}
+                                            <img src="{{ inst.user.email | gravatar }}" alt="gravatar"
+                                                 height="20" width="20" data-toggle="tooltip" data-placement="bottom"
+                                                 title="{{inst.user.username}}">
+                                        {% endif %}
+                                        </a>
+                                        upvoted
+                                        <a href="{{ url_for('softwares.info', name=inst.sentence_software_mapping.software.name) }}">{{ inst.sentence_software_mapping.software.name }}
+                                        </a>
+                                        &bull;
+                                        <em>{{ inst.date_created | time_since }}</em>
+                                    </strong>
+                                </p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            """
 
 
 @softwares.route('/')
@@ -132,7 +236,7 @@ def index():
 @softwares.route('/get-more-notifications')
 def get_more_notifications():
     """
-    supposed to be ajax retrieved, go problems
+    supposed to be ajax retrieved
     :return:
     """
     month = int(request.args['month']) if 'month' in request.args else 1
@@ -165,8 +269,25 @@ def get_more_notifications():
     sorted_insts = sorted(script_insts + comment_insts + rating_insts + upvotes_fixed,
                           key=lambda _: _.date_created if isinstance(_, (Upvote, Rating, Comment)) else _.creation_date,
                           reverse=True)
-    dicts = [x.to_json() for x in sorted_insts]
-    return json.dumps(dicts)
+    r = []
+    if sorted_insts:
+        for x in sorted_insts:
+            if isinstance(x, Comment):
+                s = 'comment'
+            elif isinstance(x, Rating):
+                s = 'rating'
+            elif isinstance(x, Script):
+                s = 'script'
+            else:
+                s = 'upvote'
+            r.append((s, x))
+
+    rendered = render_template_string(TEMPLATE, activities=r, current_month=month, today=datetime.now())
+    rendered = '' if all([c == ' ' or c == '\t' or c == '\n' for c in rendered]) else rendered
+    print "RENDERED", repr(rendered)
+    return jsonify(html=rendered)  # "".join(rendered.split('\n')))
+    # dicts = [x.to_json() for x in sorted_insts]
+    # return json.dumps(dicts)
 
 
 @softwares.route('/register', methods=['GET', 'POST'])

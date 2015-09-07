@@ -220,7 +220,7 @@
 
     <div class="row">
 
-    <div class="col-md-8 col-sm-12">
+        <div id="update-receiver" class="col-md-8 col-sm-12">
     <h2>Recent activity</h2>
     <hr/>
     {% for kind, inst in activities %}
@@ -252,6 +252,10 @@
                                 <em>{{ inst.date_created | time_since }}</em>
                             </strong>
                         </p>
+                        <p>
+                            <small class=text-muted>{{ inst.content | crop_title(length=200) }}</small>
+                        </p>
+
                     {% elif kind == 'script' %}
                         <p>
                             <strong>
@@ -314,17 +318,21 @@
                             </strong>
                         </p>
                     {% endif %}
-                    <p>
-                        {% if kind=='comment' %}
-                            <small class=text-muted>{{ inst.content | crop_title(length=200) }}</small>
-                        {% endif %}
-                    </p>
+                    {#                    <p>#}
+                    {#                        {% if kind=='comment' %}#}
+                    {#                            <small class=text-muted>{{ inst.content | crop_title(length=200) }}</small>#}
+                    {#                        {% endif %}#}
+                    {#                    </p>#}
                 </div>
             </div>
         </div>
             {% endfor %}
-        <p class="text-center"><a href="{{ url_for('softwares.index', month=current_month + 1) }}">See More</a></p>
-        {#                <p class="text-center"><a href="{{ url_for('softwares.get_more_notifications', month=current_month + 1) }}">See More</a></p>#}
+            {#        <p class="text-center"><a href="{{ url_for('softwares.index', month=current_month + 1) }}">See More</a></p>#}
+            <p class="text-center see-more see-more-active"><a
+                    href="{{ url_for('softwares.get_more_notifications', month=current_month + 1) }}">See More</a></p>
+            {#        id="see-more-{{ current_month }}"#}
+            <p id="hex-loader" class="text-center" style="display: none;"><img
+                    src="{{ url_for('static', filename='img/hex-loader2.gif') }}" alt="loader metabolomic"/></p>
 
 
         </div>
@@ -348,5 +356,45 @@
 
 {% block javascript %}
     {{ super() }}
-    <script>$('#software').addClass('active');</script>
+    <script>
+        $(function () {
+            $('#software').addClass('active');
+        });
+    </script>
+    <script>
+
+        var activate_ajax = function (element, month) {
+            element.on('click', function () {
+                element.css('display', 'none');
+                element.removeClass('.see-more-active');
+                $('#hex-loader').css('display', 'block');
+
+                $.getJSON('/softwares/get-more-notifications', {month: month + 1},
+                        function (json) {
+                            var div = document.getElementById('update-receiver');
+                            if (json['html'] == '') {
+                                div.innerHTML = div.innerHTML + '<p class="text-center">No more news</p>';
+                            } else {
+
+                                div.innerHTML = div.innerHTML + json['html'];
+                                var m = month + 1;
+                                div.innerHTML = div.innerHTML +
+                                        '<p  class="text-center see-more see-more-active"><a href="{{ url_for('softwares.get_more_notifications', month=m) }}">See More</a></p>' +
+                                        '<p id="hex-loader" class="text-center" style="display: none;"><img src="{{ url_for('static', filename='img/hex-loader2.gif') }}" alt="loader metabolomic" /></p>';
+
+                                activate_ajax($(".see-more.see-more-active"), m);
+                            }
+                        }
+                );
+                $('#hex-loader').css('display', 'none');
+                return false;
+            });
+        };
+
+        $(function () {
+            var month = {{ current_month }};
+            var actives_see_more = $(".see-more.see-more-active");
+            activate_ajax(actives_see_more, month);
+        });
+    </script>
 {% endblock %}
