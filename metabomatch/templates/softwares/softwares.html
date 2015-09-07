@@ -66,8 +66,10 @@
         {% endfor %}
     </div>
 
+    <p class="text-center"><img src="{{ url_for('static', filename='img/hex-loader3.gif') }}"/></p>
 
-    <div class="row" style="padding-top: 50px">
+    <div class="row">
+        {#        style="padding-top: 50px">#}
         <h2 class="text-left">Select the best software for your needs
             <small>by category</small>
         </h2>
@@ -218,121 +220,129 @@
         {% endif %}
     </div>
 
+    <p class="text-center"><img src="{{ url_for('static', filename='img/hex-loader3.gif') }}"/></p>
+
+
     <div class="row">
 
         <div id="update-receiver" class="col-md-8 col-sm-12">
-    <h2>Recent activity</h2>
-    <hr/>
-    {% for kind, inst in activities %}
-        <div class="alert alert-default" style="padding-top:0">
-            <div class="container" style="width:100%;">
-                <div class="col-md-1">
+            <h2>Recent activity</h2>
+            <hr/>
+            {% for kind, inst in activities %}
+                <div class="alert alert-default" style="padding-top:0">
+                    <div class="container" style="width:100%;">
+                        <div class="col-md-1">
 
-                    <span class="fa  {% if kind == 'comment' %} fa-comments-o {% elif kind == 'script' %} fa-code {% elif kind == 'rating' %} fa-certificate {% else %} fa-chevron-circle-up {% endif %} fa-2x text-muted"></span>
-                </div>
-                <div class="col-md-11">
-                    <p></p>
-                    {% if kind =='comment' %}
-                        <p>
-                            <strong>
-                                <a href="{{ url_for('user.profile', username=inst.user.username) }}">
-                                {% if inst.user.avatar %}
-                                    <img src="{{ inst.user.avatar }}" alt="Avatar" height="20" width="20"
-                                         data-toggle="tooltip" data-placement="bottom"
-                                         title="{{inst.user.username}}">
-                                {% else %}
-                                    <img src="{{ inst.user.email | gravatar }}" alt="gravatar"
-                                         height="20" width="20" data-toggle="tooltip" data-placement="bottom"
-                                         title="{{inst.user.username}}">
-                                {% endif %}
-                                </a>
-                                posted a comment on <a
-                                    href="{{ url_for('softwares.info', name=inst.software.name) }}">{{ inst.software.name }}</a>
-                                &bull;
-                                <em>{{ inst.date_created | time_since }}</em>
-                            </strong>
-                        </p>
-                        <p>
-                            <small class=text-muted>{{ inst.content | crop_title(length=200) }}</small>
-                        </p>
+                            <span class="fa  {% if kind == 'comment' %} fa-comments-o {% elif kind == 'script' %} fa-code {% elif kind == 'rating' %} fa-certificate {% else %} fa-chevron-circle-up {% endif %} fa-2x text-muted"></span>
+                        </div>
+                        <div class="col-md-11">
+                            <p></p>
+                            {% if kind =='comment' %}
+                                <p>
+                                    <strong>
+                                        <a href="{{ url_for('user.profile', username=inst.user.username) }}">
+                                            {% if inst.user.avatar %}
+                                                <img src="{{ inst.user.avatar }}" alt="Avatar" height="20" width="20"
+                                                     data-toggle="tooltip" data-placement="bottom"
+                                                     title="{{ inst.user.username }}">
+                                            {% else %}
+                                                <img src="{{ inst.user.email | gravatar }}" alt="gravatar"
+                                                     height="20" width="20" data-toggle="tooltip"
+                                                     data-placement="bottom"
+                                                     title="{{ inst.user.username }}">
+                                            {% endif %}
+                                        </a>
+                                        posted a comment on <a
+                                            href="{{ url_for('softwares.info', name=inst.software.name) }}">{{ inst.software.name }}</a>
+                                        &bull;
+                                        <em>{{ inst.date_created | time_since }}</em>
+                                    </strong>
+                                </p>
+                                <p>
+                                    <small class=text-muted>{{ inst.content | crop_title(length=200) }}</small>
+                                </p>
 
-                    {% elif kind == 'script' %}
-                        <p>
-                            <strong>
-                                <a href="{{ url_for('user.profile', username=inst.user.username) }}">
-                                {% if inst.user.avatar %}
-                                    <img src="{{ inst.user.avatar }}" alt="Avatar" height="20" width="20"
-                                            data-toggle="tooltip" data-placement="bottom"
-                                         title="{{inst.user.username}}">
-                                {% else %}
-                                    <img src="{{ inst.user.email | gravatar }}" alt="gravatar"
-                                         height="20" width="20" data-toggle="tooltip" data-placement="bottom"
-                                         title="{{inst.user.username}}">
-                                {% endif %}
-                                </a>
-                                just submit a <a
-                                    href="{{ url_for('scripts.info', script_id=inst.id, slug=inst.slug) }}">new
-                                script</a>
-                                &bull;
-                                <em>{{ inst.creation_date | time_since }}</em>
-                            </strong>
-                        </p>
-                    {% elif kind == 'rating' %}
-                        <p>
-                            <strong>
-                                <a href="{{ url_for('user.profile', username=inst.user.username) }}">
-                                {% if inst.user.avatar %}
-                                    <img src="{{ inst.user.avatar }}" alt="Avatar" height="20" width="20"
-                                            data-toggle="tooltip" data-placement="bottom"
-                                         title="{{inst.user.username}}" >
-                                {% else %}
-                                    <img src="{{ inst.user.email | gravatar }}" alt="gravatar"
-                                         height="20" width="20" data-toggle="tooltip" data-placement="bottom"
-                                         title="{{inst.user.username}}">
-                                {% endif %}
-                                </a>
-                                gave <label class="label label-info" style="font-size: 1.2em;">{{ inst.rate }}</label>
-                                for <a
-                                    href="{{ url_for('softwares.info', name=inst.software.name) }}">{{ inst.software.name }}</a>
-                                &bull;
-                                <em>{{ inst.date_created | time_since }}</em>
-                            </strong>
-                        </p>
-                    {% else %}
-                        <p>
-                            <strong>
-                                <a href="{{ url_for('user.profile', username=inst.user.username) }}">
-                                {% if inst.user.avatar %}
-                                    <img src="{{ inst.user.avatar }}" alt="Avatar" height="20" width="20">
-                                {% else %}
-                                    <img src="{{ inst.user.email | gravatar }}" alt="gravatar"
-                                         height="20" width="20" data-toggle="tooltip" data-placement="bottom"
-                                         title="{{inst.user.username}}">
-                                {% endif %}
-                                </a>
-                                upvoted
-                                <a href="{{ url_for('softwares.info', name=inst.sentence_software_mapping.software.name) }}">{{ inst.sentence_software_mapping.software.name }}
-                                </a>
-                                &bull;
-                                <em>{{ inst.date_created | time_since }}</em>
-                            </strong>
-                        </p>
-                    {% endif %}
-                    {#                    <p>#}
-                    {#                        {% if kind=='comment' %}#}
-                    {#                            <small class=text-muted>{{ inst.content | crop_title(length=200) }}</small>#}
-                    {#                        {% endif %}#}
-                    {#                    </p>#}
+                            {% elif kind == 'script' %}
+                                <p>
+                                    <strong>
+                                        <a href="{{ url_for('user.profile', username=inst.user.username) }}">
+                                            {% if inst.user.avatar %}
+                                                <img src="{{ inst.user.avatar }}" alt="Avatar" height="20" width="20"
+                                                     data-toggle="tooltip" data-placement="bottom"
+                                                     title="{{ inst.user.username }}">
+                                            {% else %}
+                                                <img src="{{ inst.user.email | gravatar }}" alt="gravatar"
+                                                     height="20" width="20" data-toggle="tooltip"
+                                                     data-placement="bottom"
+                                                     title="{{ inst.user.username }}">
+                                            {% endif %}
+                                        </a>
+                                        just submit a <a
+                                            href="{{ url_for('scripts.info', script_id=inst.id, slug=inst.slug) }}">new
+                                        script</a>
+                                        &bull;
+                                        <em>{{ inst.creation_date | time_since }}</em>
+                                    </strong>
+                                </p>
+                            {% elif kind == 'rating' %}
+                                <p>
+                                    <strong>
+                                        <a href="{{ url_for('user.profile', username=inst.user.username) }}">
+                                            {% if inst.user.avatar %}
+                                                <img src="{{ inst.user.avatar }}" alt="Avatar" height="20" width="20"
+                                                     data-toggle="tooltip" data-placement="bottom"
+                                                     title="{{ inst.user.username }}">
+                                            {% else %}
+                                                <img src="{{ inst.user.email | gravatar }}" alt="gravatar"
+                                                     height="20" width="20" data-toggle="tooltip"
+                                                     data-placement="bottom"
+                                                     title="{{ inst.user.username }}">
+                                            {% endif %}
+                                        </a>
+                                        gave <label class="label label-info"
+                                                    style="font-size: 1.2em;">{{ inst.rate }}</label>
+                                        for <a
+                                            href="{{ url_for('softwares.info', name=inst.software.name) }}">{{ inst.software.name }}</a>
+                                        &bull;
+                                        <em>{{ inst.date_created | time_since }}</em>
+                                    </strong>
+                                </p>
+                            {% else %}
+                                <p>
+                                    <strong>
+                                        <a href="{{ url_for('user.profile', username=inst.user.username) }}">
+                                            {% if inst.user.avatar %}
+                                                <img src="{{ inst.user.avatar }}" alt="Avatar" height="20" width="20">
+                                            {% else %}
+                                                <img src="{{ inst.user.email | gravatar }}" alt="gravatar"
+                                                     height="20" width="20" data-toggle="tooltip"
+                                                     data-placement="bottom"
+                                                     title="{{ inst.user.username }}">
+                                            {% endif %}
+                                        </a>
+                                        upvoted
+                                        <a href="{{ url_for('softwares.info', name=inst.sentence_software_mapping.software.name) }}">{{ inst.sentence_software_mapping.software.name }}
+                                        </a>
+                                        &bull;
+                                        <em>{{ inst.date_created | time_since }}</em>
+                                    </strong>
+                                </p>
+                            {% endif %}
+                            {#                    <p>#}
+                            {#                        {% if kind=='comment' %}#}
+                            {#                            <small class=text-muted>{{ inst.content | crop_title(length=200) }}</small>#}
+                            {#                        {% endif %}#}
+                            {#                    </p>#}
+                        </div>
                 </div>
             </div>
-        </div>
             {% endfor %}
             {#        <p class="text-center"><a href="{{ url_for('softwares.index', month=current_month + 1) }}">See More</a></p>#}
             <p class="text-center see-more see-more-active"><a
                     href="{{ url_for('softwares.get_more_notifications', month=current_month + 1) }}">See More</a></p>
             {#        id="see-more-{{ current_month }}"#}
             <p class="hex-loader hex-loader-active text-center" style="display: none;"><img
-                    src="{{ url_for('static', filename='img/hex-loader2.gif') }}" alt="loader metabolomic"/></p>
+                    src="{{ url_for('static', filename='img/hex-loader1.gif') }}" alt="loader metabolomic"/></p>
 
 
         </div>
@@ -349,7 +359,6 @@
                     <!--<p><em>{{ article.to_html() | safe | crop_title(50) }}</em></p>-->
                 </div>
             {% endfor %}
-            </ul>
         </div>
     </div>
 {% endblock %}
@@ -381,7 +390,7 @@
                                 var m = month + 1;
                                 div.innerHTML = div.innerHTML +
                                         '<p  class="text-center see-more see-more-active"><a href="{{ url_for('softwares.get_more_notifications', month=m) }}">See More</a></p>' +
-                                        '<p class="text-center hex-loader hex-loader-active" style="display: none;"><img src="{{ url_for('static', filename='img/hex-loader2.gif') }}" alt="loader metabolomic"/></p>';
+                                        '<p class="text-center hex-loader hex-loader-active" style="display: none;"><img src="{{ url_for('static', filename='img/hex-loader1.gif') }}" alt="loader metabolomic"/></p>';
 
                                 activate_ajax($(".see-more.see-more-active"), m);
                             }
