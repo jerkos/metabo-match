@@ -508,7 +508,6 @@ class Software(db.Model):
             softwares_perf.append((software, c))
 
         softwares_perf.sort(key=lambda _: _[1], reverse=True)
-        print len(softwares), len(softwares_perf)
         actual = {softwares_perf[i][0].name: i + 1 for i in range(len(softwares_perf))}
         if category == 'UI':
             return {s[0].name: s[0].last_position_by_ui_upvotes - actual[s[0].name] for s in softwares_perf}

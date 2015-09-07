@@ -284,10 +284,7 @@ def get_more_notifications():
 
     rendered = render_template_string(TEMPLATE, activities=r, current_month=month, today=datetime.now())
     rendered = '' if all([c == ' ' or c == '\t' or c == '\n' for c in rendered]) else rendered
-    print "RENDERED", repr(rendered)
-    return jsonify(html=rendered)  # "".join(rendered.split('\n')))
-    # dicts = [x.to_json() for x in sorted_insts]
-    # return json.dumps(dicts)
+    return jsonify(html=rendered)
 
 
 @softwares.route('/register', methods=['GET', 'POST'])
