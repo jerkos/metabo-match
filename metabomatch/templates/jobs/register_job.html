@@ -191,17 +191,21 @@
     {#    </script>#}
 
     <script>
-         $('#select-tags').selectize({delimiter: ',',
+        $(function () {
+            $('#select-tags').selectize({
+                delimiter: ',',
             persist: false,
-            create: function(input) {
+                create: function (input) {
                 return {
                     value: input,
                     text: input
                 }
-            }});
+                }
+            });
 
-         $('#apply_date_limit').datepicker({
-				format: 'dd-mm-yyyy'
-			});
+            $('#apply_date_limit').datepicker({
+                format: 'dd-mm-yyyy'
+            });
+        });
      </script>
 {% endblock %}
