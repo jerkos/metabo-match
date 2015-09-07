@@ -367,7 +367,7 @@
             element.on('click', function () {
                 element.css('display', 'none');
                 element.removeClass('.see-more-active');
-                $('.hex-loader.hex-loader-active').css('display', 'block');
+                $('.hex-loader.hex-loader-active').css('display', 'inline');
 
                 $.getJSON('/softwares/get-more-notifications', {month: month + 1},
                         function (json) {
@@ -375,26 +375,26 @@
                             if (json['html'] == '') {
                                 div.innerHTML = div.innerHTML + '<p class="text-center">No more news</p>';
                             } else {
-                                $('.hex-loader.hex-loader-active').removeClass('.hex-loader-active');
                                 div.innerHTML = div.innerHTML + json['html'];
                                 var m = month + 1;
+                                $('.hex-loader.hex-loader-active').removeClass('.hex-loader-active');
                                 div.innerHTML = div.innerHTML +
                                         '<p  class="text-center see-more see-more-active"><a href="{{ url_for('softwares.get_more_notifications', month=m) }}">See More</a></p>' +
-                                        '<p class="text-center hex-loader hex-loader-active" style="display: none;"><img src="{{ url_for('static', filename='img/hex-loader2.gif') }}" alt="loader metabolomic" /></p>';
+                                        '<p class="text-center hex-loader hex-loader-active" style="display: none;"><img src="{{ url_for('static', filename='img/hex-loader2.gif') }}" alt="loader metabolomic"/></p>';
 
                                 activate_ajax($(".see-more.see-more-active"), m);
                             }
-                        }
+                            }
                 );
-                $('.hex-loader.hex-loader-active').css('display', 'none');
+                $('.hex-loader').css('display', 'none');
                 return false;
-            });
+            })
         };
 
         $(function () {
             var month = {{ current_month }};
             var actives_see_more = $(".see-more.see-more-active");
             activate_ajax(actives_see_more, month);
-        });
+        })
     </script>
 {% endblock %}
