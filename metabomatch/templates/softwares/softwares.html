@@ -28,6 +28,7 @@
 
     </div>
 
+
     <div class="row">
         <h2>Current best softwares
             <small>{{ today | format_date }}</small>
@@ -67,6 +68,22 @@
     </div>
 
     <p class="text-center"><img src="{{ url_for('static', filename='img/hex-loader3.gif') }}"/></p>
+
+
+    <div class="row alert alert-default" style="background-color: #0088cc; border:none;">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="col-md-6 text-center">
+                    <span style="color:white;">Get last metabolomics softwares news !</span>
+                </div>
+                <div class="col-md-6 text-center">
+                    <a class="twitter-follow-button" href="https://twitter.com/metabomatch">Follow @metabomatch</a>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="row">
         {#        style="padding-top: 50px">#}
@@ -443,4 +460,20 @@
             activate_ajax(actives_see_more, month);
         })
     </script>
+    <script>window.twttr = (function (d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0],
+                t = window.twttr || {};
+        if (d.getElementById(id)) return t;
+        js = d.createElement(s);
+        js.id = id;
+        js.src = "https://platform.twitter.com/widgets.js";
+        fjs.parentNode.insertBefore(js, fjs);
+
+        t._e = [];
+        t.ready = function (f) {
+            t._e.push(f);
+        };
+
+        return t;
+    }(document, "script", "twitter-wjs"));</script>
 {% endblock %}
