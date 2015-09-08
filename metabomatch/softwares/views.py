@@ -116,12 +116,39 @@ TEMPLATE = """
                                                  title="{{inst.user.username}}">
                                         {% endif %}
                                         </a>
-                                        gave <label class="label label-info" style="font-size: 1.2em;">{{ inst.rate }}</label>
+                                        gave <label class="label label-info" style="font-size: 1em;">{{ inst.rate }}</label>
                                         for <a
                                             href="{{ url_for('softwares.info', name=inst.software.name) }}">{{ inst.software.name }}</a>
                                         &bull;
                                         <em>{{ inst.date_created | time_since }}</em>
                                     </strong>
+                                </p>
+                            {% elif kind == 'procons_upvote' %}
+                                <p>
+                                    <strong>
+                                        <a href="{{ url_for('user.profile', username=inst.user.username) }}">
+                                            {% if inst.user.avatar %}
+                                                <img src="{{ inst.user.avatar }}" alt="Avatar" height="20" width="20"
+                                                     data-toggle="tooltip" data-placement="bottom"
+                                                     title="{{ inst.user.username }}">
+                                            {% else %}
+                                                <img src="{{ inst.user.email | gravatar }}" alt="gravatar"
+                                                     height="20" width="20" data-toggle="tooltip"
+                                                     data-placement="bottom"
+                                                     title="{{ inst.user.username }}">
+                                            {% endif %}
+                                        </a>
+                                        upvoted a {{ inst.procons.kind }}: <a href="{{ url_for('softwares.info', name=inst.procons.software.name) }}">{{ inst.procons.title }}</a>
+                                        &bull;
+                                            <label class="label label-{% if inst.procons.kind == 'pro' %}success{% else %}danger{% endif %} ">
+                                                {{ inst.procons.procons_upvotes | length }}
+                                            </label> upvotes
+                                        &bull;
+                                        <em>{{ inst.upvote_date | time_since }}</em>
+                                    </strong>
+                                </p>
+                                <p>
+                                    <small class=text-muted>{{ inst.description | crop_title(length=200) }}</small>
                                 </p>
                             {% else %}
                                 <p>
@@ -153,6 +180,7 @@ TEMPLATE = """
 @softwares.route('/')
 def index():
     """dealing with GET args"""
+
     page = request.args.get("page", 1, type=int)
     month = request.args.get('month', 1, type=int)
     sort_by_name = request.args.get('sort_name')
@@ -190,6 +218,7 @@ def index():
     rating_insts = Rating.query.filter(Rating.date_created > month_ago).all()
     upvote_insts = Upvote.query.filter(Upvote.date_created > month_ago).all()
     script_insts = Script.query.filter(Script.creation_date > month_ago).all()
+    procons_up_insts = ProConsUpvote.query.filter(ProConsUpvote.upvote_date > month_ago).all()
 
     # seems to be not used anymore
     # guest_user = User.query.filter(User.id == GUEST_USER_ID).first()
@@ -203,8 +232,17 @@ def index():
         upvotes_fixed.append(u)
 
     r = []
-    sorted_insts = sorted(script_insts + comment_insts + rating_insts + upvotes_fixed,
-                          key=lambda _: _.date_created if isinstance(_, (Upvote, Rating, Comment)) else _.creation_date,
+
+    def f(inst):
+        if isinstance(inst, Comment) or isinstance(inst, Upvote) or isinstance(inst, Rating):
+            return inst.date_created
+        elif isinstance(inst, Script):
+            return inst.creation_date
+        elif isinstance(inst, ProConsUpvote):
+            return inst.upvote_date
+
+    sorted_insts = sorted(script_insts + comment_insts + rating_insts + upvotes_fixed + procons_up_insts,
+                          key=f,
                           reverse=True)
     if sorted_insts:
         for x in sorted_insts:
@@ -214,11 +252,13 @@ def index():
                 s = 'rating'
             elif isinstance(x, Script):
                 s = 'script'
+            elif isinstance(x, ProConsUpvote):
+                s = 'procons_upvote'
             else:
                 s = 'upvote'
             r.append((s, x))
 
-    last_articles = Article.query.order_by(desc(Article.creation_date)).limit(5)
+    last_articles = Article.query.order_by(desc(Article.creation_date)).limit(10)
 
     return render_template('softwares/softwares.html',
                            softwares=softs,

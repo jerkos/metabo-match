@@ -18,6 +18,7 @@ def index():
 def workflow():
     return render_template('home/workflow.html')
 
+
 @home.route('leaderboard', methods=['GET'])
 def leaderboard():
     users = db.session.query(User).order_by(desc(User.global_score)).all()

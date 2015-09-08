@@ -76,11 +76,11 @@
             <div class="panel-heading text-center"><strong>User notes</strong></div>
             <div class="panel-content cont">
                 {% if user.notes %}
-                {% autoescape false %}
-                {{ user.notes|markup }}
-                {% endautoescape %}
+                    {% autoescape false %}
+                        {{ user.notes| markup }}
+                    {% endautoescape %}
                 {% else %}
-                <p class="help-block"><em>User has not added any notes about him.</em></p>
+                    <p class="help-block"><em>User has not added any notes about him.</em></p>
                 {% endif %}
             </div>
         </div>

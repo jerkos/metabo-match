@@ -233,7 +233,15 @@
                     <div class="container" style="width:100%;">
                         <div class="col-md-1">
 
-                            <span class="fa  {% if kind == 'comment' %} fa-comments-o {% elif kind == 'script' %} fa-code {% elif kind == 'rating' %} fa-certificate {% else %} fa-chevron-circle-up {% endif %} fa-2x text-muted"></span>
+                            <span class="fa
+                                {% if kind == 'comment' %} fa-comments-o
+                                {% elif kind == 'script' %} fa-code
+                                {% elif kind == 'rating' %} fa-certificate
+                                {% elif kind == 'procons_upvote' %} fa-meh-o
+                                {% else %} fa-chevron-circle-up
+                                {% endif %} fa-2x text-muted">
+
+                            </span>
                         </div>
                         <div class="col-md-11">
                             <p></p>
@@ -300,12 +308,40 @@
                                             {% endif %}
                                         </a>
                                         gave <label class="label label-info"
-                                                    style="font-size: 1.2em;">{{ inst.rate }}</label>
+                                                    style="font-size: 1em;">{{ inst.rate }}</label>
                                         for <a
                                             href="{{ url_for('softwares.info', name=inst.software.name) }}">{{ inst.software.name }}</a>
                                         &bull;
                                         <em>{{ inst.date_created | time_since }}</em>
                                     </strong>
+                                </p>
+                            {% elif kind == 'procons_upvote' %}
+                                <p>
+                                    <strong>
+                                        <a href="{{ url_for('user.profile', username=inst.user.username) }}">
+                                            {% if inst.user.avatar %}
+                                                <img src="{{ inst.user.avatar }}" alt="Avatar" height="20" width="20"
+                                                     data-toggle="tooltip" data-placement="bottom"
+                                                     title="{{ inst.user.username }}">
+                                            {% else %}
+                                                <img src="{{ inst.user.email | gravatar }}" alt="gravatar"
+                                                     height="20" width="20" data-toggle="tooltip"
+                                                     data-placement="bottom"
+                                                     title="{{ inst.user.username }}">
+                                            {% endif %}
+                                        </a>
+                                        upvoted a {{ inst.procons.kind }}: <a
+                                            href="{{ url_for('softwares.info', name=inst.procons.software.name) }}">{{ inst.procons.title }}</a>
+                                        &bull;
+                                        <label class="label label-{% if inst.procons.kind == 'pro' %}success{% else %}danger{% endif %} ">
+                                            {{ inst.procons.procons_upvotes | length }}
+                                        </label> upvotes
+                                        &bull;
+                                        <em>{{ inst.upvote_date | time_since }}</em>
+                                    </strong>
+                                </p>
+                                <p>
+                                    <small class=text-muted>{{ inst.description | crop_title(length=200) }}</small>
                                 </p>
                             {% else %}
                                 <p>
