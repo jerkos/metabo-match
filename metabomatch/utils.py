@@ -113,9 +113,10 @@ def random_email(prefix=(2, 8), domain=(5, 20), sufix=(2, 4)):
 
     :return:
     """
-    l = 'abcdefghijklmnopqrstuvwxyz1234567890'
+    l = 'abcdefghijklmnopqrstuvwxyz'
+    n = '1234567890'
     p = random.randrange(*prefix)
     d = random.randrange(*domain)
     s = random.randrange(*sufix)
 
-    return '{}@{}.{}'.format("".join(sample_wr(l, p)), "".join(sample_wr(l, d)), "".join(sample_wr(l, s)))
+    return '{}@{}.{}'.format("".join(sample_wr(l + n, p)), "".join(sample_wr(l + n, d)), "".join(sample_wr(l, s)))

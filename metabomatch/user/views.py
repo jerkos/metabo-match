@@ -24,10 +24,17 @@ try:
 except ImportError:
     GUEST_USER_ID = os.environ.get('GUEST_USER_ID')
 
+try:
+    from metabomatch.private_keys import TWITTER_CONSUMER_KEY, TWITTER_CONSUMER_SECRET
+except ImportError:
+    TWITTER_CONSUMER_SECRET = os.environ.get('TWITTER_CONSUMER_SECRET')
+    TWITTER_CONSUMER_KEY = os.environ.get('TWITTER_CONSUMER_KEY')
+
 from metabomatch.user.models import User, PrivateMessage
 from metabomatch.user.forms import (ChangePasswordForm, ChangeEmailForm,
                                     ChangeUserDetailsForm, GeneralSettingsForm,
                                     NewMessageForm, EditMessageForm)
+from metabomatch.twitter_api import UserClient
 
 
 user = Blueprint("user", __name__, template_folder="templates")
@@ -35,11 +42,18 @@ user = Blueprint("user", __name__, template_folder="templates")
 
 @user.route("/<username>")
 def profile(username):
-    user = User.query.filter_by(username=username).first_or_404()
-    # print "GUEST_USER_ID:", GUEST_USER_ID, " user.id:", user.id
+    user_inst = User.query.filter_by(username=username).first_or_404()
     if username == 'Guest':  # user.id == GUEST_USER_ID or
         return render_template('errors/forbidden_page.html')
-    return render_template("user/profile.html", user=user)
+
+    if user_inst.twitter_access_token and user_inst.twitter_secret_token:
+        client = UserClient(TWITTER_CONSUMER_KEY,
+                            TWITTER_CONSUMER_SECRET,
+                            user_inst.twitter_access_token,
+                            user_inst.twitter_secret_token)
+        response = client.api.users.show.get(screen_name=username)
+        user_inst.profile_image_url = response.data['profile_image_url'].replace('normal', '400x400')
+    return render_template("user/profile.html", user=user_inst)
 
 
 @user.route("/<username>/topics")

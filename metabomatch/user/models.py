@@ -24,6 +24,7 @@ from metabomatch.flaskbb.utils.settings import flaskbb_config
 from metabomatch.flaskbb.forum.models import Post, Topic, topictracker, TopicsRead, ForumsRead
 from metabomatch.achievements import SoftwareAchievement, ScriptAchievement, ForumAchievement, JobAchievement
 from metabomatch.flaskbb.utils.serialization import SerializableMixin
+from metabomatch.utils import random_email
 
 groups_users = db.Table(
     'groups_users',
@@ -154,14 +155,14 @@ class User(db.Model, UserMixin, SerializableMixin):
     @staticmethod
     def create_from_twitter_oauth(resp):
         """
-
-        :param response: twitter response
-        :return:
+        :param resp: twitter response.
+        :return: newly created user after database insertion.
         """
+
         u = User()
         u.username = resp['screen_name']
         u.password = '1234'
-        u.email = 'noway@hotmail.com'
+        u.email = random_email()  # 'noway@hotmail.com'
         u.primary_group_id = 4
         u.date_joined = datetime.utcnow()
         u.twitter_access_token = resp['oauth_token']

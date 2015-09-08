@@ -18,6 +18,12 @@
 {% block css %}
     {{super()}}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/selectize.bootstrap3.css') }}">
+    <style>
+        #stats {
+            background-color: #f7f5fa;
+            border-radius: 5px;
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
@@ -29,64 +35,84 @@
      <p class="help-block">Be sure the software you want to register does not already exist on
          <strong>metabomatch</strong></p>
 
-     <h2 style="padding-top: 20px;">Basic informations</h2>
-     <hr/>
-        {{ form.hidden_tag() }}
+     <div class="container" style="width:100%;">
 
-        {{ horizontal_field(form.name, icon_class='fa fa-laptop fa-2x') }}
-        {{ horizontal_field(form.organization, icon_class='fa fa-briefcase fa-2x') }}
-        {{ horizontal_field(form.pg_language, icon_class='fa fa-terminal fa-2x') }}
+         <div class="row">
+             <div class="col-md-8">
+                 <h2 style="padding-top: 20px;">Basic informations</h2>
+                 <hr/>
+                    {{ form.hidden_tag() }}
 
-        <div class="form-group">
-            <label class="col-md-3 control-label">image</label>
-            <div class="col-md-4">
-                <input id="input-file" class="file" type="file" name="image" />
-            </div>
-            <div class="col-md-5">
-                <img id="preview" src='http://metabomatch.s3.amazonaws.com/placeholder.jpg'  height="200" width="200"/>
-            </div>
-        </div>
-        <div>
-        </div>
+                    {{ horizontal_field(form.name, icon_class='fa fa-laptop fa-2x') }}
+                    {{ horizontal_field(form.organization, icon_class='fa fa-briefcase fa-2x') }}
+                    {{ horizontal_field(form.pg_language, icon_class='fa fa-terminal fa-2x') }}
+
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">image</label>
+                        <div class="col-md-4">
+                            <input id="input-file" class="file" type="file" name="image" />
+                        </div>
+                        <div class="col-md-5">
+                            <img id="preview" src='http://metabomatch.s3.amazonaws.com/placeholder.jpg'  height="100" width="150"/>
+                        </div>
+                    </div>
+                    <div>
+                    </div>
 
 
-     {{ horizontal_field(form.website, label_text='website', icon_class='fa fa-paper-plane fa-2x') }}
+                 {{ horizontal_field(form.website, label_text='website', icon_class='fa fa-paper-plane fa-2x') }}
 
-        {{ horizontal_field(form.github_url, label_text='github repository url', icon_class='fa fa-github fa-2x') }}
-     
+                    {{ horizontal_field(form.github_url, label_text='github repository url', icon_class='fa fa-github fa-2x') }}
 
-         <div class="form-group">
-             <label class="col-md-3 control-label"><span class="fa fa-tags fa-2x"></span> </label>
-             <div class="col-md-9">
-                 <select id="select-tags"  name="selected_tags" multiple placeholder="Select tags...">
-                    <option value="Signal Extraction">Signal Extraction</option>
-                    <option value="LC Alignment">LC Alignment</option>
-                    <option value="Database Search">Database Search</option>
-                    <option value="Statistical Analysis">Statistical Analysis</option>
-                 </select>
+
+                     <div class="form-group">
+                         <label class="col-md-3 control-label"><span class="fa fa-tags fa-2x"></span> </label>
+                         <div class="col-md-9">
+                             <select id="select-tags"  name="selected_tags" multiple placeholder="Select tags...">
+                                <option value="Signal Extraction">Signal Extraction</option>
+                                <option value="LC Alignment">LC Alignment</option>
+                                <option value="Database Search">Database Search</option>
+                                <option value="Statistical Analysis">Statistical Analysis</option>
+                             </select>
+                         </div>
+                     </div>
+
+                 <h2>Version</h2>
+                 <hr/>
+                    <div class="form-group">
+                        <div class="col-md-9 col-md-offset-3">
+                            {{ render_boolean_field(form.is_maintained) }}
+                        </div>
+                    </div>
+                    {{ horizontal_field(form.current_version) }}
+
+                 <h2>Publications</h2>
+                 <hr/>
+                    {{ horizontal_field(form.publication_link) }}
+                    {{ horizontal_field(form.download_link) }}
+
+
+                <div class="form-group">
+                    <div class="col-sm-offset-3 col-sm-9">
+                        <button type="submit" class="btn btn-success">Register</button>
+                    </div>
+                </div>
              </div>
-         </div>
 
-     <h2>Version</h2>
-     <hr/>
-        <div class="form-group">
-            <div class="col-md-9 col-md-offset-3">
-                {{ render_boolean_field(form.is_maintained) }}
-            </div>
+             <div id="stats" class="col-md-4" style="margin-top: 50px;">
+                <div class="container" style="width:100%;">
+                    <h4 class="text-left">Statistics</h4>
+
+                    <div class="row">
+                        <h5>Total #softwares: <span class="badge">{{ tot_soft_count }}</span></h5>
+{#                        <h4>Total #upvotes: <span class="badge">{{ }}</span></h4>#}
+                        <h5>Last software: <a href={{ url_for('softwares.info', name=last_soft_name) }}>{{ last_soft_name }}</a></h5>
+                    </div>
+
+                </div>
+             </div>
         </div>
-        {{ horizontal_field(form.current_version) }}
-
-     <h2>Publications</h2>
-     <hr/>
-        {{ horizontal_field(form.publication_link) }}
-        {{ horizontal_field(form.download_link) }}
-
-
-    <div class="form-group">
-        <div class="col-sm-offset-3 col-sm-9">
-            <button type="submit" class="btn btn-success">Register</button>
-        </div>
-    </div>
+     </div>
 </form>
 {% endblock %}
 

@@ -7,9 +7,9 @@
             font-size: 2em;
         }
 
-        .cont {
-            margin: 5px 10px 5px 10px;
-        }
+        {#        .cont {#}
+        {#            margin: 5px 10px 5px 10px;#}
+        {#        }#}
     </style>
 {% endblock %}
 
@@ -25,37 +25,44 @@
 {% endif %}
 
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div class="panel panel-default">
             <div class="panel-heading text-center"><strong>user basic informations</strong></div>
             <div class="panel-content cont">
-                {% if user.avatar %}
-                    <img style="margin-top:20px" class='img-responsive img-rounded' src="{{ user.avatar }}" alt="Avatar" height="150" width="150">
-                {% else %}
-                    <img style="margin-top:20px" class='img-responsive img-rounded'
-                         src="{{ user.email | gravatar(size=150) }}" alt="gravatar"
-                         height="150" width="150" data-toggle="tooltip" data-placement="bottom"
-                         title="{{user.username}}">
-                {% endif %}
+                <p class="text-center">
+                    {% if user.avatar %}
+                        <img style="margin-top:20px" class='img-responsive img-rounded' src="{{ user.avatar }}"
+                             alt="Avatar" height="150" width="150">
+                    {% elif user.profile_image_url %}
+                        <img style="margin-top:20px" class='img-rounded' src="{{ user.profile_image_url }}"
+                             alt="twitter avatar" height="150" width="150">
+                    {% else %}
+                        <img style="margin-top:20px" class='img-responsive img-rounded'
+                             src="{{ user.email | gravatar(size=150) }}" alt="gravatar"
+                             height="150" width="150" data-toggle="tooltip" data-placement="bottom"
+                             title="{{ user.username }}">
+                    {% endif %}
+                </p>
 
-                <h1>{{ user.username }}
+                <h1 class="text-center">{{ user.username }}
                     {% if user|is_online %}
                         <small style="font-size: 0.4em;" class="label label-success">Online</small>
                     {% else %}
-                        <small class="label label-default">Offline</small>
+                        <small style="font-size: 0.4em;" class="label label-default">Offline</small>
                     {% endif %}
-                    {% if user.signature != None %}
-                    <br/>
-                    <small>{{ user.signature }}</small>
-                     <!-- | default(user.email, true) }}</small> -->
-                    {% endif %}
+                    {#                    {% if user.signature != None %}#}
+                    {#                    <br/>#}
+                    {#                    <small>{{ user.signature }}</small>#}
+                    {#                     <!-- | default(user.email, true) }}</small> -->#}
+                    {#                    {% endif %}#}
                 </h1>
 
-                <p>
+                <p class="text-center">
                     <a href="{{ url_for('user.view_all_topics', username=user.username) }}">all topics</a>,
                     <a href="{{ url_for('user.view_all_posts', username=user.username) }}">all posts</a>
                 </p>
-                <p>
+
+                <p class="text-center">
                     <a href="{{url_for('user.new_message', to_user=user.username) }}" class="label label-danger">Send private message</a>
                 </p>
 
@@ -64,7 +71,7 @@
 
     </div>
 
-    <div class="col-md-5">
+    <div class="col-md-6">
         <div class="panel panel-default">
             <div class="panel-heading text-center"><strong>User notes</strong></div>
             <div class="panel-content cont">
