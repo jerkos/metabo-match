@@ -43,17 +43,18 @@ user = Blueprint("user", __name__, template_folder="templates")
 @user.route("/<username>")
 def profile(username):
     user_inst = User.query.filter_by(username=username).first_or_404()
-    if username == 'Guest':  # user.id == GUEST_USER_ID or
-        return render_template('errors/forbidden_page.html')
+    # if username == 'Guest':  # user.id == GUEST_USER_ID or
+    #     return render_template('errors/forbidden_page.html')
 
     if user_inst.twitter_access_token and user_inst.twitter_secret_token:
         client = UserClient(TWITTER_CONSUMER_KEY,
                             TWITTER_CONSUMER_SECRET,
                             user_inst.twitter_access_token,
                             user_inst.twitter_secret_token)
+        # fetching image url
         response = client.api.users.show.get(screen_name=username)
         user_inst.profile_image_url = response.data['profile_image_url'].replace('normal', '400x400')
-    return render_template("user/profile.html", user=user_inst)
+    return render_template("user/profile.html", user=user_inst, guest_id=GUEST_USER_ID)
 
 
 @user.route("/<username>/topics")
