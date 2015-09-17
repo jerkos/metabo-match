@@ -120,7 +120,7 @@
 
 <p class="alert alert-info"><strong>The following informations are visible by all users.</strong></p>
 
-{% if user.username == 'Guest' %}
+{% if user.id | string() != guest_id | string() %}
 <h2 style="padding-top: 20px;"><span class="fa fa-certificate text-muted"></span> Achievements</h2>
 <p class="help-text text-muted"><strong>Tips</strong> post new softwares, new scripts and
     talk in our forums to get more achievements !</p>
@@ -152,7 +152,8 @@
     {% endfor %}
 </ul>
 
-{% if user.username == 'Guest' %}
+{% if user.id | string() != guest_id | string() %}
+
 <h2 style="padding-top: 50px;"><span class="fa fa-laptop text-muted"></span> Software user</h2>
 <hr/>
 
