@@ -120,7 +120,7 @@
 
 <p class="alert alert-info"><strong>The following informations are visible by all users.</strong></p>
 
-{% if user.id | string() != guest_id | string() %}
+{% if user.username == 'Guest' %}
 <h2 style="padding-top: 20px;"><span class="fa fa-certificate text-muted"></span> Achievements</h2>
 <p class="help-text text-muted"><strong>Tips</strong> post new softwares, new scripts and
     talk in our forums to get more achievements !</p>
@@ -143,6 +143,7 @@
                 class="badge">level {{ forum_achievements['level'] }}</span></li>
     {% endif %}
 </ul>
+{% endif %}
 
 <h2 style="padding-top: 50px;"># Total Software Upvotes: {{ user.upvotes | length }}</h2>
 <ul class="list-group">
@@ -151,6 +152,7 @@
     {% endfor %}
 </ul>
 
+{% if user.username == 'Guest' %}
 <h2 style="padding-top: 50px;"><span class="fa fa-laptop text-muted"></span> Software user</h2>
 <hr/>
 
