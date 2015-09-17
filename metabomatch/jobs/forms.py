@@ -32,7 +32,7 @@ class JobForm(Form):
 
     job_tags = StringField('tags', description='programming languages, expertise...', default='')
 
-    def save(self):
+    def save(self, user_id=None):
 
         job = Job(self.company.data, self.company_url.data)
         job.name = self.name.data
@@ -44,7 +44,7 @@ class JobForm(Form):
         job.apply_date_limit = self.apply_date_limit.data
         job.contact_email = self.contact_email.data
 
-        job.user_id = current_user.id
+        job.user_id = current_user.id or user_id
         job.is_closed = False
         #tags
         tags = self.job_tags.data.split(",")

@@ -148,7 +148,8 @@
 <h2 style="padding-top: 50px;"># Total Software Upvotes: {{ user.upvotes | length }}</h2>
 <ul class="list-group">
     {% for name, up in (user.upvotes | map(attribute='sentence_software_mapping') | groupby('software.name')) %}
-        <li class="list-group-item">{{ name }} <span class="badge">#{{ up | length }}</span></li>
+        <li class="list-group-item"><a href="{{ url_for('softwares.info', name=name) }}">{{ name }}</a> <span
+                class="badge">#{{ up | length }}</span></li>
     {% endfor %}
 </ul>
 

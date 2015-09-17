@@ -1,3 +1,9 @@
+import os
+
+try:
+    from metabomatch.private_keys import GUEST_USER_ID
+except ImportError:
+    GUEST_USER_ID = os.environ.get('GUEST_USER_ID')
 from sqlalchemy import func, desc
 import markdown2
 
@@ -29,18 +35,20 @@ def index():
     return render_template('jobs/jobs.html', jobs=jobs_obj)
 
 
-@jobs.route('/register', methods=['GET', 'POST'])
-@login_required
+@jobs.route('/register', methods=['GET', 'POST'])  # @login_required
 def register():
     form = JobForm()
-    print request.form
     if form.validate_on_submit():
-        form.save()
-        goal = JobAchievement.unlocked_level(len(current_user.posted_jobs))
-        if goal:
-            flash("Achievement unlock: {}, {}, level {}".format(JobAchievement.name, goal['name'], goal['level']), 'success')
-        current_user.global_score += SCORE_JOB
-        current_user.save()
+        if current_user.is_authenticated():
+            form.save()
+            goal = JobAchievement.unlocked_level(len(current_user.posted_jobs))
+            if goal:
+                flash("Achievement unlock: {}, {}, level {}".format(JobAchievement.name, goal['name'], goal['level']),
+                      'success')
+            current_user.global_score += SCORE_JOB
+            current_user.save()
+        else:
+            form.save(user_id=GUEST_USER_ID)
         return redirect(url_for('jobs.index'))
 
     #---perform some queries to get some statistics

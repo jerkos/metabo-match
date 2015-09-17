@@ -29,10 +29,10 @@ class ScriptForm(Form):
     description = TextAreaField("description", default='NA', validators=[Optional()])
     content = TextAreaField("content*", validators=[Optional()])
 
-    def save(self, software_name):
+    def save(self, software_name, user_id=None):
         script = Script(self.title.data, self.programming_language.data)
         script.description = self.description.data
-        script.user_id = current_user.id
+        script.user_id = user_id or current_user.id
         if software_name != 'None' and software_name != '---':
             script.software_id = software_name
         else:

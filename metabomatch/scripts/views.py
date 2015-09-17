@@ -3,8 +3,15 @@
 scripts views
 -------------
 """
+import os
 from flask.ext.wtf import Form
 from metabomatch.achievements import ScriptAchievement, SCORE_SCRIPT
+
+try:
+    from metabomatch.private_keys import GUEST_USER_ID
+except ImportError:
+    GUEST_USER_ID = os.environ.get('GUEST_USER_ID')
+
 from sqlalchemy import desc, and_
 from flask import Blueprint, request, redirect, url_for, flash
 
@@ -54,20 +61,22 @@ def index():
                            search_form=Form())
 
 
-@scripts.route('/register', methods=['GET', 'POST'])
-@login_required
+@scripts.route('/register', methods=['GET', 'POST'])  # @login_required
 def register():
     form = ScriptForm()
     form.get_softwares()
     if form.validate_on_submit():
-        form.save(request.form['software'])
-        goal = ScriptAchievement.unlocked_level(len(current_user.scripts))
-        if goal:
-            flash("Achievement unlock: {}, {}, level {}".format(ScriptAchievement.name, goal['name'],
-                                                                goal['level']), 'success')
-        # update score
-        current_user.global_score += SCORE_SCRIPT
-        current_user.save()
+        if current_user.is_authenticated():
+            form.save(request.form['software'])
+            goal = ScriptAchievement.unlocked_level(len(current_user.scripts))
+            if goal:
+                flash("Achievement unlock: {}, {}, level {}".format(ScriptAchievement.name, goal['name'],
+                                                                    goal['level']), 'success')
+            # update score
+            current_user.global_score += SCORE_SCRIPT
+            current_user.save()
+        else:
+            form.save(request.form['software'], GUEST_USER_ID)
         return redirect(url_for('scripts.index'))
 
     # return template for get request

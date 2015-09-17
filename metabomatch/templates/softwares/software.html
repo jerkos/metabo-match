@@ -462,7 +462,7 @@
                                         </div>
                                         <span style="padding-left:10px"></span>
                                         {{ pro.title }} by
-                                        <a href="{{ url_for('user.new_message', to_user=pro.owner.username) }}">
+                                        <a href="{{ url_for('user.profile', username=pro.owner.username) }}">
                                             <img class="img img-circle"
                                                     {% if pro.owner.avatar %}
                                                  src="{{ pro.owner.avatar }}"
@@ -480,7 +480,7 @@
                                     <p class="text-success"><em>backed by</em>
                                         <strong>{{ pro.procons_upvotes | length }} users</strong>
                                         {% for proc_up in pro.procons_upvotes[:3] %}
-                                            <a href="{{ url_for('user.new_message', to_user=proc_up.user.username) }}">
+                                            <a href="{{ url_for('user.profile', username=proc_up.user.username) }}">
                                                 <img class="img img-circle"
                                                         {% if proc_up.user.avatar %}
                                                      src="{{ proc_up.user.avatar }}"
@@ -525,7 +525,7 @@
                                         </div>
                                         <span style="padding-left:10px"></span>
                                         {{ con.title }}
-                                        <a href="{{ url_for('user.new_message', to_user=con.owner.username) }}">
+                                        <a href="{{ url_for('user.profile', username=con.owner.username) }}">
                                             <img class="img img-circle"
                                                     {% if con.owner.avatar %}
                                                  src="{{ con.owner.avatar }}"
@@ -543,7 +543,7 @@
                                     <p class="text-danger"><em>backed by</em> <strong>{{ con.procons_upvotes | length }}
                                         users</strong>
                                         {% for proc_up in con.procons_upvotes[:3] %}
-                                            <a href="{{ url_for('user.new_message', to_user=proc_up.user.username) }}">
+                                            <a href="{{ url_for('user.profile', username=proc_up.user.username) }}">
                                                 <img class="img img-circle"
                                                         {% if proc_up.user.avatar %}
                                                      src="{{ proc_up.user.avatar }}"
