@@ -62,7 +62,7 @@
                     <a href="{{ url_for('user.view_all_posts', username=user.username) }}">all posts</a>
                 </p>
 
-                {% if user.id != guest_id %}
+                {% if user.id | string() != guest_id | string() %}
                     <p class="text-center">
                         <a href="{{ url_for('user.new_message', to_user=user.username) }}" class="label label-danger">Send
                             private message</a>
@@ -120,26 +120,29 @@
 
 <p class="alert alert-info"><strong>The following informations are visible by all users.</strong></p>
 
-{% if user.id != guest_id %}
+{% if user.id | string() != guest_id | string() %}
 <h2 style="padding-top: 20px;"><span class="fa fa-certificate text-muted"></span> Achievements</h2>
 <p class="help-text text-muted"><strong>Tips</strong> post new softwares, new scripts and
     talk in our forums to get more achievements !</p>
 <hr/>
 <ul class="list-group">
     {% if software_achievements %}
-        <li class="list-group-item"><strong>{{ soft_name }}</strong> <em>{{ software_achievements['name'] }}</em> <badge class="badge">level {{ software_achievements['level'] }}</badge></li>
+        <li class="list-group-item"><strong>{{ soft_name }}</strong> <em>{{ software_achievements['name'] }}</em> <span
+                class="badge">level {{ software_achievements['level'] }}</span></li>
     {% endif %}
     {% if script_achievements %}
-        <li class="list-group-item"><strong>{{ script_name }}</strong> <em>{{ script_achievements['name'] }}</em> <badge class="badge">level {{ script_achievements['level'] }}</badge></li>
+        <li class="list-group-item"><strong>{{ script_name }}</strong> <em>{{ script_achievements['name'] }}</em> <span
+                class="badge">level {{ script_achievements['level'] }}</span></li>
     {% endif %}
     {% if job_achievements %}
-        <li class="list-group-item"><strong>{{ job_name }}</strong> <em>{{ job_achievements['name'] }}</em> <badge class="badge">level {{ job_achievements['level'] }}</badge></li>
+        <li class="list-group-item"><strong>{{ job_name }}</strong> <em>{{ job_achievements['name'] }}</em> <span
+                class="badge">level {{ job_achievements['level'] }}</span></li>
     {% endif %}
     {% if forum_achievements %}
-        <li class="list-group-item"><strong>{{ forum_name }}</strong> <em>{{ forum_achievements['name'] }}</em> <badge class="badge">level {{ forum_achievements['level'] }}</badge></li>
+        <li class="list-group-item"><strong>{{ forum_name }}</strong> <em>{{ forum_achievements['name'] }}</em> <span
+                class="badge">level {{ forum_achievements['level'] }}</span></li>
     {% endif %}
 </ul>
-{% endif %}
 
 <h2 style="padding-top: 50px;"># Total Software Upvotes: {{ user.upvotes | length }}</h2>
 <ul class="list-group">
@@ -170,21 +173,20 @@
     {% endfor %}
 </ul>
 
-{% if user.id != guest_id %}
 <h2 style="padding-top: 50px;"><span class="fa fa-code-fork text-muted"></span> Proposed scripts/parameters</h2>
 <hr/>
     <ul class="list-group">
-    {%  for script in user.scripts %}
-        <li class="list-group-item">
-            <a href="{{ url_for('scripts.info', script_id=script.id, slug=script.slug) }}"> {{ script.title }}, <em>software:</em>
-                <strong>{{ script.software.name | default('not defined') }}</strong></a>
-            <span class="pull-right badge">{{ script.up_votes }}</span>
-        </li>
-    {% else %}
-        <p>User did not proposed any scripts yet.</p>
-        <p class="alert-info">You can upload a script from the register <a href="{{ url_for('scripts.index') }}">script page</a>.</p>
-    {% endfor %}
-    </ul>
+        {% for script in user.scripts %}
+            <li class="list-group-item">
+                <a href="{{ url_for('scripts.info', script_id=script.id, slug=script.slug) }}"> {{ script.title }}, <em>software:</em>
+                    <strong>{{ script.software.name | default('not defined') }}</strong></a>
+                <span class="pull-right badge">{{ script.up_votes }}</span>
+            </li>
+        {% else %}
+            <p>User did not proposed any scripts yet.</p>
+            <p class="alert-info">You can upload a script from the register <a href="{{ url_for('scripts.index') }}">script
+                page</a>.</p>
+        {% endfor %}
 </ul>
 
 
@@ -201,5 +203,4 @@
     <p class="alert-info">Find best candidates posting your job offer on our <a href="{{ url_for('jobs.index') }}">job page</a></p>
 {% endif %}
 {% endif %}
-
 {% endblock %}
