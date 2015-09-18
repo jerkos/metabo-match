@@ -50,12 +50,13 @@
                  }
 
                  .blu {
-                     color: grey;
+                     color: black;
                  }
 
-                 {#                li.active {#}
+                 {#                 .nav li.active {#}
+                 {#                    background: #0088cc none;#}
                  {#                    border-bottom: 5px solid #42a5f5;#}
-                 {#                }#}
+                 {#                 }#}
             </style>
         {% endblock %}
 
@@ -94,33 +95,8 @@
                             <ul style="padding-top: 10px" class="nav navbar-nav">
                                 {{ emit_event("before-first-navigation-element") }}
 
-                                {#                                {{ topnav(endpoint='home.workflow' , name='Workflow', icon='fa fa-road') }}#}
-
-                                <li id="software">
-                                    {#                                    <a class="dropdown-toggle" data-toggle="dropdown">#}
-                                    {#                                        <span class="fa fa-desktop"></span> Softwares#}
-                                    {#                                        <span class="caret"></span>#}
-                                    {#                                    </a>#}
-                                    {#                                    <ul class="dropdown-menu" role="menu">#}
-                                    {#                                        <li><a href="{{ url_for('softwares.index') }}"><span class="fa fa-book"></span>#}
-                                    {#                                            Find/register software</a></li>#}
-                                    {#                                        <li class="divider"></li>#}
-                                <li>
-                                    <a href="{{ url_for('softwares.rankings') }}">
-                                        <span class="fa fa-trophy blu"></span> Rankings
-                                    </a>
-                                    {#                                        </li>#}
-                                    {#                                    </ul>#}
-                                </li>
-
-                                {#                                {{ topnav(endpoint='scripts.index' , name='Scripts', icon='fa fa-file-text-o') }}#}
+                                {{ topnav(endpoint='softwares.rankings', name='Rankings', icon='fa fa-trophy blu') }}
                                 {{ topnav(endpoint='forum.index', name='Forum', icon='fa fa-comment blu', active=active_forum_nav) }}
-
-                                {#                                {{ topnav(endpoint='jobs.index', name='Jobs', icon='fa fa-rocket') }}#}
-                                {#                                <li><a>Crowdsourcing#}
-                                {#                                    <small><label class="label label-info">soon</label></small>#}
-                                {#                                </a></li>#}
-
                                 {{ topnav(endpoint='scripts.index' , name='Scripts', icon='fa fa-file-text-o blu') }}
 
                                 <li>
