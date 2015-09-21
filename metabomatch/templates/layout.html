@@ -106,10 +106,10 @@
                                     </a>
                                     <ul class="dropdown-menu" role="menu">
                                         {{ topnav(endpoint='news.index', name='News', icon='fa fa-pencil') }}
-                                        {{ topnav(endpoint='home.about', name='About', icon='fa fa-info') }}
-                                        {{ topnav(endpoint='home.workflow' , name='Workflow', icon='fa fa-road') }}
+                                        {{ topnav(endpoint='softwares.about', name='About', icon='fa fa-info') }}
+                                        {{ topnav(endpoint='softwares.workflow' , name='Workflow', icon='fa fa-road') }}
                                         {{ topnav(endpoint='jobs.index', name='Jobs', icon='fa fa-rocket') }}
-                                        {{ topnav(endpoint='home.faq' , name='F.A.Q', icon='fa fa-question') }}
+                                        {{ topnav(endpoint='softwares.faq' , name='F.A.Q', icon='fa fa-question') }}
                                     </ul>
                                 </li>
                                 {# {{ topnav(endpoint='home.index', name='Crowdsourcing') }}#}
@@ -145,7 +145,7 @@
                                                     class="fa fa-cog"></span> Management</a></li>
                                             <li class="divider"></li>
                                         {% endif %}
-                                        <li><a href="{{ url_for('home.leaderboard') }}"><span
+                                        <li><a href="{{ url_for('softwares.leaderboard') }}"><span
                                                 class="fa fa-gamepad"></span> Leaderboard</a></li>
                                         <li class="divider"></li>
                                         <li><a href="{{ url_for('auth.logout') }}"><span class="fa fa-power-off"></span>
@@ -179,7 +179,7 @@
                                     <ul class="dropdown-menu" role="menu">
 {#                                        <li><a href="{{ url_for('auth.register') }}">Register</a></li>#}
 {#                                        <li><a href="{{ url_for('auth.forgot_password') }}">Reset Password</a></li>#}
-                                        <li><a href="{{ url_for('home.leaderboard') }}"><span
+                                        <li><a href="{{ url_for('softwares.leaderboard') }}"><span
                                                 class="fa fa-gamepad"></span> Leaderboard</a></li>
                                     </ul>
                                 </div>

@@ -23,7 +23,6 @@ from flask import Flask, request
 from flask.ext.login import current_user
 from flask.ext.whooshalchemy import whoosh_index
 
-from metabomatch.home.views import home
 from metabomatch.softwares.views import softwares
 from metabomatch.scripts.views import scripts
 from metabomatch.jobs.views import jobs
@@ -94,8 +93,7 @@ def create_app(config=None):
 
 
 def configure_blueprints(app):
-    app.register_blueprint(home, url_prefix='/')
-    app.register_blueprint(softwares, url_prefix='/softwares')
+    app.register_blueprint(softwares, url_prefix='')
     app.register_blueprint(scripts, url_prefix='/scripts')
     app.register_blueprint(jobs, url_prefix='/jobs')
     app.register_blueprint(news, url_prefix='/news')

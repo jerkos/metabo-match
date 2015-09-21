@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 from itertools import groupby
 from collections import OrderedDict
 import json
+from metabomatch.user.models import User
 import os
 
 from jinja2 import Template
@@ -274,7 +275,7 @@ def index():
                            today=datetime.now())
 
 
-@softwares.route('/get-more-notifications')
+@softwares.route('/softwares/get-more-notifications')
 def get_more_notifications():
     """
     supposed to be ajax retrieved
@@ -328,7 +329,7 @@ def get_more_notifications():
     return jsonify(html=rendered)
 
 
-@softwares.route('/register', methods=['GET', 'POST'])
+@softwares.route('/softwares/register', methods=['GET', 'POST'])
 @login_required
 def register():
     """register a new software"""
@@ -360,7 +361,7 @@ def register():
                            last_soft_name=last_soft_name, tot_soft_count=tot_soft_count)
 
 
-@softwares.route('/<name>/delete')
+@softwares.route('/softwares/<name>/delete')
 @login_required
 def delete(name):
     """
@@ -381,7 +382,7 @@ def delete(name):
     return redirect(url_for('softwares.index'))
 
 
-@softwares.route('/<name>')
+@softwares.route('/softwares/<name>')
 @cache.cached(timeout=3600)
 def info(name):
     """
@@ -414,7 +415,7 @@ def info(name):
 
 # COMMENTS and RATINGS
 # ----------------------------------------------------------------------------------------------------------------------
-@softwares.route('/<name>/comment', methods=['POST'])  # @login_required
+@softwares.route('/softwares/<name>/comment', methods=['POST'])  # @login_required
 def comment(name):
     """
     add a comment or a rating on a software
@@ -438,13 +439,13 @@ def comment(name):
     return redirect(url_for('softwares.info', name=name))
 
 
-@softwares.route('/<name>/comments')
+@softwares.route('/softwares/<name>/comments')
 def comments(name):
     soft = Software.query.filter(Software.name == name).first_or_404()
     return render_template('softwares/all_comments.html', software=soft, form=Form())
 
 
-@softwares.route('/<name>/update_comment/<int:comment_id>', methods=['POST'])
+@softwares.route('/softwares/<name>/update_comment/<int:comment_id>', methods=['POST'])
 def update_comment(name, comment_id):
     soft = Software.query.filter(Software.name == name).first_or_404()
     c = Comment.query.filter(Comment.id == comment_id).first_or_404()
@@ -455,7 +456,7 @@ def update_comment(name, comment_id):
     return redirect(url_for('softwares.comments', name=soft.name))
 
 
-@softwares.route('/<name>/ratings')
+@softwares.route('/softwares/<name>/ratings')
 def ratings(name):
     soft = Software.query.filter(Software.name == name).first_or_404()
     m = db.session.query(func.avg(Rating.rate).label('mean_rate')).filter(Rating.software_id == name).first()[0]
@@ -464,7 +465,7 @@ def ratings(name):
 
 # SENTENCES upvotes
 # ----------------------------------------------------------------------------------------------------------------------
-@softwares.route('/<name>/upvote/<int:mapping_id>')
+@softwares.route('/softwares/<name>/upvote/<int:mapping_id>')
 def upvote(name, mapping_id):
     """
     upvite a particular software mapping id
@@ -494,7 +495,7 @@ def upvote(name, mapping_id):
     return redirect(url_for('softwares.info', name=name))
 
 
-@softwares.route('/<name>/<int:mapping_id>/upvote-details')
+@softwares.route('/softwares/<name>/<int:mapping_id>/upvote-details')
 def upvote_details(name, mapping_id):
     soft = Software.query.filter(Software.name == name).first_or_404()
     s_mapp = None
@@ -517,7 +518,7 @@ def upvote_details(name, mapping_id):
 
 # PROCONS routes
 # ----------------------------------------------------------------------------------------------------------------------
-@softwares.route('/<name>/register_procon', methods=['GET', 'POST'])
+@softwares.route('/softwares/<name>/register_procon', methods=['GET', 'POST'])
 def register_procon(name):
     form = ProConsForm()
     if form.validate_on_submit():
@@ -532,7 +533,7 @@ def register_procon(name):
     return render_template('softwares/register_procons.html', software=soft, form=form)
 
 
-@softwares.route('/<name>/procons_upvote/<int:procon_id>')
+@softwares.route('/softwares/<name>/procons_upvote/<int:procon_id>')
 def upvote_procon(name, procon_id):
     user_id = current_user.id if current_user.is_authenticated() else GUEST_USER_ID
     proconup = ProConsUpvote(procon_id, user_id)
@@ -540,13 +541,13 @@ def upvote_procon(name, procon_id):
     return redirect(url_for('softwares.info', name=name))
 
 
-@softwares.route('/<name>/pros')
+@softwares.route('/softwares/<name>/pros')
 def pros(name):
     soft = Software.query.filter(Software.name == name).first_or_404()
     return render_template('softwares/all_pros.html', software=soft)
 
 
-@softwares.route('/<name>/cons')
+@softwares.route('/softwares/<name>/cons')
 def cons(name):
     soft = Software.query.filter(Software.name == name).first_or_404()
     return render_template('softwares/all_cons.html', software=soft)
@@ -554,7 +555,7 @@ def cons(name):
 
 # software users routes
 # ----------------------------------------------------------------------------------------------------------------------
-@softwares.route('/<name>/register_user')
+@softwares.route('/softwares/<name>/register_user')
 @login_required
 def register_user(name):
     """
@@ -568,7 +569,7 @@ def register_user(name):
     return redirect(url_for('softwares.info', name=name))
 
 
-@softwares.route('/<name>/remove_user')
+@softwares.route('/softwares/<name>/remove_user')
 @login_required
 def remove_user(name):
     """
@@ -588,7 +589,7 @@ def remove_user(name):
 
 # Update software informations and description
 # ----------------------------------------------------------------------------------------------------------------------
-@softwares.route('/<name>/update', methods=['GET', 'POST'])
+@softwares.route('/softwares/<name>/update', methods=['GET', 'POST'])
 @login_required
 def update(name):
     """
@@ -608,7 +609,7 @@ def update(name):
     return render_template('softwares/update_software.html', form=form, software=soft)
 
 
-@softwares.route('/<name>/update_description', methods=['POST'])
+@softwares.route('/softwares/<name>/update_description', methods=['POST'])
 @login_required
 def update_description(name):
     soft = Software.query.filter(Software.name == name).first_or_404()
@@ -735,3 +736,24 @@ def rankings():
                            delta_rankings_perf=Software.pos_delta_upvotes(category='PERFORMANCE'),
                            delta_rankings_support=Software.pos_delta_upvotes(category='SUPPORT'),
                            overall_winner=overall_winner)
+
+
+@softwares.route('/workflow', methods=['GET'])
+def workflow():
+    return render_template('home/workflow.html')
+
+
+@softwares.route('/leaderboard', methods=['GET'])
+def leaderboard():
+    users = db.session.query(User).order_by(desc(User.global_score)).all()
+    return render_template('home/leaderboard.html', users=users)
+
+
+@softwares.route('/about', methods=['GET'])
+def about():
+    return render_template('home/home_layout.html')
+
+
+@softwares.route('/faq', methods=['GET'])
+def faq():
+    return render_template('home/FAQ.html')
