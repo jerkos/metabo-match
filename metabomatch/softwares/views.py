@@ -383,7 +383,6 @@ def delete(name):
 
 
 @softwares.route('/softwares/<name>')
-@cache.cached(timeout=3600)
 def info(name):
     """
     get some infos on requested software name being the primary key
