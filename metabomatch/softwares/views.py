@@ -28,7 +28,7 @@ from flask_sqlalchemy import Pagination
 
 from metabomatch.flaskbb.utils.helpers import crop_title, time_since
 from metabomatch.achievements import SoftwareAchievement, SCORE_SOFT
-from metabomatch.extensions import db
+from metabomatch.extensions import db, cache
 from metabomatch.flaskbb.utils.helpers import render_template
 from metabomatch.flaskbb.utils.permissions import is_admin
 from metabomatch.softwares.models import Software, Tag, Comment, Rating, Sentence, SentenceSoftwareMapping, Upvote, \
@@ -178,6 +178,7 @@ TEMPLATE = """
 
 
 @softwares.route('/')
+@cache.cached(timeout=3600)
 def index():
     """dealing with GET args"""
 
@@ -381,6 +382,7 @@ def delete(name):
 
 
 @softwares.route('/<name>')
+@cache.cached(timeout=3600)
 def info(name):
     """
     get some infos on requested software name being the primary key
@@ -622,6 +624,7 @@ def update_description(name):
 # RANKINGS
 # ----------------------------------------------------------------------------------------------------------------------
 @softwares.route('/rankings', methods=['GET'])
+@cache.cached(timeout=86400)
 def rankings():
     softwares_inst = Software.query.all()
     overall_winner = max(softwares_inst, key=lambda _: _.compute_rate())
