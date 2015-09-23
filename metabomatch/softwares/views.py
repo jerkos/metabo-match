@@ -179,7 +179,6 @@ TEMPLATE = """
 
 
 @softwares.route('/')
-@cache.cached(timeout=3600)
 def index():
     """dealing with GET args"""
 
