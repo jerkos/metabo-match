@@ -30,6 +30,8 @@ class DefaultConfig(object):
         DEBUG = True
         # TESTING = False
 
+    SQLALCHEMY_POOL_SIZE = 20
+
     ## Security
     # This is the secret key that is used for session signing.
     # You can generate a secure key with os.urandom(24)
