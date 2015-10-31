@@ -133,12 +133,12 @@ def configure_extensions(app):
     redis_store.init_app(app)
 
     # Flask-WhooshAlchemy
-    with app.app_context():
-        whoosh_index(app, Post)
-        whoosh_index(app, Topic)
-        whoosh_index(app, Forum)
-        whoosh_index(app, Category)
-        whoosh_index(app, User)
+    #with app.app_context():
+    #    whoosh_index(app, Post)
+    #    whoosh_index(app, Topic)
+    #    whoosh_index(app, Forum)
+    #    whoosh_index(app, Category)
+    #    whoosh_index(app, User)
 
     # Flask-Login
     login_manager.login_view = app.config["LOGIN_VIEW"]
