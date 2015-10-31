@@ -413,13 +413,15 @@ def info(name):
 
 # COMMENTS and RATINGS
 # ----------------------------------------------------------------------------------------------------------------------
-@softwares.route('/softwares/<name>/comment', methods=['POST'])  # @login_required
+@softwares.route('/softwares/<name>/comment', methods=['GET', 'POST'])  # @login_required
 def comment(name):
     """
     add a comment or a rating on a software
     :param name: software name PK
     :return:
     """
+    if request.method == 'GET':
+        return redirect(url_for('softwares.index', name=name))
     content, rating = request.form.get('content'), request.form.get('rating')
 
     if content is None and rating is None:
