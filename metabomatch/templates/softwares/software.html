@@ -621,6 +621,7 @@
 
         <h2><span class="text-muted fa fa-comment"></span> Post a review about this software</h2>
         <hr/>
+            {% if current_user.is_authenticated() %}
                 <form class="form-horizontal" method="post" action="{{ url_for('softwares.comment', name=software.name) }}">
                     {{ form.hidden_tag() }}
                     {#                    {% if not current_user.has_commented(software.name) or show_comment_form %}#}
@@ -647,7 +648,9 @@
                     {#                    {% endif %}#}
                     {{ render_submit() }}
                 </form>
-            {#            {% else %}#}
+            {% else %}
+                <p class="alert alert-info">You lust be logged to post a comment/rating on this software.</p>
+            {% endif %}
 
             {#                <p class="alert-info">It seems you have already commented or rated this software.#}
             {#                    <a href="{{ ['/softwares/', software.name, '?show_comment_form'] | join('') }}" >Comment this software again</a>#}
