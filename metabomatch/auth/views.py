@@ -94,7 +94,7 @@ def reauth():
 def logout():
     logout_user()
     flash("Logged out", "success")
-    return redirect(url_for("home.index"))
+    return redirect(url_for("softwares.index"))
 
 
 @auth.route("/register", methods=["GET", "POST"])

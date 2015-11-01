@@ -30,7 +30,7 @@ class DefaultConfig(object):
         DEBUG = True
         # TESTING = False
 
-    SQLALCHEMY_POOL_SIZE = 20
+    # SQLALCHEMY_POOL_SIZE = 20
 
     ## Security
     # This is the secret key that is used for session signing.
@@ -120,4 +120,3 @@ class DefaultConfig(object):
     USER_URL_PREFIX = "/user"
     AUTH_URL_PREFIX = "/auth"
     ADMIN_URL_PREFIX = "/admin"
-

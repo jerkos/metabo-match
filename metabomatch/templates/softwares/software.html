@@ -283,6 +283,7 @@
         </div>
     </div>
     <p><em>Click on <i class="fa fa-chevron-circle-up"></i> of the sentence which fits best to this software</em></p>
+    <p class="alert alert-info">You must be logged to upvote a sentence.</p>
 
     {# starts a new row  #}
     <div class="row" style="padding-top: 50px;">
@@ -705,18 +706,23 @@
         $('#software').addClass('active');
     </script>
     <script>
+
         $('.a-upvotes').on('click',  function(e){
             e.preventDefault();
-            var mapping_id = $(this).data('mappingid');
-            $.get("/softwares/{{software.name}}/upvote/" + mapping_id, function() {location.reload()});
+            {% if current_user.is_authenticated() %}
+              var mapping_id = $(this).data('mappingid');
+              $.get("/softwares/{{software.name}}/upvote/" + mapping_id, function() {location.reload()});
+            {% endif %}
         });
 
         $('.procons-upvote').on('click', function (e) {
             e.preventDefault();
-            var proconid = $(this).data('proconid');
-            $.get("/softwares/{{software.name}}/procons_upvote/" + proconid, function () {
-                location.reload()
-            });
+            {% if current_user.is_authenticated() %}
+              var proconid = $(this).data('proconid');
+              $.get("/softwares/{{software.name}}/procons_upvote/" + proconid, function () {
+                  location.reload()
+              });
+            {% endif %}
         });
     </script>
     <script src="{{ url_for('static', filename='js/jquery.sparklines.min.js') }}"></script>
