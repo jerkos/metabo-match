@@ -173,7 +173,7 @@
         </li>
     {% else %}
         <p>User does not have prefered softwares.</p>
-        <p class="alert-info">You can choose your favorites softwares on the <a href="{{ url_for('softwares.index') }}">software page</a>.</p>
+        <p class="alert alert-info">You can choose your favorites softwares on the <a href="{{ url_for('softwares.index') }}">software page</a>.</p>
     {% endfor %}
 </ul>
 
@@ -188,7 +188,7 @@
             </li>
         {% else %}
             <p>User did not proposed any scripts yet.</p>
-            <p class="alert-info">You can upload a script from the register <a href="{{ url_for('scripts.index') }}">script
+            <p class=" alert alert-info">You can upload a script from the register <a href="{{ url_for('scripts.index') }}">script
                 page</a>.</p>
         {% endfor %}
 </ul>
@@ -204,7 +204,7 @@
 
 </ul>
 {% else %}
-    <p class="alert-info">Find best candidates posting your job offer on our <a href="{{ url_for('jobs.index') }}">job page</a></p>
+    <p class="alert alert-info">Find best candidates posting your job offer on our <a href="{{ url_for('jobs.index') }}">job page</a></p>
 {% endif %}
 {% endif %}
 {% endblock %}
