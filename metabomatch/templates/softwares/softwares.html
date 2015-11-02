@@ -126,29 +126,36 @@
 
     <div class="row">
 
-        <p class="help-block"><strong>Note:</strong><br/>Each rate and ranking are updated once a day.</p>
+        <p class="help-block"><strong>Note:</strong> Each rate and ranking are updated once a day.</p>
 
-        <div class="col-md-11">
-            <table class="table table-condensed table-responsive">
+        <div class="col-md-12">
+            <table class="table table-responsive">
                 <thead>
                     <tr>
-                        <th>Software</th>
-                        <th>Ranking</th>
-                        <th>Programming Language</th>
-                        <th>Tags</th>
-                        <th class="text-center">Global rate</th>
+                        <th></th>
+                        <!-- Software</th> -->
+                        <!-- <th>Ranking</th> -->
+                        <!-- <th>Programming Language</th> -->
+                        <th></th>
+                        <!-- Tags</th> -->
+                        <th class="text-center"></th>
+                        <!-- Global rate</th> -->
                     </tr>
                 </thead>
                 <tbody>
                     {% for soft in softwares.items %}
 
                         <tr>
-                            <th><a href="{{ url_for('softwares.info', name=soft.name) }}">{{ soft.name }}</a>
+                            <th>
+                              <a href="{{ url_for('softwares.info', name=soft.name) }}">
+                                <img src="http://metabomatch.s3.amazonaws.com/{{ [soft.name|lower] |join('') }}" height="50"/>
+                                {{ soft.name }}
+                              </a>
                                 {% if not (soft.insertion_date | older_than_one_month) %}
                                     <small><label class="label label-success">new</label></small>
                                 {% endif %}
                             </th>
-                            <th>
+                            {# <th>
                                 {% set delta_global_rate = delta_rankings_global_rate[soft.name] %}
                                 {% if delta_global_rate < 0 %}
                                     <span class="text-danger"><strong>{{ delta_global_rate }}</strong></span>
@@ -159,7 +166,7 @@
                                           class="text-info fa fa-compress"></span>
                                 {% endif %}
                             </th>
-                            <th><small>{{ soft.programming_language }}</small></th>
+                            <th><small>{{ soft.programming_language }}</small></th> #}
                             <th><small>
                                 {% set soft_tags = soft.tags| map(attribute='tag') | join(',') %}
                                 {% if 'Signal Extraction' in soft_tags %}
@@ -179,7 +186,7 @@
                             </th>
                             {% set rate = soft.compute_rate() %}
                             <th class="text-center">
-                                <label
+                                <label style="font-size:1em;"
                                         {% if rate >=70 %}
                                             class="label label-primary">
                                         {% elif 50 <= rate < 70 %}
@@ -197,7 +204,9 @@
                 </tbody>
             </table>
         </div>
-        <div class="col-md-1">
+      </div>
+      <div class="row">
+        <div class="col-md-1 col-md-offset-11">
             <div class="dropdown">
                 <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown"
                         aria-haspopup="true" aria-expanded="true">
