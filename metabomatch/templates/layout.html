@@ -72,6 +72,42 @@
     </head>
 
     <body>
+
+        <!-- LOGIN MODAL -->
+        <!-- Modal -->
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Login</h4>
+              </div>
+              <div class="modal-body">
+                <div class="container">
+                    <div class="row text-center">
+                        <p>
+                          <strong>
+                            Metabomatch is a community to share feedbacks/thoughts about metabolomics softwares.
+                          </strong>
+                        </p>
+                        <!--<img src="{{url_for('static', filename='img/twitter-github.png')}}" width="200" alt=""/>-->
+                    </div>
+                    <div class="row text-center" style="padding-top: 20px;">
+                        <div class="col-md-6">
+                            <a href="{{url_for('auth.login_twitter')}}" class="btn btn-info"><span class="fa fa-twitter"></span> login with Twitter</a>
+                        </div>
+                        <div class="col-md-6">
+                            <a href="{{url_for('auth.login_github')}}" class="btn btn-primary"><span class="fa fa-github"></span> login with Github</a>
+                        </div>
+                        <p class="help-block">We will never post on twitter on your behalf</p>
+                    </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- END LOGIN -->
+
         <div id="wrap">
             {% block navigation %}
                 {%- from theme("macros.html") import topnav with context -%}
@@ -168,7 +204,8 @@
                                 </div>
                             {% else %}
                                 <div style="padding-top:10px" class="btn-group navbar-btn navbar-right">
-                                    <a class="btn btn-primary" href="{{ url_for('auth.login_twitter') }}">
+                                    <a class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+                                    {# href="{{ url_for('auth.login_twitter') }}"> #}
                                         {#                                    {{ url_for('auth.login') }}">#}
                                         <span class="fa fa-user"></span> Login
                                     </a>

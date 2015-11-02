@@ -46,7 +46,7 @@ twitter = oauth.remote_app('twitter',
                            )
 
 
-@auth.route("/login", methods=["GET", "POST"])
+@auth.route("/login", methods=["GET"])
 def login():
     """
     Logs the user in
@@ -55,19 +55,19 @@ def login():
     if current_user is not None and current_user.is_authenticated():
         return redirect(url_for("user.profile"))
 
-    form = LoginForm(request.form)
-    if form.validate_on_submit():
-        user, authenticated = User.authenticate(form.login.data,
-                                                form.password.data)
+    # form = LoginForm(request.form)
+    # if form.validate_on_submit():
+    #     user, authenticated = User.authenticate(form.login.data,
+    #                                             form.password.data)
+    #
+    #     if user and authenticated:
+    #         # remove this key when a user is authenticated
+    #         session.pop('nb_views', None)
+    #         login_user(user, remember=form.remember_me.data)
+    #         return redirect(request.args.get("next") or url_for("softwares.index"))
 
-        if user and authenticated:
-            # remove this key when a user is authenticated
-            session.pop('nb_views', None)
-            login_user(user, remember=form.remember_me.data)
-            return redirect(request.args.get("next") or url_for("home.index"))
-
-        flash("Wrong username or password", "danger")
-    return render_template("auth/login.html", form=form)
+        # flash("Wrong username or password", "danger")
+    return render_template("auth/login.html")  # , form=form)
 
 
 @auth.route("/reauth", methods=["GET", "POST"])
@@ -215,7 +215,7 @@ def authorized(oauth_token):
     next_url = request.args.get('next') or url_for('softwares.index')
     if oauth_token is None:
         flash("Authorization failed.", "danger")
-        return redirect(url_for('auth.login'))
+        return redirect(url_for('softwares.index'))
 
     user = User.query.filter_by(github_access_token=oauth_token).first()
     if user is None:
