@@ -709,20 +709,26 @@
 
         $('.a-upvotes').on('click',  function(e){
             e.preventDefault();
-            {% if current_user.is_authenticated() %}
               var mapping_id = $(this).data('mappingid');
-              $.get("/softwares/{{software.name}}/upvote/" + mapping_id, function() {location.reload()});
-            {% endif %}
+              $.get("/softwares/{{software.name}}/upvote/" + mapping_id, function() {
+                {% if current_user.is_authenticated() %}
+                  location.reload();
+                {% else %}
+                  location.href = "/auth/login";
+                {% endif %}
+              });
         });
 
         $('.procons-upvote').on('click', function (e) {
             e.preventDefault();
-            {% if current_user.is_authenticated() %}
               var proconid = $(this).data('proconid');
               $.get("/softwares/{{software.name}}/procons_upvote/" + proconid, function () {
+                {% if current_user.is_authenticated() %}
                   location.reload()
+                {% else %}
+                  location.href = "/auth/login";
+                {% endif %}
               });
-            {% endif %}
         });
     </script>
     <script src="{{ url_for('static', filename='js/jquery.sparklines.min.js') }}"></script>

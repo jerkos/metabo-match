@@ -47,7 +47,7 @@ class DefaultConfig(object):
     WHOOSH_BASE = os.path.join(_basedir, "whoosh_index")
 
     # Auth
-    LOGIN_VIEW = "auth.login_twitter"
+    LOGIN_VIEW = "auth.login"
     REAUTH_VIEW = "auth.reauth"
     LOGIN_MESSAGE_CATEGORY = "error"
 
