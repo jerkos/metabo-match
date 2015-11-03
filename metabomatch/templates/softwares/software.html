@@ -714,7 +714,7 @@
                 {% if current_user.is_authenticated() %}
                   location.reload();
                 {% else %}
-                  location.href = "/auth/login";
+                  $('#myModal').modal({show: true});
                 {% endif %}
               });
         });
@@ -724,9 +724,9 @@
               var proconid = $(this).data('proconid');
               $.get("/softwares/{{software.name}}/procons_upvote/" + proconid, function () {
                 {% if current_user.is_authenticated() %}
-                  location.reload()
+                  location.reload();
                 {% else %}
-                  location.href = "/auth/login";
+                  $('#myModal').modal({show: true});
                 {% endif %}
               });
         });
