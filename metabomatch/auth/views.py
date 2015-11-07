@@ -179,22 +179,35 @@ def reset_password(token):
     return render_template("auth/reset_password.html", form=form)
 
 
-#  github authentication
 @auth.route("/login_github")
 def login_github():
-    return github.authorize()
+    """
+    github authentication
+    """
+    
+    callback_url = url_for('auth.github_authorized', next=request.args.get('next'))
+    return github.authorize(redirect_uri=callback_url)
 
 
 # twitter authentication
 @auth.route('/login_twitter')
 def login_twitter():
+    """
+    twitter authentication
+    """
+    
     callback_url = url_for('auth.twitter_authorized', next=request.args.get('next'))
     return twitter.authorize(callback=callback_url or request.referrer or None)
 
 
 @auth.route('/twitter-authorized')
 def twitter_authorized():
+    """
+    twitter callback oauth
+    """
+
     next_url = request.args.get('next') or url_for('softwares.index')
+
     resp = twitter.authorized_response()
     if resp is None:
         flash('Twitter login failed !', 'danger')
@@ -212,9 +225,13 @@ def twitter_authorized():
 @auth.route('/github-callback')
 @github.authorized_handler
 def authorized(oauth_token):
+    """
+    github callback oauth
+    """
+
     next_url = request.args.get('next') or url_for('softwares.index')
     if oauth_token is None:
-        flash("Authorization failed.", "danger")
+        flash("Github login failed.", "danger")
         return redirect(url_for('softwares.index'))
 
     user = User.query.filter_by(github_access_token=oauth_token).first()

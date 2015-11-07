@@ -260,7 +260,14 @@
                                 <li class="list-group-item">
                                     <strong>{{ sentence_mapping.sentence.sentence }}</strong>
 
-                                    <a class="a-upvotes" data-mappingid="{{sentence_mapping.id}}" href="#" rel="nofollow">
+                                    <a class="a-upvotes" data-mappingid="{{sentence_mapping.id}}" rel="nofollow" 
+                                    {% if not current_user.is_authenticated()%} 
+                                        href="#myModal" data-toggle="modal" 
+                                        data-twitternexturl="{{url_for('auth.login_twitter', next=url_for('softwares.upvote', name=software.name, mapping_id=sentence_mapping.id))}}"
+                                        data-githubnexturl="{{url_for('auth.login_twitter', next=url_for('softwares.upvote', name=software.name, mapping_id=sentence_mapping.id))}}"
+                                    {% else %} 
+                                        href="#" 
+                                    {% endif %}>
                                             <!--href="{{ url_for('softwares.upvote', name=software.name, mapping_id=sentence_mapping.id) }}"-->
                                         <span class="fa fa-chevron-circle-up fa-2x"></span>
                                     </a>
@@ -283,7 +290,6 @@
         </div>
     </div>
     <p><em>Click on <i class="fa fa-chevron-circle-up"></i> of the sentence which fits best to this software</em></p>
-    <p class="alert alert-info">You must be logged to upvote a sentence.</p>
 
     {# starts a new row  #}
     <div class="row" style="padding-top: 50px;">
@@ -459,7 +465,14 @@
                                             <span class="fa fa-fire"></span>
                                             | <a style="color:inherit; text-decoration: none;" class="procons-upvote"
                                                  data-proconid="{{ pro.id }}"
-                                                 href="#">upvotes: {{ pro.procons_upvotes | length }}</a>
+                                                 {% if not current_user.is_authenticated()%} 
+                                                    href="#myModal" data-toggle="modal" 
+                                                    data-twitternexturl="{{url_for('auth.login_twitter', next=url_for('softwares.upvote_procon', name=software.name, procon_id=pro.id))}}"
+                                                    data-githubnexturl="{{url_for('auth.login_twitter', next=url_for('softwares.upvote_procon', name=software.name, procon_id=pro.id))}}"
+                                                {% else %}
+                                                    href="#"
+                                                {% endif %}
+                                                 >upvotes: {{ pro.procons_upvotes | length }}</a>
                                         </div>
                                         <span style="padding-left:10px"></span>
                                         {{ pro.title }} by
@@ -504,8 +517,15 @@
                     </div>
                 </div>
                 <p>
-                    <strong><a href="{{ url_for('softwares.register_procon', name=software.name) }}">[ Add pro
-                        ]</a></strong>
+                    <strong>
+                    <a {% if current_user.is_authenticated() %}
+                        href="{{ url_for('softwares.register_procon', name=software.name) }}"
+                        {% else %}
+                            href="#myModal" data-toggle="modal" data-twitternexturl="{{ url_for('auth.login_twitter', next=url_for('softwares.register_procon', name=software.name, kind='con')) }}" data-githubnexturl="{{ url_for('auth.login_github', next=url_for('softwares.register_procon', name=software.name, kind='pro')) }}">
+                        {% endif %}
+                        [ Add pro ]
+                    </a>
+                    </strong>
                     <strong><a href="{{ url_for('softwares.pros', name=software.name) }}">[ See all ]</a></strong>
                 </p>
             </div>
@@ -522,7 +542,14 @@
                                             <span class="fa fa-fire-extinguisher"></span>
                                             | <a style="color:inherit; text-decoration: none;" class="procons-upvote"
                                                  data-proconid="{{ con.id }}"
-                                                 href="#">upvotes: {{ con.procons_upvotes | length }}</a>
+                                                 {% if not current_user.is_authenticated()%} 
+                                                    href="#myModal" data-toggle="modal" 
+                                                    data-twitternexturl="{{url_for('auth.login_twitter', next=url_for('softwares.upvote_procon', name=software.name, procon_id=con.id))}}"
+                                                    data-githubnexturl="{{url_for('auth.login_twitter', next=url_for('softwares.upvote_procon', name=software.name, procon_id=con.id))}}"
+                                                {% else %}
+                                                    href="#"
+                                                {% endif %}
+                                                 >upvotes: {{ con.procons_upvotes | length }}</a>
                                         </div>
                                         <span style="padding-left:10px"></span>
                                         {{ con.title }}
@@ -567,8 +594,16 @@
                     </div>
                 </div>
                 <p>
-                    <strong><a href="{{ url_for('softwares.register_procon', name=software.name) }}">[ Add con
-                        ]</a></strong>
+                    <strong>
+
+                    <a {% if current_user.is_authenticated() %}
+                        href="{{ url_for('softwares.register_procon', name=software.name) }}"
+                        {% else %}
+                            href="#myModal" data-toggle="modal" data-twitternexturl="{{ url_for('auth.login_twitter', next=url_for('softwares.register_procon', name=software.name, kind='con')) }}" data-githubnexturl="{{ url_for('auth.login_github', next=url_for('softwares.register_procon', name=software.name, kind='con')) }}">
+                        {% endif %}
+                        [ Add con]
+                    </a>
+                    </strong>
                     <strong><a href="{{ url_for('softwares.cons', name=software.name) }}">[ See all ]</a></strong>
                 </p>
             </div>
@@ -611,21 +646,24 @@
             <p class="text-info">You are using this software regularly. <a class="btn btn-sm btn-default"
                                                                            href="{{ url_for('softwares.remove_user', name=software.name) }}"
                                                                            rel="nofollow">No more ?</a></p>
-
+        {% else %}
+            <p class="help-block">
+            <em>
+            You must be logged to notify that you use this software regularly.
+            <a href="#"> We use this informations to do statistics about software usages.</a>
+            </em>
+            </p>
         {% endif %}
     </div>
 
     <!-- Post a review row -->
     <div class="row" style="padding-top:20px;">
-            {#            {% if not current_user.has_commented(software.name) or not current_user.has_commented or show_comment_form %}#}
-            {#            {% if show_comment_form %}#}
 
         <h2><span class="text-muted fa fa-comment"></span> Post a review about this software</h2>
         <hr/>
             {% if current_user.is_authenticated() %}
                 <form class="form-horizontal" method="post" action="{{ url_for('softwares.comment', name=software.name) }}">
                     {{ form.hidden_tag() }}
-                    {#                    {% if not current_user.has_commented(software.name) or show_comment_form %}#}
                     <div class="form-group">
                         <label class="col-md-3 control-label">Leave a comment</label>
                         <div class="col-md-9">
@@ -633,9 +671,6 @@
                                       placeholder="Your thoughts about {{ software.name }}"></textarea>
                         </div>
                     </div>
-                    {#                    {% endif %}#}
-
-                    {#                    {% if not current_user.has_rated(software.name) or show_comment_form %}#}
                     <div class="form-group">
                         <label class="col-md-3 control-label">rating</label>
                          <div class="col-sm-9">
@@ -646,19 +681,16 @@
 
 
                     </div>
-                    {#                    {% endif %}#}
                     {{ render_submit() }}
                 </form>
             {% else %}
-                <p class="alert alert-info">You lust be logged to post a comment/rating on this software.</p>
+                <p class="help-block">
+                <em>
+                You must be logged to post a comment/rating on this software.
+                <a href="#"> We use it to rank softwares.</a>
+                <em>
+                </p>
             {% endif %}
-
-            {#                <p class="alert-info">It seems you have already commented or rated this software.#}
-            {#                    <a href="{{ ['/softwares/', software.name, '?show_comment_form'] | join('') }}" >Comment this software again</a>#}
-            {#                </p>#}
-
-            {#            {% endif %}#}
-
         </div>
 
     {% if current_user.id == software.owner_id %}
@@ -706,31 +738,39 @@
         $('#software').addClass('active');
     </script>
     <script>
+        {% if current_user.is_authenticated() %}
+            $('.a-upvotes').on('click',  function(e){
+                e.preventDefault();
+                  var mapping_id = $(this).data('mappingid');
+                  $.get("/softwares/{{software.name}}/upvote/" + mapping_id, function() {
+                      location.reload();
+                  });
+            });
+        
 
-        $('.a-upvotes').on('click',  function(e){
-            e.preventDefault();
-              var mapping_id = $(this).data('mappingid');
-              $.get("/softwares/{{software.name}}/upvote/" + mapping_id, function() {
-                {% if current_user.is_authenticated() %}
-                  location.reload();
-                {% else %}
-                  $('#myModal').modal({show: true});
-                {% endif %}
-              });
-        });
+            $('.procons-upvote').on('click', function (e) {
+                e.preventDefault();
+                  var proconid = $(this).data('proconid');
+                  $.get("/softwares/{{software.name}}/procons_upvote/" + proconid, function () {
+                      location.reload();
+                  });
+            });
 
-        $('.procons-upvote').on('click', function (e) {
-            e.preventDefault();
-              var proconid = $(this).data('proconid');
-              $.get("/softwares/{{software.name}}/procons_upvote/" + proconid, function () {
-                {% if current_user.is_authenticated() %}
-                  location.reload();
-                {% else %}
-                  $('#myModal').modal({show: true});
-                {% endif %}
-              });
+            // user button to come
+        {% endif %}
+
+        $('#myModal').on('show.bs.modal', function(e) {
+            //get data-id attribute of the clicked element
+            var githubnexturl = $(e.relatedTarget).data('githubnexturl');
+            var twitternexturl = $(e.relatedTarget).data('twitternexturl');
+
+            
+            if (githubnexturl && twitternexturl) { 
+                $(e.currentTarget).find('.twitter-login-btn').attr('href', twitternexturl);
+                $(e.currentTarget).find('.github-login-btn').attr('href', githubnexturl);
+            }
         });
     </script>
-    <script src="{{ url_for('static', filename='js/jquery.sparklines.min.js') }}"></script>
+    {# <script src="{{ url_for('static', filename='js/jquery.sparklines.min.js') }}"></script> #}
 
 {% endblock %}
