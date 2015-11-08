@@ -519,10 +519,10 @@
                 <p>
                     <strong>
                     <a {% if current_user.is_authenticated() %}
-                        href="{{ url_for('softwares.register_procon', name=software.name) }}"
+                        href="{{ url_for('softwares.register_procon', name=software.name, kind='pro') }}"
                         {% else %}
-                            href="#myModal" data-toggle="modal" data-twitternexturl="{{ url_for('auth.login_twitter', next=url_for('softwares.register_procon', name=software.name, kind='con')) }}" data-githubnexturl="{{ url_for('auth.login_github', next=url_for('softwares.register_procon', name=software.name, kind='pro')) }}">
-                        {% endif %}
+                            href="#myModal" data-toggle="modal" data-twitternexturl="{{ url_for('auth.login_twitter', next=url_for('softwares.register_procon', name=software.name, kind='con')) }}" data-githubnexturl="{{ url_for('auth.login_github', next=url_for('softwares.register_procon', name=software.name, kind='pro')) }}"
+                        {% endif %}>
                         [ Add pro ]
                     </a>
                     </strong>
@@ -597,10 +597,10 @@
                     <strong>
 
                     <a {% if current_user.is_authenticated() %}
-                        href="{{ url_for('softwares.register_procon', name=software.name) }}"
+                        href="{{ url_for('softwares.register_procon', name=software.name, kind='con') }}"
                         {% else %}
-                            href="#myModal" data-toggle="modal" data-twitternexturl="{{ url_for('auth.login_twitter', next=url_for('softwares.register_procon', name=software.name, kind='con')) }}" data-githubnexturl="{{ url_for('auth.login_github', next=url_for('softwares.register_procon', name=software.name, kind='con')) }}">
-                        {% endif %}
+                            href="#myModal" data-toggle="modal" data-twitternexturl="{{ url_for('auth.login_twitter', next=url_for('softwares.register_procon', name=software.name, kind='con')) }}" data-githubnexturl="{{ url_for('auth.login_github', next=url_for('softwares.register_procon', name=software.name, kind='con')) }}"
+                        {% endif %}>
                         [ Add con]
                     </a>
                     </strong>

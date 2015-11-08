@@ -525,7 +525,8 @@ def upvote_details(name, mapping_id):
 @login_required
 def register_procon(name):
     form = ProConsForm()
-    form.kind.data = request.args('kind') or 'pro'
+    print "KIND:", request.args.get('kind')
+    form.kind.data = request.args.get('kind') or 'pro'
     if form.validate_on_submit():
         # create new procon object
         procon = ProCons(request.form['kind'], request.form['title'], request.form['description'])
