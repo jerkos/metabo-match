@@ -216,19 +216,19 @@
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
                     <li>
                         {% if request.args %}
-                            <a href="{{ request.url +  '&sort_rate=True' }}"><span
+                            <a href="{{ request.url +  '&sort_rate=True' }}" rel="nofollow"><span
                                     class="fa fa-sort-amount-desc"></span> rate</a>
                         {% else %}
-                            <a href="{{ request.url +  '?sort_rate=True' }}"><span
+                            <a href="{{ request.url +  '?sort_rate=True' }}" rel="nofollow"><span
                                     class="fa fa-sort-amount-desc"></span> rate</a>
                         {% endif %}
                     </li>
                     <li>
                         {% if request.args %}
-                            <a href="{{ request.url +  '&sort_name=True' }}"><span class="fa fa-sort-alpha-asc"></span>
+                            <a href="{{ request.url +  '&sort_name=True' }}" rel="nofollow"><span class="fa fa-sort-alpha-asc"></span>
                                 name</a>
                         {% else %}
-                            <a href="{{ request.url +  '?sort_name=True' }}"><span class="fa fa-sort-alpha-asc"></span>
+                            <a href="{{ request.url +  '?sort_name=True' }}" rel="nofollow"><span class="fa fa-sort-alpha-asc"></span>
                                 name</a>
                         {% endif %}
                     </li>
