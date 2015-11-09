@@ -1,5 +1,14 @@
 {% extends theme("layout.html") %}
 
+{% block title %}
+    {{user.username}}'s profile - Metabomatch
+{% endblock %}
+
+{% block keywords %}
+    <meta name="keywords" content="metabomatch, profile, page, user">
+    <meta name="description" content="{{ user.username }}' s profile page describing its activities on metabomatch.">
+{% endblock %}
+
 {% block css %}
     {{ super() }}
     <style>
