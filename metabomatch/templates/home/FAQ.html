@@ -16,36 +16,36 @@
     <p class="help-block">Send us an <a href="mailto:contact@metabomatch.com">email</a> if you have any questions.</p>
     <hr/>
     <p>
+        <strong>What is the purpose of metabomatch ?</strong><br>
+        The purpose of <em>metabomatch</em> is to help users to choose the most appropriate tool for their needs.
+        More details <a href="/about">here</a>.
+    </p>
+    <br>
+    <p>
         <strong>Can I add the software I wrote on <em>metabomatch</em> ?</strong><br/>
         Of course. Just go to <a href="{{ url_for('softwares.register') }}"> the register software page</a>. Fill a
         maximum of fields and save it. Feel free to
         comment and upvote it !
     </p>
-
+    <br>
+    <p>
+        <strong>My software does not fit in any category. What do I do ?</strong><br/>
+        Just <a href="mailto:contact@metabomatch.com">send us a mail</a>. We will do the necessary.
+    </p>
+    <br>
     <p>
         <strong>How software gloabl rates are computed ?</strong><br/>
         We compute a software rate using several informations about it:
     <ul>
-        <li>useres mean rate</li>
+        <li>users mean rate</li>
         <li>users upvotes</li>
-        <li><a href="github.com">github</a> statistics (#commits, #maintainers, #issues...)</li>
-        <li>software has been publicated or not</li>
-        <li>software is still maintained</li>
+        <li># users using a software</li>
         <li>Source code available or not</li>
+        <li><a href="github.com">Github</a> statistics (#commits, #maintainers, #issues...). <em>Plan to support other version control like <a href="http://sourceforge.net">Sourceforge</a> and <a href="https://bitbucket.org/">Bitbucket</a>.</em></li>
+        <li>software is still maintained</li>
+        <li>software has been publicated in a scientific journal or not</li>
     </ul>
     </p>
+    <br>
 
-    <p>
-        <strong>Why can we upvote a software several times a day ? Is it not cheated ?</strong><br/>
-        Indeed, original idea was to allow user to upvote only like <strong>5</strong> times a day. For the moment, we
-        preferred
-        give users POWER ! Upvotes count will be reset at the end of each month.
-    </p>
-
-    <p>
-        <strong>What are the advantages if I create an account on metabomatch ?</strong><br/>
-        You could post questions on our forums (be notified when a discussion has a new comment), post a comment (with a
-        fun objectivity analysis) and/or a rate on a software, read all users scripts about optimal software parameters,
-        little programs, and finally read/post job offers.
-    </p>
 {% endblock %}
