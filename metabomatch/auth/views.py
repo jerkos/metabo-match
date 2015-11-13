@@ -185,7 +185,7 @@ def login_github():
     github authentication
     """
     
-    callback_url = url_for('auth.github_authorized', next=request.args.get('next'))
+    callback_url = url_for('auth.authorized', next=request.args.get('next'))
     return github.authorize(redirect_uri=callback_url)
 
 
