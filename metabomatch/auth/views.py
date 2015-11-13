@@ -186,7 +186,9 @@ def login_github():
     """
     
     callback_url = url_for('auth.authorized', next=request.args.get('next'))
-    return github.authorize(redirect_uri=callback_url)
+    return github.authorize()  
+    # got serious problem when specifying a callback url
+    # redirect_uri=callback_url)
 
 
 # twitter authentication
