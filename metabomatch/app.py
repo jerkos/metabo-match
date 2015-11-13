@@ -21,7 +21,7 @@ import sys
 
 from flask import Flask, request
 from flask.ext.login import current_user
-from flask.ext.whooshalchemy import whoosh_index
+# from flask.ext.whooshalchemy import whoosh_index
 
 from metabomatch.softwares.views import softwares
 from metabomatch.scripts.views import scripts
