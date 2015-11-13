@@ -631,8 +631,7 @@ def update_description(name):
 
 # RANKINGS
 # ----------------------------------------------------------------------------------------------------------------------
-@softwares.route('/rankings', methods=['GET'])
-@cache.cached(timeout=86400)
+@softwares.route('/rankings', methods=['GET'])  # @cache.cached(timeout=86400)
 def rankings():
     softwares_inst = Software.query.all()
     overall_winner = max(softwares_inst, key=lambda _: _.compute_rate())
