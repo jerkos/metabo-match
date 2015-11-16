@@ -264,7 +264,7 @@
                                     {% if not current_user.is_authenticated()%} 
                                         href="#myModal" data-toggle="modal" 
                                         data-twitternexturl="{{url_for('auth.login_twitter', next=url_for('softwares.upvote', name=software.name, mapping_id=sentence_mapping.id))}}"
-                                        data-githubnexturl="{{url_for('auth.login_twitter', next=url_for('softwares.upvote', name=software.name, mapping_id=sentence_mapping.id))}}"
+                                        data-githubnexturl="{{url_for('auth.login_github', next=url_for('softwares.upvote', name=software.name, mapping_id=sentence_mapping.id))}}"
                                     {% else %} 
                                         href="#" 
                                     {% endif %}>
@@ -468,7 +468,7 @@
                                                  {% if not current_user.is_authenticated()%} 
                                                     href="#myModal" data-toggle="modal" 
                                                     data-twitternexturl="{{url_for('auth.login_twitter', next=url_for('softwares.upvote_procon', name=software.name, procon_id=pro.id))}}"
-                                                    data-githubnexturl="{{url_for('auth.login_twitter', next=url_for('softwares.upvote_procon', name=software.name, procon_id=pro.id))}}"
+                                                    data-githubnexturl="{{url_for('auth.login_github', next=url_for('softwares.upvote_procon', name=software.name, procon_id=pro.id))}}"
                                                 {% else %}
                                                     href="#"
                                                 {% endif %}
@@ -545,7 +545,7 @@
                                                  {% if not current_user.is_authenticated()%} 
                                                     href="#myModal" data-toggle="modal" 
                                                     data-twitternexturl="{{url_for('auth.login_twitter', next=url_for('softwares.upvote_procon', name=software.name, procon_id=con.id))}}"
-                                                    data-githubnexturl="{{url_for('auth.login_twitter', next=url_for('softwares.upvote_procon', name=software.name, procon_id=con.id))}}"
+                                                    data-githubnexturl="{{url_for('auth.login_github', next=url_for('softwares.upvote_procon', name=software.name, procon_id=con.id))}}"
                                                 {% else %}
                                                     href="#"
                                                 {% endif %}
