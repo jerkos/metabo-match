@@ -82,7 +82,11 @@ class User(db.Model, UserMixin, SerializableMixin):
     __searchable__ = ['username', 'email']
 
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(200), unique=True, nullable=False)
+
+    # removed the unicity assuming the fact that people
+    # connecting with github or twitter can have the same
+    # username
+    username = db.Column(db.String(200), nullable=False)
     email = db.Column(db.String(200), unique=True, nullable=False)
 
     #logged with github api, is nullable

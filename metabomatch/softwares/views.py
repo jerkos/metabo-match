@@ -413,13 +413,16 @@ def info(name):
 
 # COMMENTS and RATINGS
 # ----------------------------------------------------------------------------------------------------------------------
-@softwares.route('/softwares/<name>/comment', methods=['POST'])  # @login_required
+@softwares.route('/softwares/<name>/comment', methods=['GET', 'POST'])
+@login_required
 def comment(name):
     """
     add a comment or a rating on a software
     :param name: software name PK
     :return:
     """
+    if request.method == 'GET':
+        return redirect(url_for('softwares.index', name=name))
     content, rating = request.form.get('content'), request.form.get('rating')
 
     if content is None and rating is None:
@@ -444,6 +447,7 @@ def comments(name):
 
 
 @softwares.route('/softwares/<name>/update_comment/<int:comment_id>', methods=['POST'])
+@login_required
 def update_comment(name, comment_id):
     soft = Software.query.filter(Software.name == name).first_or_404()
     c = Comment.query.filter(Comment.id == comment_id).first_or_404()
@@ -464,6 +468,7 @@ def ratings(name):
 # SENTENCES upvotes
 # ----------------------------------------------------------------------------------------------------------------------
 @softwares.route('/softwares/<name>/upvote/<int:mapping_id>')
+@login_required
 def upvote(name, mapping_id):
     """
     upvite a particular software mapping id
@@ -517,8 +522,11 @@ def upvote_details(name, mapping_id):
 # PROCONS routes
 # ----------------------------------------------------------------------------------------------------------------------
 @softwares.route('/softwares/<name>/register_procon', methods=['GET', 'POST'])
+@login_required
 def register_procon(name):
     form = ProConsForm()
+    print "KIND:", request.args.get('kind')
+    form.kind.data = request.args.get('kind') or 'pro'
     if form.validate_on_submit():
         # create new procon object
         procon = ProCons(request.form['kind'], request.form['title'], request.form['description'])
@@ -532,6 +540,7 @@ def register_procon(name):
 
 
 @softwares.route('/softwares/<name>/procons_upvote/<int:procon_id>')
+@login_required
 def upvote_procon(name, procon_id):
     user_id = current_user.id if current_user.is_authenticated() else GUEST_USER_ID
     proconup = ProConsUpvote(procon_id, user_id)
@@ -622,8 +631,7 @@ def update_description(name):
 
 # RANKINGS
 # ----------------------------------------------------------------------------------------------------------------------
-@softwares.route('/rankings', methods=['GET'])
-@cache.cached(timeout=86400)
+@softwares.route('/rankings', methods=['GET'])  # @cache.cached(timeout=86400)
 def rankings():
     softwares_inst = Software.query.all()
     overall_winner = max(softwares_inst, key=lambda _: _.compute_rate())

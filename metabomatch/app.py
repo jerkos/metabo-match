@@ -21,7 +21,7 @@ import sys
 
 from flask import Flask, request
 from flask.ext.login import current_user
-from flask.ext.whooshalchemy import whoosh_index
+# from flask.ext.whooshalchemy import whoosh_index
 
 from metabomatch.softwares.views import softwares
 from metabomatch.scripts.views import scripts
@@ -133,12 +133,12 @@ def configure_extensions(app):
     redis_store.init_app(app)
 
     # Flask-WhooshAlchemy
-    with app.app_context():
-        whoosh_index(app, Post)
-        whoosh_index(app, Topic)
-        whoosh_index(app, Forum)
-        whoosh_index(app, Category)
-        whoosh_index(app, User)
+    #with app.app_context():
+    #    whoosh_index(app, Post)
+    #    whoosh_index(app, Topic)
+    #    whoosh_index(app, Forum)
+    #    whoosh_index(app, Category)
+    #    whoosh_index(app, User)
 
     # Flask-Login
     login_manager.login_view = app.config["LOGIN_VIEW"]

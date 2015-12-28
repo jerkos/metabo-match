@@ -46,7 +46,7 @@ twitter = oauth.remote_app('twitter',
                            )
 
 
-@auth.route("/login", methods=["GET", "POST"])
+@auth.route("/login", methods=["GET"])
 def login():
     """
     Logs the user in
@@ -55,19 +55,19 @@ def login():
     if current_user is not None and current_user.is_authenticated():
         return redirect(url_for("user.profile"))
 
-    form = LoginForm(request.form)
-    if form.validate_on_submit():
-        user, authenticated = User.authenticate(form.login.data,
-                                                form.password.data)
+    # form = LoginForm(request.form)
+    # if form.validate_on_submit():
+    #     user, authenticated = User.authenticate(form.login.data,
+    #                                             form.password.data)
+    #
+    #     if user and authenticated:
+    #         # remove this key when a user is authenticated
+    #         session.pop('nb_views', None)
+    #         login_user(user, remember=form.remember_me.data)
+    #         return redirect(request.args.get("next") or url_for("softwares.index"))
 
-        if user and authenticated:
-            # remove this key when a user is authenticated
-            session.pop('nb_views', None)
-            login_user(user, remember=form.remember_me.data)
-            return redirect(request.args.get("next") or url_for("home.index"))
-
-        flash("Wrong username or password", "danger")
-    return render_template("auth/login.html", form=form)
+        # flash("Wrong username or password", "danger")
+    return render_template("auth/login.html")  # , form=form)
 
 
 @auth.route("/reauth", methods=["GET", "POST"])
@@ -94,7 +94,7 @@ def reauth():
 def logout():
     logout_user()
     flash("Logged out", "success")
-    return redirect(url_for("home.index"))
+    return redirect(url_for("softwares.index"))
 
 
 @auth.route("/register", methods=["GET", "POST"])
@@ -179,22 +179,37 @@ def reset_password(token):
     return render_template("auth/reset_password.html", form=form)
 
 
-#  github authentication
 @auth.route("/login_github")
 def login_github():
-    return github.authorize()
+    """
+    github authentication
+    """
+    
+    callback_url = url_for('auth.authorized', next=request.args.get('next'))
+    return github.authorize()  
+    # got serious problem when specifying a callback url
+    # redirect_uri=callback_url)
 
 
 # twitter authentication
 @auth.route('/login_twitter')
 def login_twitter():
+    """
+    twitter authentication
+    """
+    
     callback_url = url_for('auth.twitter_authorized', next=request.args.get('next'))
     return twitter.authorize(callback=callback_url or request.referrer or None)
 
 
 @auth.route('/twitter-authorized')
 def twitter_authorized():
+    """
+    twitter callback oauth
+    """
+
     next_url = request.args.get('next') or url_for('softwares.index')
+
     resp = twitter.authorized_response()
     if resp is None:
         flash('Twitter login failed !', 'danger')
@@ -212,10 +227,14 @@ def twitter_authorized():
 @auth.route('/github-callback')
 @github.authorized_handler
 def authorized(oauth_token):
+    """
+    github callback oauth
+    """
+
     next_url = request.args.get('next') or url_for('softwares.index')
     if oauth_token is None:
-        flash("Authorization failed.", "danger")
-        return redirect(url_for('auth.login'))
+        flash("Github login failed.", "danger")
+        return redirect(url_for('softwares.index'))
 
     user = User.query.filter_by(github_access_token=oauth_token).first()
     if user is None:

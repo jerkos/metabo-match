@@ -30,7 +30,7 @@ class DefaultConfig(object):
         DEBUG = True
         # TESTING = False
 
-    SQLALCHEMY_POOL_SIZE = 20
+    # SQLALCHEMY_POOL_SIZE = 20
 
     ## Security
     # This is the secret key that is used for session signing.
@@ -47,7 +47,7 @@ class DefaultConfig(object):
     WHOOSH_BASE = os.path.join(_basedir, "whoosh_index")
 
     # Auth
-    LOGIN_VIEW = "auth.login_twitter"
+    LOGIN_VIEW = "auth.login"
     REAUTH_VIEW = "auth.reauth"
     LOGIN_MESSAGE_CATEGORY = "error"
 
@@ -73,22 +73,6 @@ class DefaultConfig(object):
     RECAPTCHA_OPTIONS = {"theme": "white"}
 
     ## Mail
-    # Local SMTP Server
-    #MAIL_SERVER = "localhost"
-    #MAIL_PORT = 25
-    #MAIL_USE_SSL = False
-    #MAIL_USERNAME = ""
-    #MAIL_PASSWORD = ""
-    #MAIL_DEFAULT_SENDER = "noreply@example.org"
-
-    # Google Mail Example
-    # MAIL_SERVER = "smtp.live.com"
-    # MAIL_PORT = 587
-    # MAIL_USE_TLS = True
-    # MAIL_USERNAME = "cram@hotmail.fr"
-    # MAIL_PASSWORD = "marco##1986"
-    # MAIL_DEFAULT_SENDER = "contact@metabomatch.com"  # ("Marco from metabomatch", "marc.dubois@omics-services.com")
-
     MAIL_SERVER = "smtp.gmail.com"
     MAIL_PORT = 465
     MAIL_USE_SSL = True
@@ -120,4 +104,3 @@ class DefaultConfig(object):
     USER_URL_PREFIX = "/user"
     AUTH_URL_PREFIX = "/auth"
     ADMIN_URL_PREFIX = "/admin"
-

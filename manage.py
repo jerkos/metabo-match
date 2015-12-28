@@ -15,8 +15,9 @@ from flask.ext.script import (Manager, Shell, Server, prompt, prompt_pass,
                               prompt_bool)
 from flask.ext.migrate import MigrateCommand
 
-from metabomatch.softwares.models import Software, SentenceSoftwareMapping, Sentence, get_nb_commits, Upvote, \
-    ProConsUpvote, ProCons
+from metabomatch.softwares.models import Software, SentenceSoftwareMapping, Sentence, \
+    get_nb_commits, Upvote, ProConsUpvote, ProCons
+
 from metabomatch.app import create_app
 from metabomatch.extensions import db
 from metabomatch.flaskbb.utils.populate import (create_test_data, create_welcome_forum,
@@ -97,7 +98,7 @@ def initflaskbb(username=None, password=None, email=None):
         create_default_settings()
     except IntegrityError:
         flask_app.logger.error("Couldn't create the default data because it already "
-                         "exist!")
+                               "exist!")
         if prompt_bool("Do you want to recreate the database? (y/n)"):
             db.session.rollback()
             db.drop_all()
@@ -125,7 +126,8 @@ def initflaskbb(username=None, password=None, email=None):
     flask_app.logger.info("Creating welcome forum...")
     create_welcome_forum()
 
-    flask_app.logger.info("Congratulations! FlaskBB has been successfully installed")
+    flask_app.logger.info(
+        "Congratulations! FlaskBB has been successfully installed")
 
 
 @manager.command
